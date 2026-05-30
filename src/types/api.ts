@@ -1,0 +1,120 @@
+// Types derived from the example responses in the Postman collection (hippocket_admin.postman_collection.json).
+
+export type ValueType = 'money' | 'coin'
+
+export interface TokenPair {
+	access_token: string
+	refresh_token: string
+	token_type: 'bearer'
+}
+
+export interface Partner {
+	id: string
+	name: string
+	email: string
+	phone: string
+	is_hide: boolean
+	sms_notifications_enabled: boolean
+	sms_phone: string
+	agent_fee: number
+	value_type: ValueType
+}
+
+export interface CreatePartnerDto {
+	name: string
+	email: string
+	subtitle?: string
+	short_description?: string
+	description?: string
+	phone?: string
+	website?: string
+	address?: string
+	agent_fee: number
+	value_type: ValueType
+	location_id?: string
+	category_id?: string
+	service_id?: string
+}
+
+export interface UpdatePartnerDto {
+	name?: string
+	email?: string
+	phone?: string
+	agent_fee?: number
+	is_hide?: boolean
+}
+
+export interface Agent {
+	id: string
+	email: string
+	first_name: string
+	last_name: string
+	phone: string
+	is_active: boolean
+	balance: number
+	balance_coin: number
+	chosen_group: string
+}
+
+export interface UpdateAgentDto {
+	first_name?: string
+	last_name?: string
+	phone?: string
+	chosen_group_slug?: string
+}
+
+export interface Group {
+	id: number
+	name: string
+	slug: string
+}
+
+export interface ReferralListItem {
+	id: string
+	referral_name: string
+	agent_email: string
+	partner_name: string
+	status: string
+	is_paid: boolean
+	potential_value: string
+	created_at: string
+}
+
+export interface ReferralDetail extends ReferralListItem {
+	agent_phone: string
+	partner_email: string
+	contact_email: string
+	contact_phone: string
+	group_name: string
+	agent_potential_value: number
+	partner_potential_value: number
+	value_type: ValueType
+}
+
+export interface Status {
+	id: number
+	name: string
+	label: string
+	priority: number
+}
+
+export type WithdrawalStatus = 'waiting' | 'success' | 'cancel'
+
+export interface Withdrawal {
+	id: string
+	user_email: string
+	amount: number
+	method: string
+	status: WithdrawalStatus
+	created_at: string
+}
+
+export interface ApiError {
+	detail: string
+}
+
+export interface PaginationParams {
+	offset: number
+	count: number
+	search?: string
+}
