@@ -1,5 +1,11 @@
 import { lazy } from 'react'
-import { Navigate, Route, Routes, useLocation, type Location } from 'react-router'
+import {
+	Navigate,
+	Route,
+	Routes,
+	useLocation,
+	type Location,
+} from 'react-router'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { useAuth } from '@/features/auth/AuthContext'
@@ -48,10 +54,7 @@ function AppRoutes({ location }: { location: Location }) {
 				<Route path="partners" element={<PartnersPage />} />
 				<Route path="partners/new" element={<PartnerCreatePage />} />
 				<Route path="partners/:id" element={<PartnerDetailPage />} />
-				<Route
-					path="partners/:id/edit"
-					element={<PartnerEditPage />}
-				/>
+				<Route path="partners/:id/edit" element={<PartnerEditPage />} />
 				<Route path="referrals" element={<ReferralsPage />} />
 				<Route
 					path="categories"

@@ -49,6 +49,7 @@ export function AppShell() {
 		logout,
 		pathname,
 		outlet,
+		isMobile,
 		collapsed,
 		toggleCollapsed,
 		mobileOpen,
@@ -182,19 +183,31 @@ export function AppShell() {
 					</span>
 				</header>
 
-				<Scrollbar element="main" className="min-h-0 flex-1">
-					{/* Padding on the inner wrapper (not the OS host) so the
-					    bottom/right spacing is part of the scroll flow. */}
-					<div className="main-pad">
-						<Suspense fallback={<PageFallback />}>
-							<AnimatePresence mode="wait" initial={false}>
-								<PageTransition key={pathname}>
-									{outlet}
-								</PageTransition>
-							</AnimatePresence>
-						</Suspense>
-					</div>
-				</Scrollbar>
+				{/* Padding on the inner wrapper (not the scroll host) so the
+				    bottom/right spacing is part of the scroll flow. */}
+				{(() => {
+					const inner = (
+						<div className="main-pad">
+							<Suspense fallback={<PageFallback />}>
+								<AnimatePresence mode="wait" initial={false}>
+									<PageTransition key={pathname}>
+										{outlet}
+									</PageTransition>
+								</AnimatePresence>
+							</Suspense>
+						</div>
+					)
+
+					// Mobile: plain <main> so the whole page scrolls natively.
+					// Desktop: custom OverlayScrollbars scroll host.
+					return isMobile ? (
+						<main className="min-h-0 flex-1">{inner}</main>
+					) : (
+						<Scrollbar element="main" className="min-h-0 flex-1">
+							{inner}
+						</Scrollbar>
+					)
+				})()}
 			</div>
 		</div>
 	)

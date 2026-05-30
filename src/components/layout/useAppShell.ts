@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 
 import { useAuth } from '@/features/auth/AuthContext'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 // A single navigation entry. A `children` array turns it into a WordPress-style
 // group: the parent stays a real link to its own page, with the related
@@ -46,6 +47,9 @@ export const NAV_ITEMS: NavItem[] = [
 export function useAppShell() {
 	const { logout } = useAuth()
 	const location = useLocation()
+	// On mobile we drop the custom (OverlayScrollbars) scroll in favour of the
+	// native full-page scroll. Mirror the SCSS breakpoint (md = 768px).
+	const isMobile = useMediaQuery('(max-width: 767.98px)')
 	// Capture the outlet element so the exiting page keeps its own content
 	// during the transition (a live <Outlet /> would render the new route
 	// inside the exiting wrapper and cause a flash).
@@ -82,6 +86,7 @@ export function useAppShell() {
 		logout,
 		pathname,
 		outlet,
+		isMobile,
 		collapsed,
 		toggleCollapsed: () => setCollapsed((v) => !v),
 		mobileOpen,

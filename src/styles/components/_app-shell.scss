@@ -13,6 +13,14 @@
 		overflow: hidden;
 		padding-left: 0.625rem;
 
+		// Mobile: drop the viewport lock so the whole page scrolls natively
+		// (the custom scroll host is desktop-only).
+		@media (max-width: 767.98px) {
+			height: auto;
+			min-height: 100dvh;
+			overflow: visible;
+		}
+
 		/* @media (min-width: 768px) {
 			gap: 3rem; // md:gap-12
 		}
@@ -262,7 +270,8 @@
 	}
 
 	.main-pad {
-		padding-top: 2.5rem; padding-bottom: 2.5rem;
+		padding-top: 2.5rem;
+		padding-bottom: 2.5rem;
 		padding-right: 0.625rem; // pr-2.5
 
 		@media (min-width: 768px) {
