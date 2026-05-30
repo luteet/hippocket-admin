@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useAuth } from '@/features/auth/AuthContext'
 import { AppShell } from '@/components/layout/AppShell'
 import { ComingSoon } from '@/components/layout/ComingSoon'
+import { NotFound } from '@/components/layout/NotFound'
 import { LoginPage } from '@/features/auth/LoginPage'
 
 // Lazy-loaded pages — each becomes its own chunk (code-splitting). LoginPage is
@@ -78,8 +79,9 @@ function AppRoutes({ location }: { location: Location }) {
 					path="withdrawals"
 					element={<ComingSoon title="Withdrawals" />}
 				/>
+				{/* Unknown path: render the 404 inside the shell. */}
+				<Route path="*" element={<NotFound />} />
 			</Route>
-			<Route path="*" element={<Navigate to="/" replace />} />
 		</Routes>
 	)
 }
