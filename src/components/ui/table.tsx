@@ -1,8 +1,8 @@
-import * as React from 'react'
+import { type ComponentProps } from 'react'
 
 import { cn } from '@/lib/utils'
 
-function Table({ className, ...props }: React.ComponentProps<'table'>) {
+function Table({ className, ...props }: ComponentProps<'table'>) {
 	return (
 		<div className="relative w-full overflow-x-auto">
 			<table
@@ -13,11 +13,11 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
 	)
 }
 
-function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
+function TableHeader({ className, ...props }: ComponentProps<'thead'>) {
 	return <thead className={cn('[&_tr]:border-b', className)} {...props} />
 }
 
-function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
+function TableBody({ className, ...props }: ComponentProps<'tbody'>) {
 	return (
 		<tbody
 			className={cn('[&_tr:last-child]:border-0', className)}
@@ -26,7 +26,7 @@ function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
 	)
 }
 
-function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
+function TableRow({ className, ...props }: ComponentProps<'tr'>) {
 	return (
 		<tr
 			className={cn(
@@ -38,7 +38,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
 	)
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
+function TableHead({ className, ...props }: ComponentProps<'th'>) {
 	return (
 		<th
 			className={cn(
@@ -50,7 +50,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
 	)
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
+function TableCell({ className, ...props }: ComponentProps<'td'>) {
 	return (
 		<td
 			className={cn(

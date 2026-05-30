@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { useNavigate } from 'react-router'
+import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Plus, Search } from 'lucide-react'
 
@@ -8,31 +7,23 @@ import { DataTable } from '@/components/DataTable'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { usePagination } from '@/hooks/usePagination'
-import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { Partner } from '@/types/api'
-import { usePartners } from './hooks'
+import { usePartnersPage } from './usePartnersPage'
 import { formatFee } from './format'
 
 export function PartnersPage() {
-	const navigate = useNavigate()
-	const [search, setSearch] = React.useState('')
-	const debouncedSearch = useDebouncedValue(search)
-	const pagination = usePagination({ count: 20 })
+	const {
+		search,
+		setSearch,
+		data,
+		isLoading,
+		isFetching,
+		pagination,
+		goToCreate,
+		openPartner,
+	} = usePartnersPage()
 
-	// Reset to the first page when the search query changes.
-	React.useEffect(() => {
-		pagination.reset()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch])
-
-	const { data, isLoading, isFetching } = usePartners({
-		offset: pagination.offset,
-		count: pagination.count,
-		search: debouncedSearch || undefined,
-	})
-
-	const columns = React.useMemo<ColumnDef<Partner, unknown>[]>(
+	const columns = useMemo<ColumnDef<Partner, unknown>[]>(
 		() => [
 			{ accessorKey: 'name', header: 'Name' },
 			{ accessorKey: 'email', header: 'Email' },
@@ -62,7 +53,7 @@ export function PartnersPage() {
 				title="Partners"
 				description="Manage partners and their fees"
 				actions={
-					<Button onClick={() => navigate('/partners/new')}>
+					<Button onClick={goToCreate}>
 						<Plus />
 						Add
 					</Button>
@@ -84,7 +75,7 @@ export function PartnersPage() {
 				data={data ?? []}
 				isLoading={isLoading || isFetching}
 				emptyMessage="No partners found"
-				onRowClick={(p) => navigate(`/partners/${p.id}`)}
+				onRowClick={(p) => openPartner(p.id)}
 				pagination={{
 					page: pagination.page,
 					hasPrev: pagination.hasPrev,

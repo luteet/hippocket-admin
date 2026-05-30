@@ -1,7 +1,4 @@
-import * as React from 'react'
-import { useNavigate, useParams } from 'react-router'
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react'
-import { toast } from 'sonner'
 
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Button } from '@/components/ui/button'
@@ -10,27 +7,20 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
-import { getApiErrorMessage } from '@/lib/api/client'
-import { usePartner, useDeletePartner } from './hooks'
+import { usePartnerDetailPage } from './usePartnerDetailPage'
 import { formatFee } from './format'
 
 export function PartnerDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
-	const { data: partner, isLoading } = usePartner(id)
-	const deleteMut = useDeletePartner()
-	const [confirmOpen, setConfirmOpen] = React.useState(false)
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Partner deleted')
-			navigate('/partners')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const {
+		partner,
+		isLoading,
+		confirmOpen,
+		setConfirmOpen,
+		isDeleting,
+		handleDelete,
+		goBack,
+		goToEdit,
+	} = usePartnerDetailPage()
 
 	return (
 		<div>
@@ -38,21 +28,13 @@ export function PartnerDetailPage() {
 				title="Partner"
 				actions={
 					<>
-						<Button
-							variant="outline"
-							onClick={() => navigate('/partners')}
-						>
+						<Button variant="outline" onClick={goBack}>
 							<ArrowLeft />
 							Back
 						</Button>
 						{partner && (
 							<>
-								<Button
-									variant="secondary"
-									onClick={() =>
-										navigate(`/partners/${id}/edit`)
-									}
-								>
+								<Button variant="secondary" onClick={goToEdit}>
 									<Pencil />
 									Edit
 								</Button>
@@ -125,7 +107,7 @@ export function PartnerDetailPage() {
 				description={`Partner "${partner?.name ?? ''}" will be permanently deleted.`}
 				confirmLabel="Delete"
 				destructive
-				loading={deleteMut.isPending}
+				loading={isDeleting}
 				onConfirm={handleDelete}
 			/>
 		</div>

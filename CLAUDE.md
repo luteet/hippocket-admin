@@ -43,6 +43,26 @@ backend at `VITE_API_BASE_URL` (default `http://localhost:8000`, set in `.env`).
   page, and dialogs. Shared UI lives in `src/components/` (`DataTable`,
   `ConfirmDialog`, `PageTransition`, `layout/`), shadcn primitives in
   `src/components/ui/`.
+- **Container/hook pattern (component logic lives in a colocated hook):** every
+  page/dialog/stateful component keeps its logic in a `use<Component>` hook in a
+  sibling file (`useLoginPage.ts`, `usePartnersPage.ts`, `usePartnerForm.ts`,
+  `useReferralDetailDialog.ts`, `useAppShell.ts`, …). The component body is then
+  just `const { … } = use<Component>()` plus JSX.
+    - The hook owns ALL state, effects, data fetching (Query/Mutation), derived
+      values, and event handlers; it returns a plain object exposing only what
+      the JSX needs (its public interface). Don't leak raw mutation objects —
+      return `isDeleting`/`isPending` flags and `handleX`/`goToX` callbacks
+      instead of `deleteMut`.
+    - Wrap form submits inside the hook: return `onSubmit = handleSubmit(fn)` so
+      the component just does `<form onSubmit={onSubmit}>`.
+    - Hook files contain NO JSX (keep them `.ts`). JSX-bearing config that's
+      pure presentation — TanStack Table `columns` with cell renderers, `Field`
+      sub-components — stays in the component file. Schemas, zod-inferred types
+      (export them), and constants shared with the JSX live in the hook file and
+      are imported by the component.
+    - Trivial wrappers with only inline navigation handlers and no real state
+      (e.g. `PartnerCreatePage`) don't need a hook.
+    - New components MUST follow this pattern.
 - **Routing:** `src/App.tsx` declares all routes. Private routes are wrapped by
   `ProtectedRoute` → `AppShell`. Page transitions use `AnimatePresence` keyed by
   `location.pathname` in `AppShell`.
@@ -62,6 +82,41 @@ backend at `VITE_API_BASE_URL` (default `http://localhost:8000`, set in `.env`).
       entry CSS, and in `.scss` it leaks through unprocessed. In SCSS, use the
       token CSS variables (`var(--background)`, `var(--border)`, …) directly.
       Apply Tailwind utilities via `className` in components instead.
+    - **When to move styles to SCSS (large/complex elements):** utilities are the
+      default, but when an element's class string grows unwieldy — multiple
+      pseudo-classes (`hover:`, `focus-visible:`, `disabled:`…), several
+      breakpoints (`md:`/`lg:`/`max-md:`), or just a very long base string —
+      give it a semantic class and write the rules in a SCSS partial instead.
+        - Partials live in `src/styles/components/_<name>.scss` and are pulled in
+          via `@use './components/<name>'` at the top of `main.scss` (keep the
+          `./` — Vite's `sass-embedded` won't resolve the bare form in dev).
+          Examples: `_input.scss` (`.input`), `_button.scss` (`.button`),
+          `_app-shell.scss` (`.shell`, `.sidebar`, `.nav`, …). Unique app-level
+          layout pieces go unprefixed; only namespace a class if it'd otherwise
+          be ambiguous.
+        - **Wrap rules in `@layer components`** so Tailwind utilities still
+          override them. Tailwind's `utilities` layer ranks above `components`,
+          so a consumer can still pass e.g. `className="pl-9"` and have it win
+          over the partial's padding. (Unlayered rules would beat utilities and
+          break such overrides — don't do that for component base styles.)
+        - **Drive state with `data-` attributes**, not conditional class strings:
+          `data-collapsed={collapsed}` / `data-open={open}` on the element, then
+          `&[data-collapsed='true'] { … }` in SCSS. React stringifies the boolean
+          to `"true"`/`"false"`.
+        - **Translate to CSS tokens, not hardcoded colors:** `var(--sidebar)`,
+          `color-mix(in srgb, var(--sidebar-foreground) 90%, transparent)` for a
+          `/90` opacity, `var(--pill)` for `rounded-pill`, etc. Tailwind spacing
+          maps as `n × 0.25rem`; breakpoints are `md = 768px`, `lg = 1024px`.
+        - **Variant primitives → base class + `.is-*` modifiers.** For a
+          component with variants (was `cva`), drop the `cva` map and give it a
+          base class plus modifier classes in the `components` layer; the
+          component maps its `variant`/`size` prop to a class. See
+          `_button.scss` (`.button` + `.is-secondary`/`.is-ghost`/`.is-sm`/…) and
+          [button.tsx](src/components/ui/button.tsx)'s `VARIANT_CLASS`/`SIZE_CLASS`
+          lookup. Because the modifiers live in `components`, callers can still
+          override with utilities (`AppShell` passes `size-9`, `w-full`,
+          `hover:bg-sidebar-accent`). Don't layer a semantic class _on top of_
+          `cva` utility output — utilities would beat it; replace the `cva`.
 - **Design tokens / light theme only:** colors are CSS variables defined in
   `src/styles/main.scss` and mapped to Tailwind in `@theme inline` in
   `src/index.css`. Palette: background `#F5F5F5`, secondary `#2494AC` (sidebar),

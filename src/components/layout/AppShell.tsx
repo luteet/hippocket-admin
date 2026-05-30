@@ -1,16 +1,11 @@
-import { Suspense, useState } from 'react'
-import { NavLink, useLocation, useOutlet } from 'react-router'
+import { Suspense } from 'react'
+import { NavLink } from 'react-router'
 import { AnimatePresence } from 'motion/react'
 import {
-	Building2,
-	Users,
-	Boxes,
-	GitBranch,
-	ListChecks,
-	Wallet,
 	LogOut,
 	Menu,
 	X,
+	ChevronDown,
 	PanelLeftClose,
 	PanelLeftOpen,
 } from 'lucide-react'
@@ -20,71 +15,73 @@ import { Button } from '@/components/ui/button'
 import { PageTransition } from '@/components/PageTransition'
 import { PageFallback } from '@/components/PageFallback'
 import { Scrollbar } from '@/components/Scrollbar'
-import { useAuth } from '@/features/auth/AuthContext'
+import { useAppShell, type NavItem } from './useAppShell'
 
-const NAV_ITEMS = [
-	{ to: '/partners', label: 'Partners', icon: Building2 },
-	{ to: '/referrals', label: 'Referrals', icon: GitBranch },
-	{ to: '/agents', label: 'Agents', icon: Users },
-	{ to: '/groups', label: 'Groups', icon: Boxes },
-	{ to: '/statuses', label: 'Statuses', icon: ListChecks },
-	{ to: '/withdrawals', label: 'Withdrawals', icon: Wallet },
-]
+// A leaf navigation link. Shared by top-level items and group children
+// (`isSub` switches it to the nested styling).
+function NavItemLink({
+	item,
+	isSub,
+	onNavigate,
+}: {
+	item: NavItem
+	isSub?: boolean
+	onNavigate: () => void
+}) {
+	const Icon = item.icon
+	return (
+		<NavLink
+			to={item.to}
+			onClick={onNavigate}
+			className={({ isActive }) =>
+				cn('nav-link', isSub && 'nav-sublink', isActive && 'is-active')
+			}
+		>
+			{/* Child links drop the icon to save horizontal space. */}
+			{!isSub && <Icon className="nav-link__icon" />}
+			<span className="nav-link__label">{item.label}</span>
+		</NavLink>
+	)
+}
 
 export function AppShell() {
-	const { logout } = useAuth()
-	const location = useLocation()
-	// Capture the outlet element so the exiting page keeps its own content
-	// during the transition (a live <Outlet /> would render the new route
-	// inside the exiting wrapper and cause a flash).
-	const outlet = useOutlet()
-	const [collapsed, setCollapsed] = useState(false)
-	const [mobileOpen, setMobileOpen] = useState(false)
-
-	const closeMobile = () => setMobileOpen(false)
+	const {
+		logout,
+		pathname,
+		outlet,
+		collapsed,
+		toggleCollapsed,
+		mobileOpen,
+		openMobile,
+		closeMobile,
+		navItems,
+		isGroupOpen,
+		toggleGroup,
+	} = useAppShell()
 
 	return (
-		<div className="flex h-dvh gap-2.5 overflow-hidden pl-2.5 md:gap-12 lg:gap-25">
+		<div className="shell">
 			{/* Mobile backdrop */}
 			<div
+				className="backdrop"
+				data-open={mobileOpen}
 				onClick={closeMobile}
-				className={cn(
-					'fixed inset-0 z-40 bg-black/50 transition-opacity md:hidden',
-					mobileOpen
-						? 'opacity-100'
-						: 'pointer-events-none opacity-0',
-				)}
 			/>
 
 			{/* Sidebar */}
 			<aside
-				className={cn(
-					'z-50 h-[100%-20px] overflow-auto flex shrink-0 flex-col rounded-pill bg-sidebar text-sidebar-foreground transition-all duration-300 md:my-2.5',
-					collapsed ? 'md:w-20' : 'md:w-45',
-					// Mobile: fixed slide-in drawer
-					'max-md:fixed max-md:inset-y-2.5 max-md:left-2.5 max-md:w-50',
-					mobileOpen
-						? 'max-md:translate-x-0'
-						: 'max-md:-translate-x-[110%]',
-				)}
+				className="sidebar"
+				data-collapsed={collapsed}
+				data-open={mobileOpen}
 			>
 				{/* Header: brand + toggles */}
-				<div
-					className={cn(
-						'flex min-h-16 items-center gap-2 px-4',
-						collapsed && 'md:justify-center md:px-0',
-					)}
-				>
-					{!collapsed && (
-						<span className="flex-1 truncate text-lg font-semibold">
-							HipPocket
-						</span>
-					)}
+				<div className="sidebar__header">
+					{!collapsed && <span className="brand">HipPocket</span>}
 					{/* Desktop collapse toggle */}
 					<Button
 						variant="ghost"
 						size="icon"
-						onClick={() => setCollapsed((v) => !v)}
+						onClick={toggleCollapsed}
 						aria-label="Toggle sidebar"
 						className="hidden size-9 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground md:inline-flex"
 					>
@@ -102,32 +99,54 @@ export function AppShell() {
 					</Button>
 				</div>
 
-				<nav className="flex-1 space-y-1 px-3">
-					{NAV_ITEMS.map(({ to, label, icon: Icon }) => (
-						<NavLink
-							key={to}
-							to={to}
-							onClick={closeMobile}
-							className={({ isActive }) =>
-								cn(
-									'flex items-center gap-3 rounded-pill px-3 py-3 text-sm font-medium transition-colors',
-									collapsed && 'md:justify-center md:px-0',
-									isActive
-										? 'bg-sidebar-primary text-sidebar-primary-foreground'
-										: 'text-sidebar-foreground/90 hover:bg-sidebar-accent',
-								)
-							}
-						>
-							<Icon className="size-5 shrink-0" />
-							<span className={cn(collapsed && 'md:hidden')}>
-								{label}
-							</span>
-						</NavLink>
-					))}
+				<nav className="nav">
+					{navItems.map((item) =>
+						item.children ? (
+							<div
+								key={item.to}
+								className="nav-group"
+								data-open={isGroupOpen(item)}
+							>
+								<div className="nav-group__row">
+									<NavItemLink
+										item={item}
+										onNavigate={closeMobile}
+									/>
+									<button
+										type="button"
+										className="nav-group__toggle"
+										onClick={() => toggleGroup(item)}
+										aria-label={`Toggle ${item.label}`}
+										aria-expanded={isGroupOpen(item)}
+									>
+										<ChevronDown className="nav-group__chevron" />
+									</button>
+								</div>
+								<div className="nav-group__children">
+									<div className="nav-group__children-inner">
+										{item.children.map((child) => (
+											<NavItemLink
+												key={child.to}
+												item={child}
+												isSub
+												onNavigate={closeMobile}
+											/>
+										))}
+									</div>
+								</div>
+							</div>
+						) : (
+							<NavItemLink
+								key={item.to}
+								item={item}
+								onNavigate={closeMobile}
+							/>
+						),
+					)}
 				</nav>
 
 				{/* Logout */}
-				<div className="p-3">
+				<div className="sidebar__footer">
 					<Button
 						variant="ghost"
 						onClick={logout}
@@ -147,13 +166,13 @@ export function AppShell() {
 			</aside>
 
 			{/* Content */}
-			<div className="flex min-w-0 flex-1 flex-col">
+			<div className="content">
 				{/* Mobile top bar */}
-				<header className="flex h-12 items-center gap-2 pt-2.5 md:hidden">
+				<header className="topbar">
 					<Button
 						variant="ghost"
 						size="icon"
-						onClick={() => setMobileOpen(true)}
+						onClick={openMobile}
 						aria-label="Open menu"
 					>
 						<Menu />
@@ -166,10 +185,10 @@ export function AppShell() {
 				<Scrollbar element="main" className="min-h-0 flex-1">
 					{/* Padding on the inner wrapper (not the OS host) so the
 					    bottom/right spacing is part of the scroll flow. */}
-					<div className="py-5 pr-2.5 md:pr-12 lg:pr-25">
+					<div className="main-pad">
 						<Suspense fallback={<PageFallback />}>
 							<AnimatePresence mode="wait" initial={false}>
-								<PageTransition key={location.pathname}>
+								<PageTransition key={pathname}>
 									{outlet}
 								</PageTransition>
 							</AnimatePresence>

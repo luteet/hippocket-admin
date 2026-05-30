@@ -1,4 +1,12 @@
-import * as React from 'react'
+import {
+	createContext,
+	useState,
+	useCallback,
+	useEffect,
+	useMemo,
+	useContext,
+	type ReactNode,
+} from 'react'
 
 import { loginRequest } from '@/lib/api/auth'
 import { AUTH_LOGOUT_EVENT } from '@/lib/api/client'
@@ -11,36 +19,33 @@ interface AuthContextValue {
 	logout: () => void
 }
 
-const AuthContext = React.createContext<AuthContextValue | null>(null)
+const AuthContext = createContext<AuthContextValue | null>(null)
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-	const [isAuthenticated, setIsAuthenticated] = React.useState(
+export function AuthProvider({ children }: { children: ReactNode }) {
+	const [isAuthenticated, setIsAuthenticated] = useState(
 		() => !!tokenStore.getAccess(),
 	)
 
-	const logout = React.useCallback(() => {
+	const logout = useCallback(() => {
 		tokenStore.clear()
 		queryClient.clear()
 		setIsAuthenticated(false)
 	}, [])
 
 	// React to a forced logout from the axios interceptor (refresh failed).
-	React.useEffect(() => {
+	useEffect(() => {
 		const handler = () => logout()
 		window.addEventListener(AUTH_LOGOUT_EVENT, handler)
 		return () => window.removeEventListener(AUTH_LOGOUT_EVENT, handler)
 	}, [logout])
 
-	const login = React.useCallback(
-		async (username: string, password: string) => {
-			const tokens = await loginRequest(username, password)
-			tokenStore.set(tokens.access_token, tokens.refresh_token)
-			setIsAuthenticated(true)
-		},
-		[],
-	)
+	const login = useCallback(async (username: string, password: string) => {
+		const tokens = await loginRequest(username, password)
+		tokenStore.set(tokens.access_token, tokens.refresh_token)
+		setIsAuthenticated(true)
+	}, [])
 
-	const value = React.useMemo(
+	const value = useMemo(
 		() => ({ isAuthenticated, login, logout }),
 		[isAuthenticated, login, logout],
 	)
@@ -50,7 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
-	const ctx = React.useContext(AuthContext)
+	const ctx = useContext(AuthContext)
 	if (!ctx) throw new Error('useAuth must be used within AuthProvider')
 	return ctx
 }

@@ -1,91 +1,34 @@
-import * as React from 'react'
-import { useNavigate, useLocation } from 'react-router'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { motion } from 'motion/react'
 import { Loader2 } from 'lucide-react'
-import { toast } from 'sonner'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card'
-import { getApiErrorMessage } from '@/lib/api/client'
-import { useAuth } from './AuthContext'
-
-const loginSchema = z.object({
-	username: z.string().min(1, 'Enter your username'),
-	password: z.string().min(1, 'Enter your password'),
-})
-
-type LoginForm = z.infer<typeof loginSchema>
-
-interface LocationState {
-	from?: { pathname: string }
-}
+import { Card, CardContent } from '@/components/ui/card'
+import { useLoginPage } from './useLoginPage'
 
 export function LoginPage() {
-	const { login, isAuthenticated } = useAuth()
-	const navigate = useNavigate()
-	const location = useLocation()
-	const from = (location.state as LocationState | null)?.from?.pathname ?? '/'
-
-	const {
-		register,
-		handleSubmit,
-		formState: { errors, isSubmitting },
-	} = useForm<LoginForm>({
-		resolver: zodResolver(loginSchema),
-		defaultValues: { username: '', password: '' },
-	})
-
-	React.useEffect(() => {
-		if (isAuthenticated) navigate(from, { replace: true })
-	}, [isAuthenticated, from, navigate])
-
-	const onSubmit = async (values: LoginForm) => {
-		try {
-			await login(values.username, values.password)
-			navigate(from, { replace: true })
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to sign in'))
-		}
-	}
+	const { register, errors, isSubmitting, onSubmit } = useLoginPage()
 
 	return (
-		<div className="flex min-h-dvh items-center justify-center bg-background p-4">
-			<motion.div
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				transition={{ duration: 0.3 }}
-				className="w-full max-w-sm"
-			>
+		<div className="flex min-h-dvh items-center justify-center bg-background p-4 pt-12 pb-12">
+			<div className="w-full max-w-sm">
+				<header className="pb-12 text-center">
+					<h1 className="text-2xl font-semibold leading-none tracking-tight uppercase">
+						Login
+					</h1>
+					<p className="pt-4 text-muted-foreground">
+						Sign in to the admin panel
+					</p>
+				</header>
 				<Card>
-					<CardHeader className="text-center">
-						<CardTitle className="text-2xl text-secondary">
-							HipPocket Admin
-						</CardTitle>
-						<CardDescription>
-							Sign in to the admin panel
-						</CardDescription>
-					</CardHeader>
 					<CardContent>
-						<form
-							onSubmit={handleSubmit(onSubmit)}
-							className="space-y-4"
-						>
+						<form onSubmit={onSubmit} className="space-y-4">
 							<div className="space-y-4">
 								<Label htmlFor="username">Username</Label>
 								<Input
 									id="username"
 									autoComplete="username"
+									placeholder="Username"
 									{...register('username')}
 								/>
 								{errors.username && (
@@ -99,6 +42,7 @@ export function LoginPage() {
 								<Input
 									id="password"
 									type="password"
+									placeholder="Password"
 									autoComplete="current-password"
 									{...register('password')}
 								/>
@@ -110,7 +54,7 @@ export function LoginPage() {
 							</div>
 							<Button
 								type="submit"
-								className="w-full mt-2"
+								className="w-full mt-4"
 								disabled={isSubmitting}
 							>
 								{isSubmitting && (
@@ -121,7 +65,7 @@ export function LoginPage() {
 						</form>
 					</CardContent>
 				</Card>
-			</motion.div>
+			</div>
 		</div>
 	)
 }

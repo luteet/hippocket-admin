@@ -1,5 +1,4 @@
 import { Loader2, CheckCircle2 } from 'lucide-react'
-import { toast } from 'sonner'
 
 import {
 	Dialog,
@@ -18,13 +17,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { getApiErrorMessage } from '@/lib/api/client'
-import {
-	useReferral,
-	useStatuses,
-	useUpdateReferralStatus,
-	useMarkReferralPaid,
-} from './hooks'
+import { useReferralDetailDialog } from './useReferralDetailDialog'
 
 interface Props {
 	referralId: string | null
@@ -32,38 +25,22 @@ interface Props {
 }
 
 export function ReferralDetailDialog({ referralId, onOpenChange }: Props) {
-	const { data, isLoading } = useReferral(referralId ?? undefined)
-	const { data: statuses } = useStatuses()
-	const statusMut = useUpdateReferralStatus()
-	const paidMut = useMarkReferralPaid()
-
-	const currentStatus = data?.status ?? ''
-
-	const handleStatusChange = async (newStatus: string) => {
-		if (!referralId || newStatus === currentStatus) return
-		try {
-			await statusMut.mutateAsync({ id: referralId, newStatus })
-			toast.success('Status updated')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to update status'))
-		}
-	}
-
-	const handleMarkPaid = async () => {
-		if (!referralId) return
-		try {
-			await paidMut.mutateAsync(referralId)
-			toast.success('Marked as paid')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to mark as paid'))
-		}
-	}
+	const {
+		data,
+		isLoading,
+		statuses,
+		currentStatus,
+		handleStatusChange,
+		handleMarkPaid,
+		isUpdatingStatus,
+		isMarkingPaid,
+	} = useReferralDetailDialog(referralId)
 
 	return (
 		<Dialog open={!!referralId} onOpenChange={onOpenChange}>
 			<DialogContent className="max-h-[90svh] max-w-lg overflow-y-auto">
 				<DialogHeader>
-					<DialogTitle>Referral</DialogTitle>
+					<DialogTitle>Pipeline Log</DialogTitle>
 				</DialogHeader>
 
 				{isLoading || !data ? (
@@ -131,7 +108,7 @@ export function ReferralDetailDialog({ referralId, onOpenChange }: Props) {
 								<Select
 									value={currentStatus}
 									onValueChange={handleStatusChange}
-									disabled={statusMut.isPending}
+									disabled={isUpdatingStatus}
 								>
 									<SelectTrigger className="max-w-xs">
 										<SelectValue placeholder="Select a status" />
@@ -147,7 +124,7 @@ export function ReferralDetailDialog({ referralId, onOpenChange }: Props) {
 										))}
 									</SelectContent>
 								</Select>
-								{statusMut.isPending && (
+								{isUpdatingStatus && (
 									<Loader2 className="size-4 animate-spin text-muted-foreground" />
 								)}
 							</div>
@@ -157,9 +134,9 @@ export function ReferralDetailDialog({ referralId, onOpenChange }: Props) {
 							<Button
 								variant="secondary"
 								onClick={handleMarkPaid}
-								disabled={paidMut.isPending}
+								disabled={isMarkingPaid}
 							>
-								{paidMut.isPending ? (
+								{isMarkingPaid ? (
 									<Loader2 className="animate-spin" />
 								) : (
 									<CheckCircle2 />

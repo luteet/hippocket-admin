@@ -1,53 +1,60 @@
-import * as React from 'react'
+import { forwardRef, type ButtonHTMLAttributes } from 'react'
 import { Slot } from '@radix-ui/react-slot'
-import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 
-const buttonVariants = cva(
-	'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-pill text-sm font-medium transition-colors outline-none focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
-	{
-		variants: {
-			variant: {
-				default:
-					'bg-primary text-primary-foreground hover:bg-primary/90',
-				secondary:
-					'bg-secondary text-secondary-foreground hover:bg-secondary/90',
-				destructive:
-					'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-				// No border — a light card surface keeps it distinct on the gray background.
-				outline:
-					'bg-card border-1 border-primary hover:bg-muted hover:text-foreground',
-				ghost: 'hover:bg-muted hover:text-foreground',
-				link: 'text-primary underline-offset-4 hover:underline',
-			},
-			size: {
-				default: 'h-14 px-6 py-2',
-				sm: 'h-9 px-4 text-xs',
-				lg: 'h-14 px-8',
-				icon: 'size-11',
-			},
-		},
-		defaultVariants: {
-			variant: 'default',
-			size: 'default',
-		},
-	},
-)
+type ButtonVariant =
+	| 'default'
+	| 'secondary'
+	| 'destructive'
+	| 'outline'
+	| 'ghost'
+	| 'link'
+type ButtonSize = 'default' | 'sm' | 'lg' | 'icon'
 
-export interface ButtonProps
-	extends
-		React.ButtonHTMLAttributes<HTMLButtonElement>,
-		VariantProps<typeof buttonVariants> {
+// Styles live in src/styles/components/_button.scss (.button + .is-* modifiers).
+const VARIANT_CLASS: Record<ButtonVariant, string> = {
+	default: '',
+	secondary: 'is-secondary',
+	destructive: 'is-destructive',
+	outline: 'is-outline',
+	ghost: 'is-ghost',
+	link: 'is-link',
+}
+
+const SIZE_CLASS: Record<ButtonSize, string> = {
+	default: '',
+	sm: 'is-sm',
+	lg: 'is-lg',
+	icon: 'is-icon',
+}
+
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	variant?: ButtonVariant
+	size?: ButtonSize
 	asChild?: boolean
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-	({ className, variant, size, asChild = false, ...props }, ref) => {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+	(
+		{
+			className,
+			variant = 'default',
+			size = 'default',
+			asChild = false,
+			...props
+		},
+		ref,
+	) => {
 		const Comp = asChild ? Slot : 'button'
 		return (
 			<Comp
-				className={cn(buttonVariants({ variant, size, className }))}
+				className={cn(
+					'button',
+					VARIANT_CLASS[variant],
+					SIZE_CLASS[size],
+					className,
+				)}
 				ref={ref}
 				{...props}
 			/>
@@ -56,5 +63,4 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = 'Button'
 
-// eslint-disable-next-line react-refresh/only-export-components
-export { Button, buttonVariants }
+export { Button }

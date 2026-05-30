@@ -1,16 +1,16 @@
-import { lazy, Suspense } from 'react'
-import { Navigate, Route, Routes } from 'react-router'
+import { lazy } from 'react'
+import { Navigate, Route, Routes, useLocation, type Location } from 'react-router'
+import { AnimatePresence, motion } from 'motion/react'
 
-import { ProtectedRoute } from '@/features/auth/ProtectedRoute'
+import { useAuth } from '@/features/auth/AuthContext'
 import { AppShell } from '@/components/layout/AppShell'
 import { ComingSoon } from '@/components/layout/ComingSoon'
-import { PageFallback } from '@/components/PageFallback'
+import { LoginPage } from '@/features/auth/LoginPage'
 
-// Lazy-loaded pages — each becomes its own chunk (code-splitting).
-// Named exports are adapted to the default export that lazy() expects.
-const LoginPage = lazy(() =>
-	import('@/features/auth/LoginPage').then((m) => ({ default: m.LoginPage })),
-)
+// Lazy-loaded pages — each becomes its own chunk (code-splitting). LoginPage is
+// imported eagerly (above) so the auth boundary can cross-fade without a Suspense
+// fallback flashing in mid-transition; it's the entry screen, so it'd load
+// up-front anyway. Named exports are adapted to the default export lazy() expects.
 const PartnersPage = lazy(() =>
 	import('@/features/partners/PartnersPage').then((m) => ({
 		default: m.PartnersPage,
@@ -37,51 +37,82 @@ const ReferralsPage = lazy(() =>
 	})),
 )
 
-export function Pages() {
+// The authenticated route tree. `location` is passed explicitly so that while
+// this branch is exiting (logout), AnimatePresence keeps rendering the route
+// the user was last on instead of following the URL change to /login.
+function AppRoutes({ location }: { location: Location }) {
 	return (
-		<Suspense fallback={<PageFallback fullScreen />}>
-			<Routes>
-				<Route path="/login" element={<LoginPage />} />
-				<Route element={<ProtectedRoute />}>
-					<Route element={<AppShell />}>
-						<Route
-							index
-							element={<Navigate to="/partners" replace />}
-						/>
-						<Route path="partners" element={<PartnersPage />} />
-						<Route
-							path="partners/new"
-							element={<PartnerCreatePage />}
-						/>
-						<Route
-							path="partners/:id"
-							element={<PartnerDetailPage />}
-						/>
-						<Route
-							path="partners/:id/edit"
-							element={<PartnerEditPage />}
-						/>
-						<Route path="referrals" element={<ReferralsPage />} />
-						<Route
-							path="agents"
-							element={<ComingSoon title="Agents" />}
-						/>
-						<Route
-							path="groups"
-							element={<ComingSoon title="Groups" />}
-						/>
-						<Route
-							path="statuses"
-							element={<ComingSoon title="Statuses" />}
-						/>
-						<Route
-							path="withdrawals"
-							element={<ComingSoon title="Withdrawals" />}
-						/>
-					</Route>
-				</Route>
-				<Route path="*" element={<Navigate to="/" replace />} />
-			</Routes>
-		</Suspense>
+		<Routes location={location}>
+			<Route element={<AppShell />}>
+				<Route index element={<Navigate to="/partners" replace />} />
+				<Route path="partners" element={<PartnersPage />} />
+				<Route path="partners/new" element={<PartnerCreatePage />} />
+				<Route path="partners/:id" element={<PartnerDetailPage />} />
+				<Route
+					path="partners/:id/edit"
+					element={<PartnerEditPage />}
+				/>
+				<Route path="referrals" element={<ReferralsPage />} />
+				<Route
+					path="categories"
+					element={<ComingSoon title="Categories" />}
+				/>
+				<Route
+					path="locations"
+					element={<ComingSoon title="Locations" />}
+				/>
+				<Route
+					path="services"
+					element={<ComingSoon title="Services" />}
+				/>
+				<Route path="agents" element={<ComingSoon title="Agents" />} />
+				<Route path="groups" element={<ComingSoon title="Groups" />} />
+				<Route
+					path="statuses"
+					element={<ComingSoon title="Statuses" />}
+				/>
+				<Route
+					path="withdrawals"
+					element={<ComingSoon title="Withdrawals" />}
+				/>
+			</Route>
+			<Route path="*" element={<Navigate to="/" replace />} />
+		</Routes>
+	)
+}
+
+// Shared fade for the auth boundary (login ⇄ admin). `mode="wait"` plays the
+// exit fully before the enter, so the login screen fades out and only then the
+// admin shell fades in (and vice-versa on logout).
+const AUTH_FADE = { duration: 0.25, ease: 'easeOut' } as const
+
+export function Pages() {
+	const { isAuthenticated } = useAuth()
+	const location = useLocation()
+
+	return (
+		<AnimatePresence mode="wait">
+			{isAuthenticated ? (
+				<motion.div
+					key="app"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={AUTH_FADE}
+				>
+					<AppRoutes location={location} />
+				</motion.div>
+			) : (
+				<motion.div
+					key="login"
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={AUTH_FADE}
+				>
+					<LoginPage />
+				</motion.div>
+			)}
+		</AnimatePresence>
 	)
 }

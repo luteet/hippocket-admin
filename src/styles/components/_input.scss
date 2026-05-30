@@ -1,0 +1,46 @@
+// Input field base styles.
+//
+// In @layer components so Tailwind utilities passed via `className`
+// (e.g. `pl-9` for a search icon) still override these.
+@layer components {
+	.input {
+		display: flex;
+		height: 3.5rem;
+		width: 100%;
+		border: 1px solid var(--input);
+		border-radius: calc(var(--pill) / 2);
+		background-color: var(--card);
+		padding: 0.25rem 1rem;
+		font-size: var(--text-sm);
+		transition:
+			color 150ms,
+			background-color 150ms,
+			border-color 150ms;
+		outline: none;
+
+		&::placeholder {
+			color: var(--muted-foreground);
+		}
+
+		&::file-selector-button {
+			border: 0;
+			background-color: transparent;
+			font-size: var(--text-sm);
+			font-weight: 500;
+		}
+
+		&:focus-visible {
+			outline: none;
+		}
+
+		&::placeholder {
+			color: var(--input);
+			opacity: 1;
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.5;
+		}
+	}
+}

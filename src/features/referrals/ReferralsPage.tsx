@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Search } from 'lucide-react'
 
@@ -13,13 +13,10 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { usePagination } from '@/hooks/usePagination'
-import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { ReferralListItem } from '@/types/api'
-import { useReferrals, useStatuses } from './hooks'
+import { useReferralsPage, ALL } from './useReferralsPage'
 import { ReferralDetailDialog } from './ReferralDetailDialog'
 
-const ALL = '__all__'
 const PAID_OPTIONS = [
 	{ value: ALL, label: 'All' },
 	{ value: 'true', label: 'Paid' },
@@ -27,30 +24,23 @@ const PAID_OPTIONS = [
 ]
 
 export function ReferralsPage() {
-	const [search, setSearch] = React.useState('')
-	const debouncedSearch = useDebouncedValue(search)
-	const [statusLabel, setStatusLabel] = React.useState(ALL)
-	const [isPaid, setIsPaid] = React.useState(ALL)
-	const pagination = usePagination({ count: 20 })
+	const {
+		search,
+		setSearch,
+		statusLabel,
+		setStatusLabel,
+		isPaid,
+		setIsPaid,
+		statuses,
+		data,
+		isLoading,
+		isFetching,
+		pagination,
+		openId,
+		setOpenId,
+	} = useReferralsPage()
 
-	const { data: statuses } = useStatuses()
-
-	React.useEffect(() => {
-		pagination.reset()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, statusLabel, isPaid])
-
-	const { data, isLoading, isFetching } = useReferrals({
-		offset: pagination.offset,
-		count: pagination.count,
-		search: debouncedSearch || undefined,
-		status_label: statusLabel === ALL ? undefined : statusLabel,
-		is_paid: isPaid === ALL ? undefined : isPaid === 'true',
-	})
-
-	const [openId, setOpenId] = React.useState<string | null>(null)
-
-	const columns = React.useMemo<ColumnDef<ReferralListItem, unknown>[]>(
+	const columns = useMemo<ColumnDef<ReferralListItem, unknown>[]>(
 		() => [
 			{ accessorKey: 'referral_name', header: 'Referral' },
 			{ accessorKey: 'agent_email', header: 'Agent' },
@@ -92,8 +82,8 @@ export function ReferralsPage() {
 	return (
 		<div>
 			<PageHeader
-				title="Referrals"
-				description="Referral requests, statuses, and payouts"
+				title="Pipeline Logs"
+				description="Pipeline log requests, statuses, and payouts"
 			/>
 
 			<div className="mb-4 flex flex-wrap items-center gap-3">
@@ -139,7 +129,7 @@ export function ReferralsPage() {
 				columns={columns}
 				data={data ?? []}
 				isLoading={isLoading || isFetching}
-				emptyMessage="No referrals found"
+				emptyMessage="No pipeline logs found"
 				onRowClick={(r) => setOpenId(r.id)}
 				pagination={{
 					page: pagination.page,
