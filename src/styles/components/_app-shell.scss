@@ -233,7 +233,7 @@
 		min-width: 0;
 
 		//gap: 0.625rem; // 2.5
-		padding-left: 0.625rem;
+		//padding-left: 0.625rem;
 
 		@media (min-width: 768px) {
 			padding-left: 0;
@@ -262,10 +262,11 @@
 	}
 
 	.main-pad {
-		padding-top: 4.5rem; padding-bottom: 2.5rem;
+		padding-top: 2.5rem; padding-bottom: 2.5rem;
 		padding-right: 0.625rem; // pr-2.5
 
 		@media (min-width: 768px) {
+			padding-top: 4.5rem;
 			padding-right: 3rem; // md:pr-12
 		}
 		@media (min-width: 1024px) {
