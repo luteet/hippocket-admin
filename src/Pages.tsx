@@ -115,7 +115,23 @@ export function Pages() {
 					exit={{ opacity: 0 }}
 					transition={AUTH_FADE}
 				>
-					<LoginPage />
+					{/* Unauthenticated: only /login exists. Any other path
+					    redirects to /login, normalizing the URL and stashing the
+					    requested path in state.from so useLoginPage can send the
+					    user back there after a successful sign-in. */}
+					<Routes location={location}>
+						<Route path="/login" element={<LoginPage />} />
+						<Route
+							path="*"
+							element={
+								<Navigate
+									to="/login"
+									replace
+									state={{ from: location }}
+								/>
+							}
+						/>
+					</Routes>
 				</motion.div>
 			)}
 		</AnimatePresence>
