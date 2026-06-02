@@ -103,7 +103,7 @@ export function ReferralsPage() {
 					</SelectTrigger>
 					<SelectContent>
 						<SelectItem value={ALL}>All statuses</SelectItem>
-						{statuses?.map((s) => (
+						{statuses?.items.map((s) => (
 							<SelectItem key={s.id} value={s.label}>
 								{s.name}
 							</SelectItem>
@@ -127,14 +127,14 @@ export function ReferralsPage() {
 
 			<DataTable
 				columns={columns}
-				data={data ?? []}
+				data={data?.items ?? []}
 				isLoading={isLoading || isFetching}
 				emptyMessage="No pipeline logs found"
 				onRowClick={(r) => setOpenId(r.id)}
 				pagination={{
 					page: pagination.page,
 					hasPrev: pagination.hasPrev,
-					hasNext: pagination.canNext(data?.length ?? 0),
+					hasNext: pagination.canNext(data?.items.length ?? 0),
 					onPrev: pagination.prev,
 					onNext: pagination.next,
 				}}

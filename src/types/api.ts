@@ -8,6 +8,13 @@ export interface TokenPair {
 	token_type: 'bearer'
 }
 
+export interface PartnersData {
+	count: number
+	items: Partner[]
+	offset: number
+	total: number
+}
+
 export interface Partner {
 	id: string
 	name: string
@@ -69,6 +76,13 @@ export interface Group {
 	slug: string
 }
 
+export interface ReferralListData {
+	count: number
+	items: ReferralListItem[]
+	offset: number
+	total: number
+}
+
 export interface ReferralListItem {
 	id: string
 	referral_name: string
@@ -89,6 +103,13 @@ export interface ReferralDetail extends ReferralListItem {
 	agent_potential_value: number
 	partner_potential_value: number
 	value_type: ValueType
+}
+
+export interface StatusData {
+	count: number
+	items: Status[]
+	offset: number
+	total: number
 }
 
 export interface Status {

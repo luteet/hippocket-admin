@@ -114,7 +114,7 @@ export function ReferralDetailDialog({ referralId, onOpenChange }: Props) {
 										<SelectValue placeholder="Select a status" />
 									</SelectTrigger>
 									<SelectContent>
-										{statuses?.map((s) => (
+										{statuses?.items?.map((s) => (
 											<SelectItem
 												key={s.id}
 												value={s.label}

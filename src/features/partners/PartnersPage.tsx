@@ -72,14 +72,14 @@ export function PartnersPage() {
 
 			<DataTable
 				columns={columns}
-				data={data ?? []}
+				data={data?.items ?? []}
 				isLoading={isLoading || isFetching}
 				emptyMessage="No partners found"
 				onRowClick={(p) => openPartner(p.id)}
 				pagination={{
 					page: pagination.page,
 					hasPrev: pagination.hasPrev,
-					hasNext: pagination.canNext(data?.length ?? 0),
+					hasNext: pagination.canNext(data?.items.length ?? 0),
 					onPrev: pagination.prev,
 					onNext: pagination.next,
 				}}

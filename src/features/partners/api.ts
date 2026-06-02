@@ -3,13 +3,14 @@ import type {
 	CreatePartnerDto,
 	PaginationParams,
 	Partner,
+	PartnersData,
 	UpdatePartnerDto,
 } from '@/types/api'
 
 export async function listPartners(
 	params: PaginationParams,
-): Promise<Partner[]> {
-	const { data } = await api.get<Partner[]>('/partners/', {
+): Promise<PartnersData> {
+	const { data } = await api.get<PartnersData>('/partners/', {
 		params: {
 			offset: params.offset,
 			count: params.count,
