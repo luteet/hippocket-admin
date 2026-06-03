@@ -176,7 +176,8 @@ These are not yet consumed in the app; `CreatePartnerDto` still posts raw
 
 ## Open questions for the backend (do not block MVP)
 
-1. Full set of `value_type` values — only `money` appears in the collection
-   examples; the app types it as `'money' | 'coin'`.
+1. `value_type` is `'money' | 'tokens'` — confirmed against the dev API
+   (`/partners/` returns both; `tokens` is shown in the UI as "Tokens"). The
+   collection examples only show `money`; confirm no further values exist.
 2. Withdrawal statuses are `waiting` (initial) → `success` (approve) / `cancel`
    (reject); confirm there are no others.

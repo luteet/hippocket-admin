@@ -18,5 +18,12 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // React Compiler bails out of memoizing components that use TanStack
+      // Table's `useReactTable()` or React Hook Form's `watch()` (they return
+      // non-memoizable functions). That's the intended, safe behavior, and the
+      // compiler isn't even part of our Vite build — keep the lint log clean.
+      'react-hooks/incompatible-library': 'off',
+    },
   },
 ])
