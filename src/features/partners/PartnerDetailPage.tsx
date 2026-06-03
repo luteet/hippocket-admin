@@ -72,7 +72,7 @@ export function PartnerDetailPage() {
 										{partner.name}
 									</p>
 									{partner.subtitle && (
-										<p className="text-sm text-muted-foreground">
+										<p className="pt-2 text-sm font-medium">
 											{partner.subtitle}
 										</p>
 									)}
@@ -90,9 +90,9 @@ export function PartnerDetailPage() {
 								</p>
 							)}
 
-							<Separator />
+							<Separator className="mt-8" />
 
-							<dl className="grid grid-cols-1 gap-x-4 gap-y-3 text-sm sm:grid-cols-2">
+							<dl className="grid grid-cols-1 gap-x-4 gap-y-8 mt-8 text-sm sm:grid-cols-2">
 								<Row label="Email" value={partner.email} />
 								<Row label="Phone" value={partner.phone} />
 								<Row label="Website" value={partner.website} />

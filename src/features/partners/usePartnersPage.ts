@@ -30,7 +30,8 @@ function buildUpdateDto(
 	row: Partial<Record<EditableField, string>>,
 ): UpdatePartnerDto {
 	const dto: UpdatePartnerDto = {}
-	if (row.value_type !== undefined) dto.value_type = row.value_type as ValueType
+	if (row.value_type !== undefined)
+		dto.value_type = row.value_type as ValueType
 	if (row.potential_value !== undefined)
 		dto.potential_value =
 			row.potential_value === '' ? null : Number(row.potential_value)
@@ -156,7 +157,10 @@ export function usePartnersPage() {
 	// eslint-disable-next-line react-hooks/refs
 	saveIdsRef.current = saveIds
 
-	const handleSaveRow = useCallback((id: string) => saveIdsRef.current([id]), [])
+	const handleSaveRow = useCallback(
+		(id: string) => saveIdsRef.current([id]),
+		[],
+	)
 	const handleSaveAll = useCallback(
 		() => saveIdsRef.current(Object.keys(editsRef.current)),
 		[],
