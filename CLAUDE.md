@@ -6,7 +6,7 @@ Guidance for Claude Code when working in this repository.
 
 Admin panel for Hippocket, a SPA on top of the `/admin-api` REST API. The API is
 documented by the Postman files at the repo root
-(`hippocket_admin.postman_collection.json`, `hippocket_admin.postman_environment.json`) —
+(`collections.json`, `environment.json`) —
 treat them as the source of truth for endpoints, payloads, and response shapes.
 
 Status: MVP skeleton. Auth, layout, and two reference sections (**Partners**,
@@ -24,6 +24,25 @@ npm run lint     # ESLint
 There is no test suite. Verify changes with `npm run build` and `npm run lint`
 (both must pass), and by running the dev server. Seeing real data requires a
 backend at `VITE_API_BASE_URL` (default `http://localhost:8000`, set in `.env`).
+
+## Testing against the dev API (data-safety rule)
+
+The dev backend (`https://dev-admin.hippocket.com`, see `.env`; admin login in
+the git-ignored `.dev-credentials.json`) is backed by a **shared database with
+real partner and agent records that have real email addresses**. Mutating them
+can trigger real side effects (emails/SMS). When manually testing any request
+that **writes** to or otherwise acts on a partner or agent (create/update/delete,
+toggle-active, status changes, mark-paid, anything that may notify), only target
+**test records**:
+
+- **Partners:** only those with `is_hide: true`. A hidden partner is safe to
+  touch; never run write/test requests against a visible (`is_hide: false`)
+  partner. The email containing `test` is an extra positive signal.
+- **Agents:** only those whose `email` contains `test`.
+
+If no suitable test record exists, create one first (a partner with
+`is_hide: true` and a `*test*` email) instead of touching a real record.
+Read-only `GET`s against any record are fine.
 
 ## Architecture
 
@@ -122,9 +141,12 @@ backend at `VITE_API_BASE_URL` (default `http://localhost:8000`, set in `.env`).
   `src/index.css`. Palette: background `#F5F5F5`, secondary `#2494AC` (sidebar),
   accent/primary `#DF9033` (buttons/links), border `#CCCCCC`. Font: Readex Pro.
   No dark mode.
-- **Pagination:** the API returns bare arrays with no total count. `usePagination`
-  enables "Next" only while a full page is returned (`length === count`). If the
-  backend adds `X-Total-Count`, switch to numbered pagination.
+- **Pagination:** list endpoints now wrap rows in
+  `{ items, total, offset, count }` (see `PartnersData` / `ReferralListData` /
+  `StatusData` in [api.ts](src/types/api.ts)) — `total` is the full record count.
+  `usePagination` still uses the legacy page-size heuristic (`canNext` =
+  `items.length === count`) and ignores `total`; since `total` is now available,
+  these pages can be switched to numbered pagination when desired.
 
 ## Gotchas
 
@@ -137,9 +159,24 @@ backend at `VITE_API_BASE_URL` (default `http://localhost:8000`, set in `.env`).
 - shadcn files that export a component plus a `cva` variants object trip
   `react-refresh/only-export-components`; an inline eslint-disable is fine.
 
+## Reference-data (selects) endpoints
+
+The collection's **Reference data (selects)** folder exposes lightweight option
+lists (mostly `[{ id, name }]`) for building form selects, so the Partner forms
+no longer need raw IDs once wired up:
+
+- `GET /refs/partner-locations/`, `/refs/partner-categories/`,
+  `/refs/partner-services/` — options for the partner create/edit form.
+- `GET /refs/categories/`, `/refs/groups/`, `/refs/statuses/` — general lookups.
+- `GET /refs/partners/?limit=500`, `/refs/agents/?limit=200` — partner/agent
+  pickers (e.g. referral filters). `/refs/agents/` returns `{ id, email, name }`.
+
+These are not yet consumed in the app; `CreatePartnerDto` still posts raw
+`location_id` / `category_id` / `service_id`.
+
 ## Open questions for the backend (do not block MVP)
 
-1. Total record count for pagination (`X-Total-Count`?).
-2. Reference-data endpoints for `locations` / `categories` / `services` (partner
-   create form currently takes raw IDs).
-3. Full set of `value_type` values and withdrawal statuses.
+1. Full set of `value_type` values — only `money` appears in the collection
+   examples; the app types it as `'money' | 'coin'`.
+2. Withdrawal statuses are `waiting` (initial) → `success` (approve) / `cancel`
+   (reject); confirm there are no others.
