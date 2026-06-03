@@ -47,7 +47,7 @@ export function usePartnersPage() {
 	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const debouncedSearch = useDebouncedValue(search)
-	const pagination = usePagination({ count: 20 })
+	const pagination = usePagination({ count: 20, storageKey: 'partners' })
 
 	// Reset to the first page when the search query changes.
 	useEffect(() => {

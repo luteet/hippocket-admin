@@ -14,6 +14,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { PAGE_SIZE_OPTIONS } from '@/hooks/usePagination'
 import type { ReferralListItem } from '@/types/api'
 import { useReferralsPage, ALL } from './useReferralsPage'
 import { ReferralDetailDialog } from './ReferralDetailDialog'
@@ -142,6 +143,22 @@ export function ReferralsPage() {
 						{PAID_OPTIONS.map((o) => (
 							<SelectItem key={o.value} value={o.value}>
 								{o.label}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+
+				<Select
+					value={String(pagination.count)}
+					onValueChange={(v) => pagination.setCount(Number(v))}
+				>
+					<SelectTrigger className="ml-auto w-36">
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						{PAGE_SIZE_OPTIONS.map((n) => (
+							<SelectItem key={n} value={String(n)}>
+								{n} per page
 							</SelectItem>
 						))}
 					</SelectContent>

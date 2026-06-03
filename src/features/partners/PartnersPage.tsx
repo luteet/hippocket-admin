@@ -15,6 +15,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { PAGE_SIZE_OPTIONS } from '@/hooks/usePagination'
 import type { Partner } from '@/types/api'
 import { usePartnersPage, type EditableField } from './usePartnersPage'
 
@@ -221,14 +222,32 @@ export function PartnersPage() {
 				}
 			/>
 
-			<div className="relative mb-4 max-w-sm">
-				<Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-				<Input
-					placeholder="Search partners…"
-					className="pl-9"
-					value={search}
-					onChange={(e) => setSearch(e.target.value)}
-				/>
+			<div className="mb-4 flex flex-wrap items-center gap-3">
+				<div className="relative max-w-sm flex-1">
+					<Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+					<Input
+						placeholder="Search partners…"
+						className="pl-9"
+						value={search}
+						onChange={(e) => setSearch(e.target.value)}
+					/>
+				</div>
+
+				<Select
+					value={String(pagination.count)}
+					onValueChange={(v) => pagination.setCount(Number(v))}
+				>
+					<SelectTrigger className="ml-auto w-36">
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						{PAGE_SIZE_OPTIONS.map((n) => (
+							<SelectItem key={n} value={String(n)}>
+								{n} per page
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
 			</div>
 
 			<DataTable

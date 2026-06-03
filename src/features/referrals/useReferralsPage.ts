@@ -11,7 +11,7 @@ export function useReferralsPage() {
 	const debouncedSearch = useDebouncedValue(search)
 	const [statusLabel, setStatusLabel] = useState(ALL)
 	const [isPaid, setIsPaid] = useState(ALL)
-	const pagination = usePagination({ count: 20 })
+	const pagination = usePagination({ count: 20, storageKey: 'referrals' })
 	const [openId, setOpenId] = useState<string | null>(null)
 
 	const { data: statuses } = useStatuses()
