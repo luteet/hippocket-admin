@@ -270,6 +270,12 @@
 	}
 
 	.main-pad {
+		// Full-height flex column so a flex-1 child (e.g. the Suspense
+		// PageFallback) can fill the scroll viewport and center vertically.
+		display: flex;
+		flex-direction: column;
+		min-height: 100%;
+
 		padding-top: 2.5rem;
 		padding-bottom: 2.5rem;
 		padding-right: 0.625rem; // pr-2.5

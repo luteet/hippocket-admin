@@ -6,7 +6,7 @@ export function PageFallback({ fullScreen = false }: { fullScreen?: boolean }) {
 		<div
 			className={cn(
 				'flex w-full items-center justify-center',
-				fullScreen ? 'min-h-dvh' : 'h-full min-h-60',
+				fullScreen ? 'min-h-dvh' : 'min-h-60 flex-1',
 			)}
 		>
 			<Spinner />
