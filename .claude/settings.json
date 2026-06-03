@@ -25,7 +25,8 @@
       "Bash(rg:*)",
       "Bash(python3:*)",
       "Bash(cd:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(sed:*)"
     ]
   }
 }
