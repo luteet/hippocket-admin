@@ -20,12 +20,15 @@
       "Bash(git stash:*)",
       "Bash(ls:*)",
       "Bash(cat:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
       "Bash(rg:*)",
       "Bash(python3:*)",
       "Bash(cd:*)",
       "Bash(curl:*)",
+      "Bash(echo:*)",
       "Bash(sed:*)"
     ]
   }
