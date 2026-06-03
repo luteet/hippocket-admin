@@ -18,11 +18,35 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 
 interface PaginationProps {
+	/** Current 0-based page index. */
 	page: number
-	hasPrev: boolean
-	hasNext: boolean
-	onPrev: () => void
-	onNext: () => void
+	/** Total number of pages. */
+	pageCount: number
+	/** Jump to a 0-based page. */
+	onPageChange: (page: number) => void
+}
+
+/**
+ * Page indices to render, with `'ellipsis'` gaps. Always shows the first and
+ * last page plus a window around the current one (e.g. 1 … 4 5 6 … 20).
+ */
+function getPageItems(
+	current: number,
+	pageCount: number,
+): (number | 'ellipsis')[] {
+	const pages = new Set<number>([0, pageCount - 1])
+	for (let i = current - 1; i <= current + 1; i++) {
+		if (i >= 0 && i < pageCount) pages.add(i)
+	}
+	const sorted = [...pages].sort((a, b) => a - b)
+	const items: (number | 'ellipsis')[] = []
+	let prev = -1
+	for (const p of sorted) {
+		if (prev !== -1 && p - prev > 1) items.push('ellipsis')
+		items.push(p)
+		prev = p
+	}
+	return items
 }
 
 interface DataTableProps<TData> {
@@ -32,6 +56,11 @@ interface DataTableProps<TData> {
 	emptyMessage?: string
 	onRowClick?: (row: TData) => void
 	pagination?: PaginationProps
+	/**
+	 * Minimum table width (any CSS length). Below this the table scrolls
+	 * horizontally instead of squeezing columns until text wraps.
+	 */
+	minWidth?: string
 }
 
 export function DataTable<TData>({
@@ -41,6 +70,7 @@ export function DataTable<TData>({
 	emptyMessage = 'No data',
 	onRowClick,
 	pagination,
+	minWidth,
 }: DataTableProps<TData>) {
 	const table = useReactTable({
 		data,
@@ -51,7 +81,7 @@ export function DataTable<TData>({
 	return (
 		<div className="space-y-4">
 			<div className="overflow-hidden rounded-xl border border-border bg-card">
-				<Table>
+				<Table style={minWidth ? { minWidth } : undefined}>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow
@@ -125,27 +155,57 @@ export function DataTable<TData>({
 				</Table>
 			</div>
 
-			{pagination && (
-				<div className="flex items-center justify-end gap-2">
-					<span className="mr-2 text-sm text-muted-foreground">
-						Page {pagination.page + 1}
-					</span>
+			{pagination && pagination.pageCount > 1 && (
+				<div className="flex items-center justify-end gap-1">
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={pagination.onPrev}
-						disabled={!pagination.hasPrev}
+						className="size-9 rounded-full"
+						onClick={() =>
+							pagination.onPageChange(pagination.page - 1)
+						}
+						disabled={pagination.page === 0}
 					>
 						<ChevronLeft />
-						Previous
 					</Button>
+
+					{getPageItems(pagination.page, pagination.pageCount).map(
+						(item, i) =>
+							item === 'ellipsis' ? (
+								<span
+									key={`ellipsis-${i}`}
+									className="px-1 text-sm text-muted-foreground"
+								>
+									…
+								</span>
+							) : (
+								<Button
+									key={item}
+									variant={
+										item === pagination.page
+											? 'default'
+											: 'outline'
+									}
+									size="sm"
+									className="size-9 rounded-full"
+									onClick={() =>
+										pagination.onPageChange(item)
+									}
+								>
+									{item + 1}
+								</Button>
+							),
+					)}
+
 					<Button
 						variant="outline"
 						size="sm"
-						onClick={pagination.onNext}
-						disabled={!pagination.hasNext}
+						className="size-9 rounded-full"
+						onClick={() =>
+							pagination.onPageChange(pagination.page + 1)
+						}
+						disabled={pagination.page >= pagination.pageCount - 1}
 					>
-						Next
 						<ChevronRight />
 					</Button>
 				</div>

@@ -1,6 +1,6 @@
 // Types derived from the example responses in the Postman collection (hippocket_admin.postman_collection.json).
 
-export type ValueType = 'money' | 'coin'
+export type ValueType = 'money' | 'tokens'
 
 export interface TokenPair {
 	access_token: string
@@ -17,14 +17,46 @@ export interface PartnersData {
 
 export interface Partner {
 	id: string
+	slug: string
 	name: string
+	subtitle: string
+	short_description: string
+	description: string
 	email: string
 	phone: string
+	website: string
+	address: string
 	is_hide: boolean
+	is_hide_for_journey: boolean
+	/** Display string shown to agents, e.g. "$50". May be null. */
+	referral_fee: string | null
+	potential_value: number | null
+	value_type: ValueType
+	agent_fee: number
+	group_owner_fee: number
+	hippocket_fee: number
 	sms_notifications_enabled: boolean
 	sms_phone: string
-	agent_fee: number
-	value_type: ValueType
+	video: string
+	custom_keywords: string
+	logo_url: string | null
+	preview_url: string | null
+	location_id: string
+	location_name: string
+	category_id: string
+	category_name: string
+	service_id: string
+	service_name: string
+	chosen_group_id: number
+	chosen_group_name: string
+	category_ids: string[]
+	group_ids: number[]
+	recommended_user_ids: string[]
+	count_login: number
+	/** ISO timestamp; null if the partner has never logged in. */
+	last_login: string | null
+	created_at: string
+	updated_at: string
 }
 
 export interface CreatePartnerDto {
@@ -49,6 +81,10 @@ export interface UpdatePartnerDto {
 	phone?: string
 	agent_fee?: number
 	is_hide?: boolean
+	potential_value?: number | null
+	value_type?: ValueType
+	group_owner_fee?: number
+	hippocket_fee?: number
 }
 
 export interface Agent {

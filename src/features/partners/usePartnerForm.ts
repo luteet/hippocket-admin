@@ -15,7 +15,7 @@ const schema = z.object({
 	agent_fee: z
 		.number({ message: 'Enter a number' })
 		.min(0, 'Cannot be negative'),
-	value_type: z.enum(['money', 'coin']),
+	value_type: z.enum(['money', 'tokens']),
 	is_hide: z.boolean(),
 	location_id: z.string().optional(),
 	category_id: z.string().optional(),

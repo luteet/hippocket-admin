@@ -133,10 +133,8 @@ export function ReferralsPage() {
 				onRowClick={(r) => setOpenId(r.id)}
 				pagination={{
 					page: pagination.page,
-					hasPrev: pagination.hasPrev,
-					hasNext: pagination.canNext(data?.items.length ?? 0),
-					onPrev: pagination.prev,
-					onNext: pagination.next,
+					pageCount: pagination.pageCount(data?.total ?? 0),
+					onPageChange: pagination.goTo,
 				}}
 			/>
 

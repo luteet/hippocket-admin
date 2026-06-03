@@ -69,7 +69,7 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="money">Money</SelectItem>
-							<SelectItem value="coin">Coins</SelectItem>
+							<SelectItem value="tokens">Tokens</SelectItem>
 						</SelectContent>
 					</Select>
 				</Field>

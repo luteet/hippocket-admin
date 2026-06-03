@@ -5,21 +5,23 @@ interface UsePaginationOptions {
 }
 
 /**
- * offset/count pagination. The API returns a bare array without a total,
- * so "Next" stays enabled while a full page was returned (lastPageSize === count).
- * If the backend adds X-Total-Count we'll switch to numbered pagination.
+ * offset/count pagination. List endpoints return `total` (the full record
+ * count), so the page count is `ceil(total / count)` and we render numbered
+ * pages. `goTo` jumps to an arbitrary 0-based page.
  */
 export function usePagination({ count = 20 }: UsePaginationOptions = {}) {
 	const [page, setPage] = useState(0)
 
 	const offset = page * count
 
-	const next = useCallback(() => setPage((p) => p + 1), [])
-	const prev = useCallback(() => setPage((p) => Math.max(0, p - 1)), [])
+	const goTo = useCallback(
+		(p: number) => setPage((p2) => Math.max(0, p ?? p2)),
+		[],
+	)
 	const reset = useCallback(() => setPage(0), [])
 
-	const hasPrev = page > 0
-	const canNext = (lastPageSize: number) => lastPageSize === count
+	/** Number of pages for a given total record count (at least 1). */
+	const pageCount = (total: number) => Math.max(1, Math.ceil(total / count))
 
-	return { page, offset, count, next, prev, reset, hasPrev, canNext }
+	return { page, offset, count, goTo, reset, pageCount }
 }
