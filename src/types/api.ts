@@ -70,6 +70,13 @@ export interface CreatePartnerDto {
 	address?: string
 	agent_fee: number
 	value_type: ValueType
+	potential_value?: number | null
+	group_owner_fee?: number
+	hippocket_fee?: number
+	sms_notifications_enabled?: boolean
+	sms_phone?: string
+	custom_keywords?: string
+	is_hide_for_journey?: boolean
 	location_id?: string
 	category_id?: string
 	service_id?: string
@@ -79,12 +86,21 @@ export interface UpdatePartnerDto {
 	name?: string
 	email?: string
 	phone?: string
+	subtitle?: string
+	short_description?: string
+	description?: string
+	website?: string
+	address?: string
+	custom_keywords?: string
 	agent_fee?: number
 	is_hide?: boolean
+	is_hide_for_journey?: boolean
 	potential_value?: number | null
 	value_type?: ValueType
 	group_owner_fee?: number
 	hippocket_fee?: number
+	sms_notifications_enabled?: boolean
+	sms_phone?: string
 }
 
 export interface Agent {

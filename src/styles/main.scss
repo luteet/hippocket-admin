@@ -10,6 +10,7 @@
 // styles to SCSS". Their rules live in @layer components so utilities passed via
 // `className` still win.
 @use './components/input';
+@use './components/textarea';
 @use './components/button';
 @use './components/select';
 @use './components/app-shell';

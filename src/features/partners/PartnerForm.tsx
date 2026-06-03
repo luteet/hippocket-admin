@@ -3,7 +3,9 @@ import { Loader2 } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import {
 	Select,
@@ -29,6 +31,8 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 		setValue,
 		valueType,
 		isHide,
+		isHideForJourney,
+		smsEnabled,
 		isPending,
 		onSubmit,
 	} = usePartnerForm({ partner, onSuccess })
@@ -45,6 +49,35 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 				<Input {...register('phone')} />
 			</Field>
 
+			<SectionTitle>Details</SectionTitle>
+			<Field label="Subtitle" error={errors.subtitle?.message}>
+				<Input {...register('subtitle')} />
+			</Field>
+			<Field
+				label="Short description"
+				error={errors.short_description?.message}
+			>
+				<Textarea rows={2} {...register('short_description')} />
+			</Field>
+			<Field label="Description" error={errors.description?.message}>
+				<Textarea rows={4} {...register('description')} />
+			</Field>
+			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+				<Field label="Website" error={errors.website?.message}>
+					<Input {...register('website')} />
+				</Field>
+				<Field label="Address" error={errors.address?.message}>
+					<Input {...register('address')} />
+				</Field>
+			</div>
+			<Field
+				label="Custom keywords"
+				error={errors.custom_keywords?.message}
+			>
+				<Input {...register('custom_keywords')} />
+			</Field>
+
+			<SectionTitle>Fees & value</SectionTitle>
 			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 				<Field label="Agent fee" error={errors.agent_fee?.message}>
 					<Input
@@ -73,17 +106,73 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 						</SelectContent>
 					</Select>
 				</Field>
+				<Field
+					label="Potential value"
+					error={errors.potential_value?.message}
+				>
+					<Input
+						type="number"
+						step="0.01"
+						{...register('potential_value', {
+							setValueAs: (v) =>
+								v === '' || v == null ? null : Number(v),
+						})}
+					/>
+				</Field>
+				<Field
+					label="Group owner fee"
+					error={errors.group_owner_fee?.message}
+				>
+					<Input
+						type="number"
+						step="0.01"
+						{...register('group_owner_fee', {
+							valueAsNumber: true,
+						})}
+					/>
+				</Field>
+				<Field
+					label="Hippocket fee"
+					error={errors.hippocket_fee?.message}
+				>
+					<Input
+						type="number"
+						step="0.01"
+						{...register('hippocket_fee', {
+							valueAsNumber: true,
+						})}
+					/>
+				</Field>
 			</div>
 
+			<SectionTitle>SMS notifications</SectionTitle>
+			<SwitchField
+				id="sms_notifications_enabled"
+				label="SMS notifications"
+				checked={smsEnabled}
+				onCheckedChange={(v) =>
+					setValue('sms_notifications_enabled', v)
+				}
+			/>
+			<Field label="SMS phone" error={errors.sms_phone?.message}>
+				<Input {...register('sms_phone')} />
+			</Field>
+
+			<SectionTitle>Visibility</SectionTitle>
+			<SwitchField
+				id="is_hide_for_journey"
+				label="Hidden for journey"
+				checked={isHideForJourney}
+				onCheckedChange={(v) => setValue('is_hide_for_journey', v)}
+			/>
+
 			{isEdit ? (
-				<div className="flex items-center justify-between rounded-md border border-border p-3">
-					<Label htmlFor="is_hide">Hidden</Label>
-					<Switch
-						id="is_hide"
-						checked={isHide}
-						onCheckedChange={(v) => setValue('is_hide', v)}
-					/>
-				</div>
+				<SwitchField
+					id="is_hide"
+					label="Hidden"
+					checked={isHide}
+					onCheckedChange={(v) => setValue('is_hide', v)}
+				/>
 			) : (
 				<div className="space-y-4 rounded-md border border-dashed border-border p-3">
 					<p className="text-xs text-muted-foreground">
@@ -116,6 +205,43 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 	)
 }
 
+function SectionTitle({ children }: { children: ReactNode }) {
+	return (
+		<div className="space-y-8 pt-6">
+			<Separator />
+			<p className="text-sm font-medium text-muted-foreground">
+				{children}
+			</p>
+		</div>
+	)
+}
+
+function SwitchField({
+	id,
+	label,
+	checked,
+	onCheckedChange,
+}: {
+	id: string
+	label: string
+	checked: boolean
+	onCheckedChange: (checked: boolean) => void
+}) {
+	return (
+		<Label
+			htmlFor={id}
+			className="flex cursor-pointer items-center justify-between rounded-md border border-border p-3"
+		>
+			{label}
+			<Switch
+				id={id}
+				checked={checked}
+				onCheckedChange={onCheckedChange}
+			/>
+		</Label>
+	)
+}
+
 function Field({
 	label,
 	error,
@@ -126,7 +252,7 @@ function Field({
 	children: ReactNode
 }) {
 	return (
-		<div className="space-y-2">
+		<div className="space-y-6">
 			<Label>{label}</Label>
 			{children}
 			{error && <p className="text-xs text-destructive">{error}</p>}
