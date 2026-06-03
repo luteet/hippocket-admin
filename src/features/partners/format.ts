@@ -7,9 +7,7 @@ export function valueTypeLabel(valueType: ValueType) {
 
 /** Format an amount according to the partner's value type. */
 export function formatAmount(amount: number, valueType: ValueType) {
-	return valueType === 'money'
-		? `$${amount.toFixed(2)}`
-		: `${amount} tokens`
+	return valueType === 'money' ? `$${amount.toFixed(2)}` : `${amount} tokens`
 }
 
 export function formatFee(partner: Partner) {

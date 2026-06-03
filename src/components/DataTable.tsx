@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import {
 	flexRender,
 	getCoreRowModel,
@@ -78,6 +79,26 @@ export function DataTable<TData>({
 		getCoreRowModel: getCoreRowModel(),
 	})
 
+	// Where the press started — used to tell a real click apart from a drag
+	// (e.g. selecting text in an inline input). A drag releasing on the row
+	// fires `click` on the row, so without this it would navigate. We only
+	// trigger onRowClick when the pointer barely moved between down and up.
+	const downPos = useRef<{ x: number; y: number } | null>(null)
+
+	const handleRowClick = onRowClick
+		? (row: TData) => (e: React.MouseEvent) => {
+				const start = downPos.current
+				downPos.current = null
+				if (
+					start &&
+					Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
+				) {
+					return
+				}
+				onRowClick(row)
+			}
+		: undefined
+
 	return (
 		<div className="space-y-4">
 			<div className="overflow-hidden rounded-xl border border-border bg-card">
@@ -120,11 +141,17 @@ export function DataTable<TData>({
 							table.getRowModel().rows.map((row) => (
 								<TableRow
 									key={row.id}
-									onClick={
+									onMouseDown={
 										onRowClick
-											? () => onRowClick(row.original)
+											? (e) => {
+													downPos.current = {
+														x: e.clientX,
+														y: e.clientY,
+													}
+												}
 											: undefined
 									}
+									onClick={handleRowClick?.(row.original)}
 									className={
 										onRowClick
 											? 'cursor-pointer'
