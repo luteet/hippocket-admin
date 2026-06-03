@@ -62,6 +62,11 @@ interface DataTableProps<TData> {
 	 * horizontally instead of squeezing columns until text wraps.
 	 */
 	minWidth?: string
+	/**
+	 * Number of skeleton rows to render while loading. Defaults to 5; pass the
+	 * current page size so the loading state matches the expected row count.
+	 */
+	skeletonRows?: number
 }
 
 export function DataTable<TData>({
@@ -72,6 +77,7 @@ export function DataTable<TData>({
 	onRowClick,
 	pagination,
 	minWidth,
+	skeletonRows = 5,
 }: DataTableProps<TData>) {
 	const table = useReactTable({
 		data,
@@ -87,16 +93,16 @@ export function DataTable<TData>({
 
 	const handleRowClick = onRowClick
 		? (row: TData) => (e: React.MouseEvent) => {
-				const start = downPos.current
-				downPos.current = null
-				if (
-					start &&
-					Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
-				) {
-					return
-				}
-				onRowClick(row)
+			const start = downPos.current
+			downPos.current = null
+			if (
+				start &&
+				Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
+			) {
+				return
 			}
+			onRowClick(row)
+		}
 		: undefined
 
 	return (
@@ -114,10 +120,10 @@ export function DataTable<TData>({
 										{header.isPlaceholder
 											? null
 											: flexRender(
-													header.column.columnDef
-														.header,
-													header.getContext(),
-												)}
+												header.column.columnDef
+													.header,
+												header.getContext(),
+											)}
 									</TableHead>
 								))}
 							</TableRow>
@@ -125,14 +131,14 @@ export function DataTable<TData>({
 					</TableHeader>
 					<TableBody>
 						{isLoading ? (
-							Array.from({ length: 5 }).map((_, i) => (
+							Array.from({ length: skeletonRows }).map((_, i) => (
 								<TableRow
 									key={i}
 									className="hover:bg-transparent"
 								>
 									{columns.map((_col, j) => (
 										<TableCell key={j}>
-											<Skeleton className="h-4 w-full" />
+											<Skeleton className="h-8 w-full" />
 										</TableCell>
 									))}
 								</TableRow>
@@ -144,11 +150,11 @@ export function DataTable<TData>({
 									onMouseDown={
 										onRowClick
 											? (e) => {
-													downPos.current = {
-														x: e.clientX,
-														y: e.clientY,
-													}
+												downPos.current = {
+													x: e.clientX,
+													y: e.clientY,
 												}
+											}
 											: undefined
 									}
 									onClick={handleRowClick?.(row.original)}

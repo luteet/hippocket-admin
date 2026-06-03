@@ -256,6 +256,7 @@ export function PartnersPage() {
 				isLoading={isLoading || isFetching}
 				emptyMessage="No partners found"
 				minWidth="1800px"
+				skeletonRows={pagination.count}
 				onRowClick={(p) => openPartner(p.id)}
 				pagination={{
 					page: pagination.page,

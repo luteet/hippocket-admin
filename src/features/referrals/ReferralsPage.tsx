@@ -170,6 +170,7 @@ export function ReferralsPage() {
 				data={data?.items ?? []}
 				isLoading={isLoading || isFetching}
 				emptyMessage="No pipeline logs found"
+				skeletonRows={pagination.count}
 				onRowClick={(r) => setOpenId(r.id)}
 				pagination={{
 					page: pagination.page,
