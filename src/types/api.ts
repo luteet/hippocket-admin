@@ -171,6 +171,12 @@ export interface Status {
 	priority: number
 }
 
+// Lightweight option from the reference-data (selects) endpoints, e.g. /refs/partners/.
+export interface RefOption {
+	id: string
+	name: string
+}
+
 export type WithdrawalStatus = 'waiting' | 'success' | 'cancel'
 
 export interface Withdrawal {

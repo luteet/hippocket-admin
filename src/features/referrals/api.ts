@@ -1,5 +1,10 @@
 import { api } from '@/lib/api/client'
-import type { ReferralDetail, ReferralListData, StatusData } from '@/types/api'
+import type {
+	RefOption,
+	ReferralDetail,
+	ReferralListData,
+	StatusData,
+} from '@/types/api'
 
 export interface ReferralFilters {
 	offset: number
@@ -57,6 +62,12 @@ export async function markReferralPaid(
 
 export async function listStatuses(): Promise<StatusData> {
 	const { data } = await api.get<StatusData>('/statuses/')
-	console.log(data)
+	return data
+}
+
+export async function listPartnerRefs(): Promise<RefOption[]> {
+	const { data } = await api.get<RefOption[]>('/refs/partners/', {
+		params: { limit: 500 },
+	})
 	return data
 }

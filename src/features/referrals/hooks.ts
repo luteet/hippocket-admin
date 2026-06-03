@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import {
 	getReferral,
+	listPartnerRefs,
 	listReferrals,
 	listStatuses,
 	markReferralPaid,
@@ -30,6 +31,14 @@ export function useStatuses() {
 	return useQuery({
 		queryKey: ['statuses'],
 		queryFn: listStatuses,
+		staleTime: 5 * 60_000,
+	})
+}
+
+export function usePartnerRefs() {
+	return useQuery({
+		queryKey: ['refs', 'partners'],
+		queryFn: listPartnerRefs,
 		staleTime: 5 * 60_000,
 	})
 }

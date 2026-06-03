@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 import { Search } from 'lucide-react'
 
@@ -32,6 +33,8 @@ export function ReferralsPage() {
 		isPaid,
 		setIsPaid,
 		statuses,
+		statusNameByLabel,
+		partnerIdByName,
 		data,
 		isLoading,
 		isFetching,
@@ -44,12 +47,32 @@ export function ReferralsPage() {
 		() => [
 			{ accessorKey: 'referral_name', header: 'Referral' },
 			{ accessorKey: 'agent_email', header: 'Agent' },
-			{ accessorKey: 'partner_name', header: 'Partner' },
+			{
+				accessorKey: 'partner_name',
+				header: 'Partner',
+				cell: ({ row }) => {
+					const { partner_name } = row.original
+					const partnerId = partnerIdByName[partner_name]
+					if (!partnerId) return partner_name
+					return (
+						<Link
+							to={`/partners/${partnerId}`}
+							className="text-primary underline underline-offset-[5px] transition-[filter] hover:brightness-110 active:brightness-90"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{partner_name}
+						</Link>
+					)
+				},
+			},
 			{
 				accessorKey: 'status',
 				header: 'Status',
 				cell: ({ row }) => (
-					<Badge variant="outline">{row.original.status}</Badge>
+					<Badge variant="outline">
+						{statusNameByLabel[row.original.status] ??
+							row.original.status}
+					</Badge>
 				),
 			},
 			{
@@ -76,7 +99,7 @@ export function ReferralsPage() {
 				),
 			},
 		],
-		[],
+		[statusNameByLabel, partnerIdByName],
 	)
 
 	return (

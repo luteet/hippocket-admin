@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
-import { useReferrals, useStatuses } from './hooks'
+import { usePartnerRefs, useReferrals, useStatuses } from './hooks'
 
 export const ALL = '__all__'
 
@@ -15,6 +15,24 @@ export function useReferralsPage() {
 	const [openId, setOpenId] = useState<string | null>(null)
 
 	const { data: statuses } = useStatuses()
+
+	const statusNameByLabel = useMemo(() => {
+		const map: Record<string, string> = {}
+		statuses?.items.forEach((s) => {
+			map[s.label] = s.name
+		})
+		return map
+	}, [statuses])
+
+	const { data: partnerRefs } = usePartnerRefs()
+
+	const partnerIdByName = useMemo(() => {
+		const map: Record<string, string> = {}
+		partnerRefs?.forEach((p) => {
+			map[p.name] = p.id
+		})
+		return map
+	}, [partnerRefs])
 
 	useEffect(() => {
 		pagination.reset()
@@ -37,6 +55,8 @@ export function useReferralsPage() {
 		isPaid,
 		setIsPaid,
 		statuses,
+		statusNameByLabel,
+		partnerIdByName,
 		data,
 		isLoading,
 		isFetching,
