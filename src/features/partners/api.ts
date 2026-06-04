@@ -1,10 +1,13 @@
 import { api } from '@/lib/api/client'
 import type {
 	CreatePartnerDto,
+	CreatePartnerReviewDto,
 	PaginationParams,
 	Partner,
+	PartnerReview,
 	PartnersData,
 	UpdatePartnerDto,
+	UpdatePartnerReviewDto,
 } from '@/types/api'
 
 export async function listPartners(
@@ -40,4 +43,43 @@ export async function updatePartner(
 
 export async function deletePartner(id: string): Promise<void> {
 	await api.delete(`/partners/${id}/`)
+}
+
+export async function listPartnerReviews(
+	partnerId: string,
+): Promise<PartnerReview[]> {
+	const { data } = await api.get<PartnerReview[]>(
+		`/partners/${partnerId}/reviews/`,
+	)
+	return data
+}
+
+export async function createPartnerReview(
+	partnerId: string,
+	dto: CreatePartnerReviewDto,
+): Promise<PartnerReview> {
+	const { data } = await api.post<PartnerReview>(
+		`/partners/${partnerId}/reviews/`,
+		dto,
+	)
+	return data
+}
+
+export async function updatePartnerReview(
+	partnerId: string,
+	reviewId: string,
+	dto: UpdatePartnerReviewDto,
+): Promise<PartnerReview> {
+	const { data } = await api.put<PartnerReview>(
+		`/partners/${partnerId}/reviews/${reviewId}/`,
+		dto,
+	)
+	return data
+}
+
+export async function deletePartnerReview(
+	partnerId: string,
+	reviewId: string,
+): Promise<void> {
+	await api.delete(`/partners/${partnerId}/reviews/${reviewId}/`)
 }

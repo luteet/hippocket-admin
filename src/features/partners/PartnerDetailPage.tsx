@@ -1,4 +1,8 @@
+import { type ReactNode } from 'react'
+import { AnimatePresence } from 'motion/react'
+
 import { Icon } from '@/components/Icon'
+import { PageTransition } from '@/components/PageTransition'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -6,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { PartnerReviewsTab } from './PartnerReviewsTab'
 import { usePartnerDetailPage } from './usePartnerDetailPage'
 import {
 	formatAmount,
@@ -17,7 +22,10 @@ import {
 export function PartnerDetailPage() {
 	const {
 		partner,
+		partnerId,
 		isLoading,
+		tab,
+		setTab,
 		confirmOpen,
 		setConfirmOpen,
 		isDeleting,
@@ -32,22 +40,37 @@ export function PartnerDetailPage() {
 				title="Partner"
 				actions={
 					<>
-						<Button variant="outline" onClick={goBack}>
+						<Button
+							variant="outline"
+							onClick={goBack}
+							aria-label="Back"
+						>
 							<Icon name="arrow-left" />
-							Back
+							<span className="sm:inline hidden">
+								Back
+							</span>
 						</Button>
 						{partner && (
 							<>
-								<Button variant="secondary" onClick={goToEdit}>
+								<Button
+									variant="secondary"
+									onClick={goToEdit}
+									aria-label="Edit"
+								>
 									<Icon name="pencil" />
-									Edit
+									<span className="sm:inline hidden">
+										Edit
+									</span>
 								</Button>
 								<Button
 									variant="destructive"
 									onClick={() => setConfirmOpen(true)}
+									aria-label="Delete"
 								>
 									<Icon name="trash-2" />
-									Delete
+									<span className="sm:inline hidden">
+										Delete
+									</span>
 								</Button>
 							</>
 						)}
@@ -55,133 +78,187 @@ export function PartnerDetailPage() {
 				}
 			/>
 
-			<Card className="max-w-2xl">
-				<CardContent className="pt-6">
-					{isLoading || !partner ? (
-						<div className="space-y-3">
-							<Skeleton className="h-6 w-1/2" />
-							<Skeleton className="h-5 w-2/3" />
-							<Skeleton className="h-5 w-1/3" />
-						</div>
+			<div className="mb-6 flex gap-1 border-b border-border">
+				<TabButton
+					active={tab === 'details'}
+					onClick={() => setTab('details')}
+				>
+					Details
+				</TabButton>
+				<TabButton
+					active={tab === 'reviews'}
+					onClick={() => setTab('reviews')}
+				>
+					Reviews
+				</TabButton>
+			</div>
+
+			<AnimatePresence mode="wait" initial={false}>
+				<PageTransition key={tab}>
+					{tab === 'reviews' ? (
+						partnerId && <PartnerReviewsTab partnerId={partnerId} />
 					) : (
-						<div className="space-y-4">
-							<div className="flex items-center justify-between gap-4">
-								<div>
-									<p className="text-xl font-semibold">
-										{partner.name}
-									</p>
-									{partner.subtitle && (
-										<p className="pt-2 text-sm font-medium">
-											{partner.subtitle}
-										</p>
-									)}
-								</div>
-								{partner.is_hide ? (
-									<Badge variant="muted">Hidden</Badge>
+						<Card className="max-w-2xl">
+							<CardContent className="pt-6">
+								{isLoading || !partner ? (
+									<div className="space-y-3">
+										<Skeleton className="h-6 w-1/2" />
+										<Skeleton className="h-5 w-2/3" />
+										<Skeleton className="h-5 w-1/3" />
+									</div>
 								) : (
-									<Badge variant="success">Active</Badge>
-								)}
-							</div>
+									<div className="space-y-4">
+										<div className="flex items-center justify-between gap-4">
+											<div>
+												<p className="text-xl font-semibold">
+													{partner.name}
+												</p>
+												{partner.subtitle && (
+													<p className="pt-2 text-sm font-medium">
+														{partner.subtitle}
+													</p>
+												)}
+											</div>
+											{partner.is_hide ? (
+												<Badge variant="muted">
+													Hidden
+												</Badge>
+											) : (
+												<Badge variant="success">
+													Active
+												</Badge>
+											)}
+										</div>
 
-							{partner.description && (
-								<p className="text-sm wrap-break-word whitespace-pre-line text-muted-foreground">
-									{partner.description}
-								</p>
-							)}
+										{partner.description && (
+											<p className="text-sm wrap-break-word whitespace-pre-line text-muted-foreground">
+												{partner.description}
+											</p>
+										)}
 
-							<Separator className="mt-8" />
+										<Separator className="mt-8" />
 
-							<dl className="grid grid-cols-1 gap-x-4 gap-y-8 mt-8 text-sm sm:grid-cols-2">
-								<Row label="Email" value={partner.email} />
-								<Row label="Phone" value={partner.phone} />
-								<Row label="Website" value={partner.website} />
-								<Row label="Address" value={partner.address} />
-								<Row
-									label="Category"
-									value={partner.category_name}
-								/>
-								<Row
-									label="Service"
-									value={partner.service_name}
-								/>
-								<Row
-									label="Location"
-									value={partner.location_name}
-								/>
-								<Row
-									label="Group"
-									value={partner.chosen_group_name}
-								/>
-								<Row
-									label="Referral fee"
-									value={partner.referral_fee ?? ''}
-								/>
-								<Row
-									label="Potential value"
-									value={
-										partner.potential_value != null
-											? formatAmount(
-													partner.potential_value,
+										<dl className="grid grid-cols-1 gap-x-4 gap-y-8 mt-8 text-sm sm:grid-cols-2">
+											<Row
+												label="Email"
+												value={partner.email}
+											/>
+											<Row
+												label="Phone"
+												value={partner.phone}
+											/>
+											<Row
+												label="Website"
+												value={partner.website}
+											/>
+											<Row
+												label="Address"
+												value={partner.address}
+											/>
+											<Row
+												label="Category"
+												value={partner.category_name}
+											/>
+											<Row
+												label="Service"
+												value={partner.service_name}
+											/>
+											<Row
+												label="Location"
+												value={partner.location_name}
+											/>
+											<Row
+												label="Group"
+												value={
+													partner.chosen_group_name
+												}
+											/>
+											<Row
+												label="Referral fee"
+												value={
+													partner.referral_fee ?? ''
+												}
+											/>
+											<Row
+												label="Potential value"
+												value={
+													partner.potential_value !=
+														null
+														? formatAmount(
+															partner.potential_value,
+															partner.value_type,
+														)
+														: ''
+												}
+											/>
+											<Row
+												label="Agent fee"
+												value={formatFee(partner)}
+											/>
+											<Row
+												label="Group owner fee"
+												value={formatAmount(
+													partner.group_owner_fee,
 													partner.value_type,
-												)
-											: ''
-									}
-								/>
-								<Row
-									label="Agent fee"
-									value={formatFee(partner)}
-								/>
-								<Row
-									label="Group owner fee"
-									value={formatAmount(
-										partner.group_owner_fee,
-										partner.value_type,
-									)}
-								/>
-								<Row
-									label="Hippocket fee"
-									value={formatAmount(
-										partner.hippocket_fee,
-										partner.value_type,
-									)}
-								/>
-								<Row
-									label="Value type"
-									value={valueTypeLabel(partner.value_type)}
-								/>
-								<Row
-									label="SMS notifications"
-									value={
-										partner.sms_notifications_enabled
-											? 'On'
-											: 'Off'
-									}
-								/>
-								<Row
-									label="SMS phone"
-									value={partner.sms_phone}
-								/>
-								<Row
-									label="Logins"
-									value={String(partner.count_login)}
-								/>
-								<Row
-									label="Last login"
-									value={formatDateTime(partner.last_login)}
-								/>
-								<Row
-									label="Created"
-									value={formatDateTime(partner.created_at)}
-								/>
-								<Row
-									label="Updated"
-									value={formatDateTime(partner.updated_at)}
-								/>
-							</dl>
-						</div>
+												)}
+											/>
+											<Row
+												label="Hippocket fee"
+												value={formatAmount(
+													partner.hippocket_fee,
+													partner.value_type,
+												)}
+											/>
+											<Row
+												label="Value type"
+												value={valueTypeLabel(
+													partner.value_type,
+												)}
+											/>
+											<Row
+												label="SMS notifications"
+												value={
+													partner.sms_notifications_enabled
+														? 'On'
+														: 'Off'
+												}
+											/>
+											<Row
+												label="SMS phone"
+												value={partner.sms_phone}
+											/>
+											<Row
+												label="Logins"
+												value={String(
+													partner.count_login,
+												)}
+											/>
+											<Row
+												label="Last login"
+												value={formatDateTime(
+													partner.last_login,
+												)}
+											/>
+											<Row
+												label="Created"
+												value={formatDateTime(
+													partner.created_at,
+												)}
+											/>
+											<Row
+												label="Updated"
+												value={formatDateTime(
+													partner.updated_at,
+												)}
+											/>
+										</dl>
+									</div>
+								)}
+							</CardContent>
+						</Card>
 					)}
-				</CardContent>
-			</Card>
+				</PageTransition>
+			</AnimatePresence>
 
 			<ConfirmDialog
 				open={confirmOpen}
@@ -197,11 +274,32 @@ export function PartnerDetailPage() {
 	)
 }
 
+function TabButton({
+	active,
+	onClick,
+	children,
+}: {
+	active: boolean
+	onClick: () => void
+	children: ReactNode
+}) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			data-active={active}
+			className="-mb-px border-b-2 border-transparent px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[active=true]:border-primary data-[active=true]:text-foreground"
+		>
+			{children}
+		</button>
+	)
+}
+
 function Row({ label, value }: { label: string; value: string }) {
 	return (
 		<div>
 			<dt className="text-xs text-muted-foreground">{label}</dt>
-			<dd className="wrap-break-word">{value || '—'}</dd>
+			<dd className="pt-1 wrap-break-word">{value || '—'}</dd>
 		</div>
 	)
 }

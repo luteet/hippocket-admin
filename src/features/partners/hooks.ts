@@ -2,15 +2,21 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import type {
 	CreatePartnerDto,
+	CreatePartnerReviewDto,
 	PaginationParams,
 	UpdatePartnerDto,
+	UpdatePartnerReviewDto,
 } from '@/types/api'
 import {
 	createPartner,
+	createPartnerReview,
 	deletePartner,
+	deletePartnerReview,
 	getPartner,
+	listPartnerReviews,
 	listPartners,
 	updatePartner,
+	updatePartnerReview,
 } from './api'
 
 const KEY = 'partners'
@@ -52,5 +58,50 @@ export function useDeletePartner() {
 	return useMutation({
 		mutationFn: (id: string) => deletePartner(id),
 		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+const reviewsKey = (partnerId: string) => [KEY, 'detail', partnerId, 'reviews']
+
+export function usePartnerReviews(partnerId: string | undefined) {
+	return useQuery({
+		queryKey: reviewsKey(partnerId as string),
+		queryFn: () => listPartnerReviews(partnerId as string),
+		enabled: !!partnerId,
+	})
+}
+
+export function useCreatePartnerReview(partnerId: string) {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: (dto: CreatePartnerReviewDto) =>
+			createPartnerReview(partnerId, dto),
+		onSuccess: () =>
+			qc.invalidateQueries({ queryKey: reviewsKey(partnerId) }),
+	})
+}
+
+export function useUpdatePartnerReview(partnerId: string) {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: ({
+			reviewId,
+			dto,
+		}: {
+			reviewId: string
+			dto: UpdatePartnerReviewDto
+		}) => updatePartnerReview(partnerId, reviewId, dto),
+		onSuccess: () =>
+			qc.invalidateQueries({ queryKey: reviewsKey(partnerId) }),
+	})
+}
+
+export function useDeletePartnerReview(partnerId: string) {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: (reviewId: string) =>
+			deletePartnerReview(partnerId, reviewId),
+		onSuccess: () =>
+			qc.invalidateQueries({ queryKey: reviewsKey(partnerId) }),
 	})
 }

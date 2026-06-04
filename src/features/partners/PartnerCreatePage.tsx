@@ -17,9 +17,10 @@ export function PartnerCreatePage() {
 					<Button
 						variant="outline"
 						onClick={() => navigate('/partners')}
+						aria-label="Back"
 					>
 						<Icon name="arrow-left" />
-						Back
+						<span className="sm:inline hidden">Back</span>
 					</Button>
 				}
 			/>

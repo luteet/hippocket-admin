@@ -27,6 +27,15 @@ There is no test suite. Verify changes with `npm run build` and `npm run lint`
 (both must pass), and by running the dev server. Seeing real data requires a
 backend at `VITE_API_BASE_URL` (default `http://localhost:8000`, set in `.env`).
 
+### After completing a task: reconcile shell commands with `settings.json`
+
+When a task is done, review the shell commands you ran during the session and
+compare them against the `permissions.allow` list in
+[.claude/settings.json](.claude/settings.json). If you used any command that
+isn't already covered by an existing allow entry, add it (use the `Bash(cmd:*)`
+prefix form so future invocations with different args are pre-approved). This
+keeps the allowlist current and reduces permission prompts on later runs.
+
 ## Testing against the dev API (data-safety rule)
 
 The dev backend (`https://dev-admin.hippocket.com`, see `.env`; admin login in
@@ -147,29 +156,32 @@ Read-only `GET`s against any record are fine.
   sprite, `public/img/sprites.svg` (a hidden root `<svg>` of `<symbol id="…">`
   entries, each a 24×24 Lucide glyph with `stroke="currentColor"`). Render them
   through [Icon.tsx](src/components/Icon.tsx):
-  ```tsx
-  <Icon name="search" />            // → <svg><use href="/img/sprites.svg#search" /></svg>
-  <Icon name="loader" className="animate-spin" />
-  ```
-    - **Never** import `lucide-react` (it's removed from deps) or hand-write
-      inline `<svg>` in components. Use `<Icon>`.
-    - `name` is the typed `IconName` union in `Icon.tsx` — the editor
-      autocompletes it and rejects typos. Icon ids are kebab-case
-      (`arrow-left`, `chevron-down`, `panel-left-open`); the spinner is `loader`,
-      the success check is `circle-check`.
-    - **Sizing/color match the old Lucide behaviour:** color is inherited
-      `currentColor`; size defaults to 24 but any CSS size wins — a `className`
-      utility (`size-4`, `size-10`), a semantic class (`.nav-link__icon`), or the
-      `.button svg { width: 1rem }` rule inside Buttons. Pass `size-4` etc. just
-      like before.
-    - **Adding a new icon:** copy the inner nodes from the matching
-      [Lucide](https://lucide.dev) glyph into a new `<symbol id="kebab-name"
-      viewBox="0 0 24 24" …>` in `sprites.svg` (keep the
-      `stroke`/`stroke-width`/`stroke-linecap`/`stroke-linejoin` attrs), then add
-      `'kebab-name'` to the `IconName` union in `Icon.tsx`. Keep the two in sync.
+  `tsx
+    <Icon name="search" />            // → <svg><use href="/img/sprites.svg#search" /></svg>
+    <Icon name="loader" className="animate-spin" />
+    `
+
+        - **Never** import `lucide-react` (it's removed from deps) or hand-write
+          inline `<svg>` in components. Use `<Icon>`.
+        - `name` is the typed `IconName` union in `Icon.tsx` — the editor
+          autocompletes it and rejects typos. Icon ids are kebab-case
+          (`arrow-left`, `chevron-down`, `panel-left-open`); the spinner is `loader`,
+          the success check is `circle-check`.
+        - **Sizing/color match the old Lucide behaviour:** color is inherited
+          `currentColor`; size defaults to 24 but any CSS size wins — a `className`
+          utility (`size-4`, `size-10`), a semantic class (`.nav-link__icon`), or the
+          `.button svg { width: 1rem }` rule inside Buttons. Pass `size-4` etc. just
+          like before.
+        - **Adding a new icon:** copy the inner nodes from the matching
+          [Lucide](https://lucide.dev) glyph into a new `<symbol id="kebab-name"
+
+    viewBox="0 0 24 24" …>`in`sprites.svg`(keep the
+     `stroke`/`stroke-width`/`stroke-linecap`/`stroke-linejoin`attrs), then add
+     `'kebab-name'`to the`IconName`union in`Icon.tsx`. Keep the two in sync.
     - The path is built from `import.meta.env.BASE_URL`, so it survives a
       non-root Vite `base`. The legacy `public/icons.svg` (social glyphs) is
-      unrelated and unused.
+    unrelated and unused.
+
 - **Pagination:** list endpoints now wrap rows in
   `{ items, total, offset, count }` (see `PartnersData` / `ReferralListData` /
   `StatusData` in [api.ts](src/types/api.ts)) — `total` is the full record count.

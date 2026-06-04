@@ -103,6 +103,22 @@ export interface UpdatePartnerDto {
 	sms_phone?: string
 }
 
+export interface PartnerReview {
+	id: string
+	partner_id: string
+	name: string
+	text: string
+	avatar_url: string | null
+	created_at: string
+}
+
+export interface CreatePartnerReviewDto {
+	name: string
+	text: string
+}
+
+export type UpdatePartnerReviewDto = CreatePartnerReviewDto
+
 export interface Agent {
 	id: string
 	email: string

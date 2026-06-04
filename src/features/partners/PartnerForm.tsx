@@ -38,7 +38,7 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 	} = usePartnerForm({ partner, onSuccess })
 
 	return (
-		<form onSubmit={onSubmit} className="space-y-4">
+		<form onSubmit={onSubmit} className="space-y-6">
 			<Field label="Name" error={errors.name?.message}>
 				<Input {...register('name')} />
 			</Field>
@@ -211,7 +211,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
 	return (
 		<div className="space-y-8 pt-6">
 			<Separator />
-			<p className="text-sm font-medium text-muted-foreground">
+			<p className="text-lg font-medium text-muted-foreground">
 				{children}
 			</p>
 		</div>
@@ -232,7 +232,7 @@ function SwitchField({
 	return (
 		<Label
 			htmlFor={id}
-			className="flex cursor-pointer items-center justify-between rounded-md border border-border p-3"
+			className="flex cursor-pointer items-center justify-between rounded-md border border-border p-3 text-sm"
 		>
 			{label}
 			<Switch
@@ -254,7 +254,7 @@ function Field({
 	children: ReactNode
 }) {
 	return (
-		<div className="space-y-6">
+		<div className="space-y-3">
 			<Label>{label}</Label>
 			{children}
 			{error && <p className="text-xs text-destructive">{error}</p>}

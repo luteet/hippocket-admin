@@ -5,12 +5,15 @@ import { toast } from 'sonner'
 import { getApiErrorMessage } from '@/lib/api/client'
 import { usePartner, useDeletePartner } from './hooks'
 
+export type PartnerDetailTab = 'details' | 'reviews'
+
 export function usePartnerDetailPage() {
 	const { id } = useParams()
 	const navigate = useNavigate()
 	const { data: partner, isLoading } = usePartner(id)
 	const deleteMut = useDeletePartner()
 	const [confirmOpen, setConfirmOpen] = useState(false)
+	const [tab, setTab] = useState<PartnerDetailTab>('details')
 
 	const handleDelete = async () => {
 		if (!id) return
@@ -25,7 +28,10 @@ export function usePartnerDetailPage() {
 
 	return {
 		partner,
+		partnerId: id,
 		isLoading,
+		tab,
+		setTab,
 		confirmOpen,
 		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
