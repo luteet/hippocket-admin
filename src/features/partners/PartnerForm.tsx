@@ -275,7 +275,7 @@ function SwitchField({
 	return (
 		<Label
 			htmlFor={id}
-			className="flex cursor-pointer items-center justify-between rounded-md border border-border p-3 text-sm"
+			className="flex cursor-pointer items-center justify-between rounded-md border border-border p-4 text-sm"
 		>
 			{label}
 			<Switch
