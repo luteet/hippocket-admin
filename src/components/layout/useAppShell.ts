@@ -8,6 +8,7 @@ import {
 	ListChecks,
 	Wallet,
 	Tags,
+	Layers,
 	MapPin,
 	Wrench,
 	type LucideIcon,
@@ -33,6 +34,7 @@ export const NAV_ITEMS: NavItem[] = [
 		icon: Building2,
 		children: [
 			{ to: '/categories', label: 'Categories', icon: Tags },
+			{ to: '/segments', label: 'Segments', icon: Layers },
 			{ to: '/locations', label: 'Locations', icon: MapPin },
 			{ to: '/services', label: 'Services', icon: Wrench },
 		],

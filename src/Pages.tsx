@@ -69,6 +69,10 @@ function AppRoutes({ location }: { location: Location }) {
 					element={<ReferenceListPage kind="categories" />}
 				/>
 				<Route
+					path="segments"
+					element={<ReferenceListPage kind="segments" />}
+				/>
+				<Route
 					path="locations"
 					element={<ReferenceListPage kind="locations" />}
 				/>

@@ -10,8 +10,8 @@ documented by the Postman files at the repo root
 treat them as the source of truth for endpoints, payloads, and response shapes.
 
 Status: MVP skeleton. Auth, layout, and the **Partners** and **Referrals**
-sections are fully implemented, plus the three read-only partner-taxonomy
-sections (**Categories / Locations / Services**) backed by the `/refs/partner-*`
+sections are fully implemented, plus the read-only reference sections
+(**Categories / Segments / Locations / Services**) backed by the `/refs/*`
 endpoints. **Agents / Groups / Statuses / Withdrawals** are `ComingSoon`
 placeholders to be built following the same pattern.
 
@@ -168,12 +168,17 @@ lists (mostly `[{ id, name }]`) for building form selects, so the Partner forms
 no longer need raw IDs once wired up:
 
 - `GET /refs/partner-locations/`, `/refs/partner-categories/`,
-  `/refs/partner-services/` — options for the partner create/edit form. These
-  three also back the read-only **Categories / Locations / Services** pages
-  (`src/features/references/`): one parameterized `ReferenceListPage` driven by
-  `REFERENCE_CONFIG[kind]` (`useReferenceListPage.ts`), client-side name search,
-  no pagination (the endpoints return a flat `[{ id, name }]` array).
+  `/refs/partner-services/` — options for the partner create/edit form.
 - `GET /refs/categories/`, `/refs/groups/`, `/refs/statuses/` — general lookups.
+
+  The read-only reference pages (`src/features/references/`) are one
+  parameterized `ReferenceListPage` driven by `REFERENCE_CONFIG[kind]`
+  (`useReferenceListPage.ts`), with client-side name search and no pagination
+  (these endpoints return a flat `[{ id, name }]` array). The `kind`→endpoint
+  map: **Categories** → `/refs/categories/` (granular service categories),
+  **Segments** → `/refs/partner-categories/` (broad partner groupings; the
+  partner form's `category_id`), **Locations** → `/refs/partner-locations/`,
+  **Services** → `/refs/partner-services/`.
 - `GET /refs/partners/?limit=500`, `/refs/agents/?limit=200` — partner/agent
   pickers (e.g. referral filters). `/refs/agents/` returns `{ id, email, name }`.
 

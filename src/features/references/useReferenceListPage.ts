@@ -3,10 +3,13 @@ import { useMemo, useState } from 'react'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useReferenceOptions } from './hooks'
 
-// The three partner-taxonomy sections (nested under Partners in the sidebar) are
-// identical read-only lists backed by the matching `/refs/partner-*` endpoint;
-// only the labels and the path differ, so one page is driven by this config.
-export type ReferenceKind = 'categories' | 'locations' | 'services'
+// The partner-taxonomy sections (nested under Partners in the sidebar) are
+// identical read-only lists backed by a `/refs/*` (selects) endpoint; only the
+// labels and the path differ, so one page is driven by this config. Note the
+// two distinct category lists: "Categories" (`/refs/categories/`, the granular
+// service categories) vs "Segments" (`/refs/partner-categories/`, the broad
+// partner groupings).
+export type ReferenceKind = 'categories' | 'segments' | 'locations' | 'services'
 
 interface ReferenceConfig {
 	title: string
@@ -22,11 +25,19 @@ interface ReferenceConfig {
 export const REFERENCE_CONFIG: Record<ReferenceKind, ReferenceConfig> = {
 	categories: {
 		title: 'Categories',
-		description: 'Partner categories',
-		endpoint: '/refs/partner-categories/',
-		queryKey: 'partner-categories',
+		description: 'Service categories',
+		endpoint: '/refs/categories/',
+		queryKey: 'categories',
 		searchPlaceholder: 'Search categories…',
 		emptyMessage: 'No categories found',
+	},
+	segments: {
+		title: 'Segments',
+		description: 'Partner segments',
+		endpoint: '/refs/partner-categories/',
+		queryKey: 'partner-categories',
+		searchPlaceholder: 'Search segments…',
+		emptyMessage: 'No segments found',
 	},
 	locations: {
 		title: 'Locations',
