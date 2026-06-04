@@ -222,8 +222,12 @@ no longer need raw IDs once wired up:
 - `GET /refs/partners/?limit=500`, `/refs/agents/?limit=200` — partner/agent
   pickers (e.g. referral filters). `/refs/agents/` returns `{ id, email, name }`.
 
-The partner-form selects are not yet wired up; `CreatePartnerDto` still posts
-raw `location_id` / `category_id` / `service_id`.
+The partner create form's Location / Category / Service fields are wired up as
+selects backed by `/refs/partner-locations/`, `/refs/partner-categories/`,
+`/refs/partner-services/` (see `RefSelect` in `PartnerForm.tsx` and the
+`useReferenceOptions` calls in `usePartnerForm.ts`); `CreatePartnerDto` posts the
+selected `location_id` / `category_id` / `service_id`. These are create-only —
+they aren't part of the update DTO.
 
 ## Open questions for the backend (do not block MVP)
 

@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 
 import { getApiErrorMessage } from '@/lib/api/client'
 import type { Partner } from '@/types/api'
+import { useReferenceOptions } from '@/features/references/hooks'
 import { useCreatePartner, useUpdatePartner } from './hooks'
 
 const fee = z.number({ message: 'Enter a number' }).min(0, 'Cannot be negative')
@@ -117,6 +118,24 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 	const isHide = watch('is_hide')
 	const isHideForJourney = watch('is_hide_for_journey')
 	const smsEnabled = watch('sms_notifications_enabled')
+	const locationId = watch('location_id')
+	const categoryId = watch('category_id')
+	const serviceId = watch('service_id')
+
+	// Option lists for the create-only location/category/service selects.
+	// Skip the fetches in edit mode where these fields aren't shown.
+	const { data: locationOptions } = useReferenceOptions(
+		'partner-locations',
+		'/refs/partner-locations/',
+	)
+	const { data: categoryOptions } = useReferenceOptions(
+		'partner-categories',
+		'/refs/partner-categories/',
+	)
+	const { data: serviceOptions } = useReferenceOptions(
+		'partner-services',
+		'/refs/partner-services/',
+	)
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
@@ -188,6 +207,12 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 		isHide,
 		isHideForJourney,
 		smsEnabled,
+		locationId,
+		categoryId,
+		serviceId,
+		locationOptions: locationOptions ?? [],
+		categoryOptions: categoryOptions ?? [],
+		serviceOptions: serviceOptions ?? [],
 		isPending,
 		onSubmit,
 	}

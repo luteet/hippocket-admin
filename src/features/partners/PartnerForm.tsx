@@ -14,7 +14,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import type { Partner } from '@/types/api'
+import type { Partner, RefOption } from '@/types/api'
 import { usePartnerForm, type PartnerFormValues } from './usePartnerForm'
 
 interface Props {
@@ -33,6 +33,12 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 		isHide,
 		isHideForJourney,
 		smsEnabled,
+		locationId,
+		categoryId,
+		serviceId,
+		locationOptions,
+		categoryOptions,
+		serviceOptions,
 		isPending,
 		onSubmit,
 	} = usePartnerForm({ partner, onSuccess })
@@ -175,19 +181,29 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 				/>
 			) : (
 				<div className="space-y-4 rounded-md border border-dashed border-border p-3">
-					<p className="text-xs text-muted-foreground">
-						Location / category / service IDs. The API has no
-						reference endpoints yet — entered manually (see the
-						backend questions).
-					</p>
-					<Field label="Location ID">
-						<Input {...register('location_id')} />
+					<Field label="Location">
+						<RefSelect
+							value={locationId}
+							options={locationOptions}
+							placeholder="Select a location"
+							onChange={(v) => setValue('location_id', v)}
+						/>
 					</Field>
-					<Field label="Category ID">
-						<Input {...register('category_id')} />
+					<Field label="Category">
+						<RefSelect
+							value={categoryId}
+							options={categoryOptions}
+							placeholder="Select a category"
+							onChange={(v) => setValue('category_id', v)}
+						/>
 					</Field>
-					<Field label="Service ID">
-						<Input {...register('service_id')} />
+					<Field label="Service">
+						<RefSelect
+							value={serviceId}
+							options={serviceOptions}
+							placeholder="Select a service"
+							onChange={(v) => setValue('service_id', v)}
+						/>
 					</Field>
 				</div>
 			)}
@@ -204,6 +220,33 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 				</Button>
 			</div>
 		</form>
+	)
+}
+
+function RefSelect({
+	value,
+	options,
+	placeholder,
+	onChange,
+}: {
+	value?: string
+	options: RefOption[]
+	placeholder: string
+	onChange: (value: string) => void
+}) {
+	return (
+		<Select value={value || undefined} onValueChange={onChange}>
+			<SelectTrigger>
+				<SelectValue placeholder={placeholder} />
+			</SelectTrigger>
+			<SelectContent>
+				{options.map((o) => (
+					<SelectItem key={o.id} value={o.id}>
+						{o.name}
+					</SelectItem>
+				))}
+			</SelectContent>
+		</Select>
 	)
 }
 
