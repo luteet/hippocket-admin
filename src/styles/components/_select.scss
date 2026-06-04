@@ -5,7 +5,7 @@
 	// Trigger button.
 	.select-trigger {
 		display: flex;
-		height: 3.5rem; // h-14
+		height: 2.25rem; // h-14
 		width: 100%;
 		align-items: center;
 		justify-content: space-between;
@@ -19,6 +19,10 @@
 		text-align: start;
 		color: var(--foreground);
 		outline: none;
+
+		@media (min-width: 36rem) {
+			height: 3.5rem; // h-14
+		}
 
 		&:focus,
 		&:focus-visible {

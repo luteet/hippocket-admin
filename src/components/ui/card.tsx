@@ -42,7 +42,7 @@ function CardDescription({ className, ...props }: ComponentProps<'div'>) {
 }
 
 function CardContent({ className, ...props }: ComponentProps<'div'>) {
-	return <div className={cn('p-12', className)} {...props} />
+	return <div className={cn('p-6 sm:p-12', className)} {...props} />
 }
 
 function CardFooter({ className, ...props }: ComponentProps<'div'>) {
