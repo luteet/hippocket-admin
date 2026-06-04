@@ -5,8 +5,8 @@ import {
 	type ComponentProps,
 } from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { X } from 'lucide-react'
 
+import { Icon } from '@/components/Icon'
 import { cn } from '@/lib/utils'
 
 const Dialog = DialogPrimitive.Root
@@ -45,7 +45,7 @@ const DialogContent = forwardRef<
 		>
 			{children}
 			<DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 outline-none focus:outline-none disabled:pointer-events-none">
-				<X className="size-4" />
+				<Icon name="x" className="size-4" />
 				<span className="sr-only">Close</span>
 			</DialogPrimitive.Close>
 		</DialogPrimitive.Content>

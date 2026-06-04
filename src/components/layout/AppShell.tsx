@@ -1,15 +1,8 @@
 import { Suspense } from 'react'
 import { NavLink } from 'react-router'
 import { AnimatePresence } from 'motion/react'
-import {
-	LogOut,
-	Menu,
-	X,
-	ChevronDown,
-	PanelLeftClose,
-	PanelLeftOpen,
-} from 'lucide-react'
 
+import { Icon } from '@/components/Icon'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { PageTransition } from '@/components/PageTransition'
@@ -28,7 +21,6 @@ function NavItemLink({
 	isSub?: boolean
 	onNavigate: () => void
 }) {
-	const Icon = item.icon
 	return (
 		<NavLink
 			to={item.to}
@@ -38,7 +30,7 @@ function NavItemLink({
 			}
 		>
 			{/* Child links drop the icon to save horizontal space. */}
-			{!isSub && <Icon className="nav-link__icon" />}
+			{!isSub && <Icon name={item.icon} className="nav-link__icon" />}
 			<span className="nav-link__label">{item.label}</span>
 		</NavLink>
 	)
@@ -86,7 +78,11 @@ export function AppShell() {
 						aria-label="Toggle sidebar"
 						className="hidden size-9 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground md:inline-flex"
 					>
-						{collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
+						{collapsed ? (
+							<Icon name="panel-left-open" />
+						) : (
+							<Icon name="panel-left-close" />
+						)}
 					</Button>
 					{/* Mobile close */}
 					<Button
@@ -96,7 +92,7 @@ export function AppShell() {
 						aria-label="Close menu"
 						className="ml-auto text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground md:hidden"
 					>
-						<X />
+						<Icon name="x" />
 					</Button>
 				</div>
 
@@ -120,7 +116,10 @@ export function AppShell() {
 										aria-label={`Toggle ${item.label}`}
 										aria-expanded={isGroupOpen(item)}
 									>
-										<ChevronDown className="nav-group__chevron" />
+										<Icon
+											name="chevron-down"
+											className="nav-group__chevron"
+										/>
 									</button>
 								</div>
 								<div className="nav-group__children">
@@ -158,7 +157,7 @@ export function AppShell() {
 								: 'justify-start',
 						)}
 					>
-						<LogOut className="size-5 shrink-0" />
+						<Icon name="log-out" className="size-5 shrink-0" />
 						<span className={cn(collapsed && 'md:hidden')}>
 							Sign out
 						</span>
@@ -176,7 +175,7 @@ export function AppShell() {
 						onClick={openMobile}
 						aria-label="Open menu"
 					>
-						<Menu />
+						<Icon name="menu" />
 					</Button>
 					<span className="text-lg font-semibold text-secondary">
 						HipPocket

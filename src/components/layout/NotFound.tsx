@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
-import { FileQuestion } from 'lucide-react'
 
+import { Icon } from '@/components/Icon'
 import { PageHeader } from './PageHeader'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -11,7 +11,10 @@ export function NotFound() {
 			<PageHeader title="Not Found" />
 			<Card>
 				<CardContent className="flex flex-col items-center justify-center gap-4 py-16 text-center text-muted-foreground">
-					<FileQuestion className="size-10 text-secondary" />
+					<Icon
+						name="file-question"
+						className="size-10 text-secondary"
+					/>
 					<p>
 						The page you are looking for doesn’t exist or has been
 						moved.

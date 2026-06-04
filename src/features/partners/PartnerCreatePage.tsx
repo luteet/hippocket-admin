@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router'
-import { ArrowLeft } from 'lucide-react'
 
+import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -18,7 +18,7 @@ export function PartnerCreatePage() {
 						variant="outline"
 						onClick={() => navigate('/partners')}
 					>
-						<ArrowLeft />
+						<Icon name="arrow-left" />
 						Back
 					</Button>
 				}

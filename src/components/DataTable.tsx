@@ -5,8 +5,7 @@ import {
 	useReactTable,
 	type ColumnDef,
 } from '@tanstack/react-table'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-
+import { Icon } from '@/components/Icon'
 import {
 	Table,
 	TableBody,
@@ -93,16 +92,16 @@ export function DataTable<TData>({
 
 	const handleRowClick = onRowClick
 		? (row: TData) => (e: React.MouseEvent) => {
-			const start = downPos.current
-			downPos.current = null
-			if (
-				start &&
-				Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
-			) {
-				return
+				const start = downPos.current
+				downPos.current = null
+				if (
+					start &&
+					Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
+				) {
+					return
+				}
+				onRowClick(row)
 			}
-			onRowClick(row)
-		}
 		: undefined
 
 	return (
@@ -120,10 +119,10 @@ export function DataTable<TData>({
 										{header.isPlaceholder
 											? null
 											: flexRender(
-												header.column.columnDef
-													.header,
-												header.getContext(),
-											)}
+													header.column.columnDef
+														.header,
+													header.getContext(),
+												)}
 									</TableHead>
 								))}
 							</TableRow>
@@ -150,11 +149,11 @@ export function DataTable<TData>({
 									onMouseDown={
 										onRowClick
 											? (e) => {
-												downPos.current = {
-													x: e.clientX,
-													y: e.clientY,
+													downPos.current = {
+														x: e.clientX,
+														y: e.clientY,
+													}
 												}
-											}
 											: undefined
 									}
 									onClick={handleRowClick?.(row.original)}
@@ -199,7 +198,7 @@ export function DataTable<TData>({
 						}
 						disabled={pagination.page === 0}
 					>
-						<ChevronLeft />
+						<Icon name="chevron-left" />
 					</Button>
 
 					{getPageItems(pagination.page, pagination.pageCount).map(
@@ -239,7 +238,7 @@ export function DataTable<TData>({
 						}
 						disabled={pagination.page >= pagination.pageCount - 1}
 					>
-						<ChevronRight />
+						<Icon name="chevron-right" />
 					</Button>
 				</div>
 			)}

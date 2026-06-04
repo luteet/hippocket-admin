@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from 'react-router'
-import { ArrowLeft } from 'lucide-react'
 
+import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -22,7 +22,7 @@ export function PartnerEditPage() {
 						variant="outline"
 						onClick={() => navigate(`/partners/${id}`)}
 					>
-						<ArrowLeft />
+						<Icon name="arrow-left" />
 						Back
 					</Button>
 				}

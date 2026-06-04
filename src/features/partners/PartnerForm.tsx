@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
-import { Loader2 } from 'lucide-react'
 
+import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -197,7 +197,9 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 					Cancel
 				</Button>
 				<Button type="submit" disabled={isPending}>
-					{isPending && <Loader2 className="animate-spin" />}
+					{isPending && (
+						<Icon name="loader" className="animate-spin" />
+					)}
 					Save
 				</Button>
 			</div>

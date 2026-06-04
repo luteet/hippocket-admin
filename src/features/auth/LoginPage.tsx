@@ -1,5 +1,4 @@
-import { Loader2 } from 'lucide-react'
-
+import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -58,7 +57,10 @@ export function LoginPage() {
 								disabled={isSubmitting}
 							>
 								{isSubmitting && (
-									<Loader2 className="animate-spin" />
+									<Icon
+										name="loader"
+										className="animate-spin"
+									/>
 								)}
 								Sign in
 							</Button>

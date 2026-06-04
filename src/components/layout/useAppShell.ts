@@ -1,19 +1,7 @@
 import { useState } from 'react'
 import { useLocation, useOutlet } from 'react-router'
-import {
-	Building2,
-	Users,
-	Boxes,
-	GitBranch,
-	ListChecks,
-	Wallet,
-	Tags,
-	Layers,
-	MapPin,
-	Wrench,
-	type LucideIcon,
-} from 'lucide-react'
 
+import type { IconName } from '@/components/Icon'
 import { useAuth } from '@/features/auth/AuthContext'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
@@ -23,7 +11,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery'
 export type NavItem = {
 	to: string
 	label: string
-	icon: LucideIcon
+	icon: IconName
 	children?: NavItem[]
 }
 
@@ -31,19 +19,19 @@ export const NAV_ITEMS: NavItem[] = [
 	{
 		to: '/partners',
 		label: 'Partners',
-		icon: Building2,
+		icon: 'building-2',
 		children: [
-			{ to: '/categories', label: 'Categories', icon: Tags },
-			{ to: '/segments', label: 'Segments', icon: Layers },
-			{ to: '/locations', label: 'Locations', icon: MapPin },
-			{ to: '/services', label: 'Services', icon: Wrench },
+			{ to: '/categories', label: 'Categories', icon: 'tags' },
+			{ to: '/segments', label: 'Segments', icon: 'layers' },
+			{ to: '/locations', label: 'Locations', icon: 'map-pin' },
+			{ to: '/services', label: 'Services', icon: 'wrench' },
 		],
 	},
-	{ to: '/referrals', label: 'Pipeline Logs', icon: GitBranch },
-	{ to: '/agents', label: 'Agents', icon: Users },
-	{ to: '/groups', label: 'Groups', icon: Boxes },
-	{ to: '/statuses', label: 'Statuses', icon: ListChecks },
-	{ to: '/withdrawals', label: 'Withdrawals', icon: Wallet },
+	{ to: '/referrals', label: 'Pipeline Logs', icon: 'git-branch' },
+	{ to: '/agents', label: 'Agents', icon: 'users' },
+	{ to: '/groups', label: 'Groups', icon: 'boxes' },
+	{ to: '/statuses', label: 'Statuses', icon: 'list-checks' },
+	{ to: '/withdrawals', label: 'Withdrawals', icon: 'wallet' },
 ]
 
 export function useAppShell() {

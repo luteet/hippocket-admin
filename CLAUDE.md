@@ -143,6 +143,33 @@ Read-only `GET`s against any record are fine.
   `src/index.css`. Palette: background `#F5F5F5`, secondary `#2494AC` (sidebar),
   accent/primary `#DF9033` (buttons/links), border `#CCCCCC`. Font: Readex Pro.
   No dark mode.
+- **Icons — SVG sprite + `<Icon>`, no icon library.** All icons come from one
+  sprite, `public/img/sprites.svg` (a hidden root `<svg>` of `<symbol id="…">`
+  entries, each a 24×24 Lucide glyph with `stroke="currentColor"`). Render them
+  through [Icon.tsx](src/components/Icon.tsx):
+  ```tsx
+  <Icon name="search" />            // → <svg><use href="/img/sprites.svg#search" /></svg>
+  <Icon name="loader" className="animate-spin" />
+  ```
+    - **Never** import `lucide-react` (it's removed from deps) or hand-write
+      inline `<svg>` in components. Use `<Icon>`.
+    - `name` is the typed `IconName` union in `Icon.tsx` — the editor
+      autocompletes it and rejects typos. Icon ids are kebab-case
+      (`arrow-left`, `chevron-down`, `panel-left-open`); the spinner is `loader`,
+      the success check is `circle-check`.
+    - **Sizing/color match the old Lucide behaviour:** color is inherited
+      `currentColor`; size defaults to 24 but any CSS size wins — a `className`
+      utility (`size-4`, `size-10`), a semantic class (`.nav-link__icon`), or the
+      `.button svg { width: 1rem }` rule inside Buttons. Pass `size-4` etc. just
+      like before.
+    - **Adding a new icon:** copy the inner nodes from the matching
+      [Lucide](https://lucide.dev) glyph into a new `<symbol id="kebab-name"
+      viewBox="0 0 24 24" …>` in `sprites.svg` (keep the
+      `stroke`/`stroke-width`/`stroke-linecap`/`stroke-linejoin` attrs), then add
+      `'kebab-name'` to the `IconName` union in `Icon.tsx`. Keep the two in sync.
+    - The path is built from `import.meta.env.BASE_URL`, so it survives a
+      non-root Vite `base`. The legacy `public/icons.svg` (social glyphs) is
+      unrelated and unused.
 - **Pagination:** list endpoints now wrap rows in
   `{ items, total, offset, count }` (see `PartnersData` / `ReferralListData` /
   `StatusData` in [api.ts](src/types/api.ts)) — `total` is the full record count.
@@ -171,14 +198,15 @@ no longer need raw IDs once wired up:
   `/refs/partner-services/` — options for the partner create/edit form.
 - `GET /refs/categories/`, `/refs/groups/`, `/refs/statuses/` — general lookups.
 
-  The read-only reference pages (`src/features/references/`) are one
-  parameterized `ReferenceListPage` driven by `REFERENCE_CONFIG[kind]`
-  (`useReferenceListPage.ts`), with client-side name search and no pagination
-  (these endpoints return a flat `[{ id, name }]` array). The `kind`→endpoint
-  map: **Categories** → `/refs/categories/` (granular service categories),
-  **Segments** → `/refs/partner-categories/` (broad partner groupings; the
-  partner form's `category_id`), **Locations** → `/refs/partner-locations/`,
-  **Services** → `/refs/partner-services/`.
+    The read-only reference pages (`src/features/references/`) are one
+    parameterized `ReferenceListPage` driven by `REFERENCE_CONFIG[kind]`
+    (`useReferenceListPage.ts`), with client-side name search and no pagination
+    (these endpoints return a flat `[{ id, name }]` array). The `kind`→endpoint
+    map: **Categories** → `/refs/categories/` (granular service categories),
+    **Segments** → `/refs/partner-categories/` (broad partner groupings; the
+    partner form's `category_id`), **Locations** → `/refs/partner-locations/`,
+    **Services** → `/refs/partner-services/`.
+
 - `GET /refs/partners/?limit=500`, `/refs/agents/?limit=200` — partner/agent
   pickers (e.g. referral filters). `/refs/agents/` returns `{ id, email, name }`.
 

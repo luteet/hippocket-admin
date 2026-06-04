@@ -1,5 +1,4 @@
-import { Loader2 } from 'lucide-react'
-
+import { Icon } from '@/components/Icon'
 import {
 	Dialog,
 	DialogContent,
@@ -53,7 +52,9 @@ export function ConfirmDialog({
 						onClick={onConfirm}
 						disabled={loading}
 					>
-						{loading && <Loader2 className="animate-spin" />}
+						{loading && (
+							<Icon name="loader" className="animate-spin" />
+						)}
 						{confirmLabel}
 					</Button>
 				</DialogFooter>

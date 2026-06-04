@@ -1,5 +1,4 @@
-import { Loader2, CheckCircle2 } from 'lucide-react'
-
+import { Icon } from '@/components/Icon'
 import {
 	Dialog,
 	DialogContent,
@@ -125,7 +124,10 @@ export function ReferralDetailDialog({ referralId, onOpenChange }: Props) {
 									</SelectContent>
 								</Select>
 								{isUpdatingStatus && (
-									<Loader2 className="size-4 animate-spin text-muted-foreground" />
+									<Icon
+										name="loader"
+										className="size-4 animate-spin text-muted-foreground"
+									/>
 								)}
 							</div>
 						</div>
@@ -137,9 +139,12 @@ export function ReferralDetailDialog({ referralId, onOpenChange }: Props) {
 								disabled={isMarkingPaid}
 							>
 								{isMarkingPaid ? (
-									<Loader2 className="animate-spin" />
+									<Icon
+										name="loader"
+										className="animate-spin"
+									/>
 								) : (
-									<CheckCircle2 />
+									<Icon name="circle-check" />
 								)}
 								Mark as paid
 							</Button>

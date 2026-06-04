@@ -1,5 +1,4 @@
-import { ArrowLeft, Pencil, Trash2 } from 'lucide-react'
-
+import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -34,20 +33,20 @@ export function PartnerDetailPage() {
 				actions={
 					<>
 						<Button variant="outline" onClick={goBack}>
-							<ArrowLeft />
+							<Icon name="arrow-left" />
 							Back
 						</Button>
 						{partner && (
 							<>
 								<Button variant="secondary" onClick={goToEdit}>
-									<Pencil />
+									<Icon name="pencil" />
 									Edit
 								</Button>
 								<Button
 									variant="destructive"
 									onClick={() => setConfirmOpen(true)}
 								>
-									<Trash2 />
+									<Icon name="trash-2" />
 									Delete
 								</Button>
 							</>
