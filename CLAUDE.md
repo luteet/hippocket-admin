@@ -9,9 +9,11 @@ documented by the Postman files at the repo root
 (`collections.json`, `environment.json`) —
 treat them as the source of truth for endpoints, payloads, and response shapes.
 
-Status: MVP skeleton. Auth, layout, and two reference sections (**Partners**,
-**Referrals**) are fully implemented. **Agents / Groups / Statuses / Withdrawals**
-are `ComingSoon` placeholders to be built following the same pattern.
+Status: MVP skeleton. Auth, layout, and the **Partners** and **Referrals**
+sections are fully implemented, plus the three read-only partner-taxonomy
+sections (**Categories / Locations / Services**) backed by the `/refs/partner-*`
+endpoints. **Agents / Groups / Statuses / Withdrawals** are `ComingSoon`
+placeholders to be built following the same pattern.
 
 ## Commands
 
@@ -166,13 +168,17 @@ lists (mostly `[{ id, name }]`) for building form selects, so the Partner forms
 no longer need raw IDs once wired up:
 
 - `GET /refs/partner-locations/`, `/refs/partner-categories/`,
-  `/refs/partner-services/` — options for the partner create/edit form.
+  `/refs/partner-services/` — options for the partner create/edit form. These
+  three also back the read-only **Categories / Locations / Services** pages
+  (`src/features/references/`): one parameterized `ReferenceListPage` driven by
+  `REFERENCE_CONFIG[kind]` (`useReferenceListPage.ts`), client-side name search,
+  no pagination (the endpoints return a flat `[{ id, name }]` array).
 - `GET /refs/categories/`, `/refs/groups/`, `/refs/statuses/` — general lookups.
 - `GET /refs/partners/?limit=500`, `/refs/agents/?limit=200` — partner/agent
   pickers (e.g. referral filters). `/refs/agents/` returns `{ id, email, name }`.
 
-These are not yet consumed in the app; `CreatePartnerDto` still posts raw
-`location_id` / `category_id` / `service_id`.
+The partner-form selects are not yet wired up; `CreatePartnerDto` still posts
+raw `location_id` / `category_id` / `service_id`.
 
 ## Open questions for the backend (do not block MVP)
 

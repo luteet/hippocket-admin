@@ -237,7 +237,7 @@ export function PartnersPage() {
 					value={String(pagination.count)}
 					onValueChange={(v) => pagination.setCount(Number(v))}
 				>
-					<SelectTrigger className="ml-auto w-36">
+					<SelectTrigger className="ml-auto w-40">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>

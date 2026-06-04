@@ -43,6 +43,13 @@ const ReferralsPage = lazy(() =>
 		default: m.ReferralsPage,
 	})),
 )
+// One parameterized page serves the three partner-taxonomy sections; the `kind`
+// prop selects the labels and the `/refs/partner-*` endpoint it reads.
+const ReferenceListPage = lazy(() =>
+	import('@/features/references/ReferenceListPage').then((m) => ({
+		default: m.ReferenceListPage,
+	})),
+)
 
 // The authenticated route tree. `location` is passed explicitly so that while
 // this branch is exiting (logout), AnimatePresence keeps rendering the route
@@ -59,15 +66,15 @@ function AppRoutes({ location }: { location: Location }) {
 				<Route path="referrals" element={<ReferralsPage />} />
 				<Route
 					path="categories"
-					element={<ComingSoon title="Categories" />}
+					element={<ReferenceListPage kind="categories" />}
 				/>
 				<Route
 					path="locations"
-					element={<ComingSoon title="Locations" />}
+					element={<ReferenceListPage kind="locations" />}
 				/>
 				<Route
 					path="services"
-					element={<ComingSoon title="Services" />}
+					element={<ReferenceListPage kind="services" />}
 				/>
 				<Route path="agents" element={<ComingSoon title="Agents" />} />
 				<Route path="groups" element={<ComingSoon title="Groups" />} />

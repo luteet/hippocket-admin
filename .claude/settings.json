@@ -10,6 +10,8 @@
       "Bash(npm_config_cache=/tmp/npm-cache-hp npm run lint)",
       "Bash(npm_config_cache=/tmp/npm-cache-hp npm run format)",
       "Bash(npm_config_cache=/tmp/npm-cache-hp npm run format:check)",
+      "Bash(npx prettier:*)",
+      "Bash(npm_config_cache=/tmp/npm-cache-hp npx prettier:*)",
       "Bash(git status)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
