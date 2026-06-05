@@ -213,10 +213,10 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 			</Field>
 
 			<div className="flex justify-end gap-2 pt-4">
-				<Button type="button" variant="outline" onClick={onCancel}>
+				<Button type="button" variant="outline" className="flex-auto xs:flex-none" onClick={onCancel}>
 					Cancel
 				</Button>
-				<Button type="submit" disabled={isPending}>
+				<Button type="submit" disabled={isPending} className="flex-auto xs:flex-none">
 					{isPending && (
 						<Icon name="loader" className="animate-spin" />
 					)}
