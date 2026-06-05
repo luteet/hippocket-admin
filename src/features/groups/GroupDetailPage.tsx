@@ -9,13 +9,25 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { DetailGrid, DetailRow } from '@/components/DetailList'
 import { formatDateTime } from '@/lib/format'
 import { useGroupDetailPage } from './useGroupDetailPage'
 
 export function GroupDetailPage() {
-	const { group, isLoading, tab, setTab, goBack, goToEdit, openAgent } =
-		useGroupDetailPage()
+	const {
+		group,
+		isLoading,
+		tab,
+		setTab,
+		confirmOpen,
+		setConfirmOpen,
+		isDeleting,
+		handleDelete,
+		goBack,
+		goToEdit,
+		openAgent,
+	} = useGroupDetailPage()
 
 	return (
 		<div>
@@ -32,14 +44,28 @@ export function GroupDetailPage() {
 							<span className="sm:inline hidden">Back</span>
 						</Button>
 						{group && (
-							<Button
-								variant="secondary"
-								onClick={goToEdit}
-								aria-label="Edit"
-							>
-								<Icon name="pencil" />
-								<span className="sm:inline hidden">Edit</span>
-							</Button>
+							<>
+								<Button
+									variant="secondary"
+									onClick={goToEdit}
+									aria-label="Edit"
+								>
+									<Icon name="pencil" />
+									<span className="sm:inline hidden">
+										Edit
+									</span>
+								</Button>
+								<Button
+									variant="destructive"
+									onClick={() => setConfirmOpen(true)}
+									aria-label="Delete"
+								>
+									<Icon name="trash-2" />
+									<span className="sm:inline hidden">
+										Delete
+									</span>
+								</Button>
+							</>
 						)}
 					</>
 				}
@@ -199,6 +225,17 @@ export function GroupDetailPage() {
 					</Card>
 				</PageTransition>
 			</AnimatePresence>
+
+			<ConfirmDialog
+				open={confirmOpen}
+				onOpenChange={setConfirmOpen}
+				title="Delete group?"
+				description={`Group "${group?.name ?? ''}" will be soft-deleted — marked as deleted and hidden, but kept in the database and restorable later.`}
+				confirmLabel="Delete"
+				destructive
+				loading={isDeleting}
+				onConfirm={handleDelete}
+			/>
 		</div>
 	)
 }

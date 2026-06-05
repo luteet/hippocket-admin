@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { CreateGroupDto, UpdateGroupDto } from '@/types/api'
 import {
 	createGroup,
+	deleteGroup,
 	getGroup,
 	listAgentRefs,
 	listGroups,
@@ -40,6 +41,14 @@ export function useUpdateGroup() {
 	return useMutation({
 		mutationFn: ({ id, dto }: { id: number; dto: UpdateGroupDto }) =>
 			updateGroup(id, dto),
+		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+export function useDeleteGroup() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: (id: number) => deleteGroup(id),
 		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
 	})
 }

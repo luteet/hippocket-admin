@@ -47,6 +47,13 @@ export async function updateGroup(
 	return data
 }
 
+// Soft delete by default — the group is marked `is_deleted` and can be
+// restored. (A `?hard=true` permanent delete exists but is blocked when the
+// group still has Team Leaders; we don't expose it here.)
+export async function deleteGroup(id: number): Promise<void> {
+	await api.delete(`/groups/${id}/`)
+}
+
 export async function listAgentRefs(): Promise<AgentOption[]> {
 	const { data } = await api.get<AgentOption[]>('/refs/agents/', {
 		params: { limit: 200 },
