@@ -83,6 +83,11 @@ const GroupEditPage = lazy(() =>
 		default: m.GroupEditPage,
 	})),
 )
+const StatusesPage = lazy(() =>
+	import('@/features/statuses/StatusesPage').then((m) => ({
+		default: m.StatusesPage,
+	})),
+)
 // One parameterized page serves the three partner-taxonomy sections; the `kind`
 // prop selects the labels and the `/refs/partner-*` endpoint it reads.
 const ReferenceListPage = lazy(() =>
@@ -128,10 +133,7 @@ function AppRoutes({ location }: { location: Location }) {
 				<Route path="groups/new" element={<GroupCreatePage />} />
 				<Route path="groups/:id" element={<GroupDetailPage />} />
 				<Route path="groups/:id/edit" element={<GroupEditPage />} />
-				<Route
-					path="statuses"
-					element={<ComingSoon title="Statuses" />}
-				/>
+				<Route path="statuses" element={<StatusesPage />} />
 				<Route
 					path="withdrawals"
 					element={<ComingSoon title="Withdrawals" />}

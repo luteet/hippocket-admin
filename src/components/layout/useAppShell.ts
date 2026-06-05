@@ -27,10 +27,14 @@ export const NAV_ITEMS: NavItem[] = [
 			{ to: '/services', label: 'Services', icon: 'wrench' },
 		],
 	},
-	{ to: '/referrals', label: 'Pipeline Logs', icon: 'git-branch' },
+	{
+		to: '/referrals',
+		label: 'Pipeline',
+		icon: 'git-branch',
+		children: [{ to: '/statuses', label: 'Statuses', icon: 'list-checks' }],
+	},
 	{ to: '/agents', label: 'Agents', icon: 'users' },
 	{ to: '/groups', label: 'Groups', icon: 'boxes' },
-	{ to: '/statuses', label: 'Statuses', icon: 'list-checks' },
 	{ to: '/withdrawals', label: 'Withdrawals', icon: 'wallet' },
 ]
 

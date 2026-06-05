@@ -220,7 +220,7 @@
 		// Indented guide rail aligned under the parent icon's centre.
 		margin-left: 1.125rem; // 0.625rem padding + half of the 1rem icon
 		padding-left: 0.625rem;
-		padding-top: 0.25rem;
+		margin-top: 0.25rem;
 		border-left: 1px solid
 			color-mix(in srgb, var(--sidebar-foreground) 25%, transparent);
 	}
