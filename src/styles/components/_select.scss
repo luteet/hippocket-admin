@@ -72,8 +72,11 @@
 			animation: select-fade-in 0.15s ease;
 		}
 
-		&[data-state='closed'] {
-			animation: select-fade-out 0.15s ease;
+		// Radix keeps `data-state='open'` while closing (we delay its unmount in
+		// select.tsx), so the exit is driven by our own `data-closing` flag.
+		// Keep this duration in sync with CLOSE_DURATION in select.tsx.
+		&[data-closing='true'] {
+			animation: select-fade-out 0.15s ease forwards;
 		}
 
 		&.is-popper {
