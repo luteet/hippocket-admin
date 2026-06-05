@@ -2,3 +2,5 @@ dist
 node_modules
 *.postman_collection.json
 *.postman_environment.json
+# Hand-formatted docs — keep Prettier from re-indenting nested lists.
+CLAUDE.md
