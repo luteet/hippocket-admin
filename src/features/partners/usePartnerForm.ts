@@ -16,7 +16,7 @@ const optionalAmount = z.number().min(0, 'Cannot be negative').nullable()
 
 const schema = z.object({
 	name: z.string().min(1, 'Enter a name'),
-	email: z.string().email('Invalid email'),
+	email: z.email('Invalid email'),
 	phone: z.string().optional(),
 	subtitle: z.string().optional(),
 	short_description: z.string().optional(),

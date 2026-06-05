@@ -13,14 +13,10 @@ const amount = z
 	.min(0, 'Cannot be negative')
 
 const schema = z.object({
-	email: z.string().email('Invalid email'),
+	email: z.email('Invalid email'),
 	// New email requested on edit — applied once the agent confirms it. Empty
 	// means "no change".
-	pending_email: z
-		.string()
-		.email('Invalid email')
-		.or(z.literal(''))
-		.optional(),
+	pending_email: z.email('Invalid email').or(z.literal('')).optional(),
 	// Required on create, optional on edit — enforced in onSubmit since the rule
 	// depends on the mode.
 	password: z.string().optional(),
