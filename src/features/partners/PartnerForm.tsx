@@ -154,13 +154,13 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 			<SectionTitle>SMS notifications</SectionTitle>
 			<SwitchField
 				id="sms_notifications_enabled"
-				label="SMS notifications"
+				label="Active"
 				checked={smsEnabled}
 				onCheckedChange={(v) =>
 					setValue('sms_notifications_enabled', v)
 				}
 			/>
-			<Field label="SMS phone" error={errors.sms_phone?.message}>
+			<Field label="Phone" error={errors.sms_phone?.message}>
 				<Input {...register('sms_phone')} />
 			</Field>
 
