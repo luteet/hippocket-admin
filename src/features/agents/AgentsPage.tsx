@@ -37,6 +37,7 @@ export function AgentsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		openAgent,
 	} = useAgentsPage()
 
 	const columns = useMemo<ColumnDef<Agent, unknown>[]>(
@@ -186,6 +187,7 @@ export function AgentsPage() {
 				emptyMessage="No agents found"
 				minWidth="1000px"
 				skeletonRows={pagination.count}
+				onRowClick={(a) => openAgent(a.id)}
 				pagination={{
 					page: pagination.page,
 					pageCount: pagination.pageCount(data?.total ?? 0),

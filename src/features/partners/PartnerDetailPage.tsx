@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { DetailGrid, DetailRow } from '@/components/DetailList'
 import { PartnerReviewsTab } from './PartnerReviewsTab'
 import { usePartnerDetailPage } from './usePartnerDetailPage'
 import {
@@ -136,48 +137,48 @@ export function PartnerDetailPage() {
 
 										<Separator className="mt-8" />
 
-										<dl className="grid grid-cols-1 gap-x-4 gap-y-8 mt-8 text-sm sm:grid-cols-2">
-											<Row
+										<DetailGrid className="mt-8">
+											<DetailRow
 												label="Email"
 												value={partner.email}
 											/>
-											<Row
+											<DetailRow
 												label="Phone"
 												value={partner.phone}
 											/>
-											<Row
+											<DetailRow
 												label="Website"
 												value={partner.website}
 											/>
-											<Row
+											<DetailRow
 												label="Address"
 												value={partner.address}
 											/>
-											<Row
+											<DetailRow
 												label="Category"
 												value={partner.category_name}
 											/>
-											<Row
+											<DetailRow
 												label="Service"
 												value={partner.service_name}
 											/>
-											<Row
+											<DetailRow
 												label="Location"
 												value={partner.location_name}
 											/>
-											<Row
+											<DetailRow
 												label="Group"
 												value={
 													partner.chosen_group_name
 												}
 											/>
-											<Row
+											<DetailRow
 												label="Referral fee"
 												value={
 													partner.referral_fee ?? ''
 												}
 											/>
-											<Row
+											<DetailRow
 												label="Potential value"
 												value={
 													partner.potential_value !=
@@ -189,31 +190,31 @@ export function PartnerDetailPage() {
 														: ''
 												}
 											/>
-											<Row
+											<DetailRow
 												label="Agent fee"
 												value={formatFee(partner)}
 											/>
-											<Row
+											<DetailRow
 												label="Group owner fee"
 												value={formatAmount(
 													partner.group_owner_fee,
 													partner.value_type,
 												)}
 											/>
-											<Row
+											<DetailRow
 												label="Hippocket fee"
 												value={formatAmount(
 													partner.hippocket_fee,
 													partner.value_type,
 												)}
 											/>
-											<Row
+											<DetailRow
 												label="Value type"
 												value={valueTypeLabel(
 													partner.value_type,
 												)}
 											/>
-											<Row
+											<DetailRow
 												label="SMS notifications"
 												value={
 													partner.sms_notifications_enabled
@@ -221,35 +222,35 @@ export function PartnerDetailPage() {
 														: 'Off'
 												}
 											/>
-											<Row
+											<DetailRow
 												label="SMS phone"
 												value={partner.sms_phone}
 											/>
-											<Row
+											<DetailRow
 												label="Logins"
 												value={String(
 													partner.count_login,
 												)}
 											/>
-											<Row
+											<DetailRow
 												label="Last login"
 												value={formatDateTime(
 													partner.last_login,
 												)}
 											/>
-											<Row
+											<DetailRow
 												label="Created"
 												value={formatDateTime(
 													partner.created_at,
 												)}
 											/>
-											<Row
+											<DetailRow
 												label="Updated"
 												value={formatDateTime(
 													partner.updated_at,
 												)}
 											/>
-										</dl>
+										</DetailGrid>
 									</div>
 								)}
 							</CardContent>
@@ -290,14 +291,5 @@ function TabButton({
 		>
 			{children}
 		</button>
-	)
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-	return (
-		<div>
-			<dt className="text-xs text-muted-foreground">{label}</dt>
-			<dd className="pt-1 wrap-break-word">{value || '—'}</dd>
-		</div>
 	)
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
@@ -28,6 +29,7 @@ export const ACTIVE_OPTIONS = [
 ]
 
 export function useAgentsPage() {
+	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const debouncedSearch = useDebouncedValue(search)
 	const [role, setRole] = useState(ALL)
@@ -63,5 +65,6 @@ export function useAgentsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		openAgent: (id: string) => navigate(`/agents/${id}`),
 	}
 }

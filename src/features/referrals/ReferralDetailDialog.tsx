@@ -16,6 +16,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { DetailGrid, DetailRow } from '@/components/DetailList'
 import { useReferralDetailDialog } from './useReferralDetailDialog'
 
 interface Props {
@@ -68,36 +69,42 @@ export function ReferralDetailDialog({ referralId, onOpenChange }: Props) {
 
 						<Separator />
 
-						<dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-							<Row label="Agent" value={data.agent_email} />
-							<Row label="Agent phone" value={data.agent_phone} />
-							<Row label="Partner" value={data.partner_name} />
-							<Row
+						<DetailGrid dense>
+							<DetailRow label="Agent" value={data.agent_email} />
+							<DetailRow
+								label="Agent phone"
+								value={data.agent_phone}
+							/>
+							<DetailRow
+								label="Partner"
+								value={data.partner_name}
+							/>
+							<DetailRow
 								label="Partner email"
 								value={data.partner_email}
 							/>
-							<Row
+							<DetailRow
 								label="Contact (email)"
 								value={data.contact_email}
 							/>
-							<Row
+							<DetailRow
 								label="Contact (phone)"
 								value={data.contact_phone}
 							/>
-							<Row label="Group" value={data.group_name} />
-							<Row
+							<DetailRow label="Group" value={data.group_name} />
+							<DetailRow
 								label="Potential"
 								value={data.potential_value}
 							/>
-							<Row
+							<DetailRow
 								label="Agent income"
 								value={String(data.agent_potential_value)}
 							/>
-							<Row
+							<DetailRow
 								label="Partner income"
 								value={String(data.partner_potential_value)}
 							/>
-						</dl>
+						</DetailGrid>
 
 						<Separator />
 
@@ -153,14 +160,5 @@ export function ReferralDetailDialog({ referralId, onOpenChange }: Props) {
 				)}
 			</DialogContent>
 		</Dialog>
-	)
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-	return (
-		<div>
-			<dt className="text-xs text-muted-foreground">{label}</dt>
-			<dd className="wrap-break-word">{value || '—'}</dd>
-		</div>
 	)
 }

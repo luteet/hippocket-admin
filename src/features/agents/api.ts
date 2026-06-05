@@ -1,5 +1,5 @@
 import { api } from '@/lib/api/client'
-import type { AgentRole, AgentStatus, AgentsData } from '@/types/api'
+import type { Agent, AgentRole, AgentStatus, AgentsData } from '@/types/api'
 
 export interface AgentFilters {
 	offset: number
@@ -22,5 +22,10 @@ export async function listAgents(filters: AgentFilters): Promise<AgentsData> {
 		params.is_active = String(filters.is_active)
 
 	const { data } = await api.get<AgentsData>('/agents/', { params })
+	return data
+}
+
+export async function getAgent(id: string): Promise<Agent> {
+	const { data } = await api.get<Agent>(`/agents/${id}/`)
 	return data
 }

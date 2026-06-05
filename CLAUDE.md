@@ -161,26 +161,26 @@ Read-only `GET`s against any record are fine.
 <Icon name="loader" className="animate-spin" />
 `
 
-            - **Never** import `lucide-react` (it's removed from deps) or hand-write
-              inline `<svg>` in components. Use `<Icon>`.
-            - `name` is the typed `IconName` union in `Icon.tsx` — the editor
-              autocompletes it and rejects typos. Icon ids are kebab-case
-              (`arrow-left`, `chevron-down`, `panel-left-open`); the spinner is `loader`,
-              the success check is `circle-check`.
-            - **Sizing/color match the old Lucide behaviour:** color is inherited
-              `currentColor`; size defaults to 24 but any CSS size wins — a `className`
-              utility (`size-4`, `size-10`), a semantic class (`.nav-link__icon`), or the
-              `.button svg { width: 1rem }` rule inside Buttons. Pass `size-4` etc. just
-              like before.
-            - **Adding a new icon:** copy the inner nodes from the matching
-              [Lucide](https://lucide.dev) glyph into a new `<symbol id="kebab-name"
+                    - **Never** import `lucide-react` (it's removed from deps) or hand-write
+                      inline `<svg>` in components. Use `<Icon>`.
+                    - `name` is the typed `IconName` union in `Icon.tsx` — the editor
+                      autocompletes it and rejects typos. Icon ids are kebab-case
+                      (`arrow-left`, `chevron-down`, `panel-left-open`); the spinner is `loader`,
+                      the success check is `circle-check`.
+                    - **Sizing/color match the old Lucide behaviour:** color is inherited
+                      `currentColor`; size defaults to 24 but any CSS size wins — a `className`
+                      utility (`size-4`, `size-10`), a semantic class (`.nav-link__icon`), or the
+                      `.button svg { width: 1rem }` rule inside Buttons. Pass `size-4` etc. just
+                      like before.
+                    - **Adding a new icon:** copy the inner nodes from the matching
+                      [Lucide](https://lucide.dev) glyph into a new `<symbol id="kebab-name"
 
-    viewBox="0 0 24 24" …>`in`sprites.svg`(keep the
- `stroke`/`stroke-width`/`stroke-linecap`/`stroke-linejoin`attrs), then add
- `'kebab-name'`to the`IconName`union in`Icon.tsx`. Keep the two in sync.
-    - The path is built from `import.meta.env.BASE_URL`, so it survives a
-      non-root Vite `base`. The legacy `public/icons.svg` (social glyphs) is
-      unrelated and unused.
+            viewBox="0 0 24 24" …>`in`sprites.svg`(keep the
+
+        `stroke`/`stroke-width`/`stroke-linecap`/`stroke-linejoin`attrs), then add
+        `'kebab-name'`to the`IconName`union in`Icon.tsx`. Keep the two in sync. - The path is built from `import.meta.env.BASE_URL`, so it survives a
+        non-root Vite `base`. The legacy `public/icons.svg` (social glyphs) is
+        unrelated and unused.
 
 - **Pagination:** list endpoints now wrap rows in
   `{ items, total, offset, count }` (see `PartnersData` / `ReferralListData` /
