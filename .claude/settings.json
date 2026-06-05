@@ -1,17 +1,13 @@
 {
+  "env": {
+    "npm_config_cache": "/tmp/npm-cache-hp"
+  },
   "permissions": {
     "allow": [
-      "Bash(npm run build)",
-      "Bash(npm run lint)",
-      "Bash(npm run dev)",
-      "Bash(npm run format)",
-      "Bash(npm run format:check)",
-      "Bash(npm_config_cache=/tmp/npm-cache-hp npm run build)",
-      "Bash(npm_config_cache=/tmp/npm-cache-hp npm run lint)",
-      "Bash(npm_config_cache=/tmp/npm-cache-hp npm run format)",
-      "Bash(npm_config_cache=/tmp/npm-cache-hp npm run format:check)",
+      "Bash(npm run:*)",
+      "Bash(npm install:*)",
+      "Bash(npm uninstall:*)",
       "Bash(npx prettier:*)",
-      "Bash(npm_config_cache=/tmp/npm-cache-hp npx prettier:*)",
       "Bash(git status)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
@@ -33,11 +29,7 @@
       "Bash(echo:*)",
       "Bash(sed:*)",
       "Bash(perl:*)",
-      "Bash(tr:*)",
-      "Bash(npm uninstall:*)",
-      "Bash(npm install:*)",
-      "Bash(npm_config_cache=/tmp/npm-cache-hp npm uninstall:*)",
-      "Bash(npm_config_cache=/tmp/npm-cache-hp npm install:*)"
+      "Bash(tr:*)"
     ]
   }
 }

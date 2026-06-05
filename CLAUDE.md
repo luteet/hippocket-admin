@@ -71,8 +71,25 @@ Read-only `GET`s against any record are fine.
   Partners/Referrals files as the template for new sections.
 - **Feature structure:** `src/features/<name>/` holds `api.ts`, `hooks.ts`, the
   page, and dialogs. Shared UI lives in `src/components/` (`DataTable`,
-  `ConfirmDialog`, `PageTransition`, `layout/`), shadcn primitives in
-  `src/components/ui/`.
+  `ConfirmDialog`, `PageTransition`, `Field`, `SwitchField`, `SectionTitle`,
+  `TabButton`, `layout/`), shadcn primitives in `src/components/ui/`.
+- **Local presentational sub-components live in their own file, not inline.** A
+  page/form/dialog must NOT define helper components (`function ColorField(…)`,
+  `function RefSelect(…)`, a custom table cell, …) in the same file as its main
+  component. Extract each into its own file and import it:
+    - **Feature-specific** ones → `src/features/<name>/components/<Name>.tsx`
+      (one component per file, named after it). Examples: `groups/components/`
+      (`ColorField`, `AdminMultiSelect`, `ColorRow`), `agents/components/`
+      (`GroupMultiSelect`), `partners/components/` (`RefSelect`, `NumberCell`).
+    - **Reused across features** (the same component duplicated in 2+ features) →
+      promote to `src/components/` as the single source. `Field`, `SwitchField`,
+      `SectionTitle`, and `TabButton` live there for this reason.
+    - A non-component helper that a sub-component needs (e.g. `stopRowClick`)
+      goes in the feature's `.ts` hook file and is imported — never `export`ed
+      from a `.tsx` component file (trips `react-refresh/only-export-components`).
+    - This is about reusable/standalone sub-components. `columns` arrays with
+      inline cell renderers stay in the page file (they're config, not
+      components); a cell that grows into a real component (`NumberCell`) moves out.
 - **Container/hook pattern (component logic lives in a colocated hook):** every
   page/dialog/stateful component keeps its logic in a `use<Component>` hook in a
   sibling file (`useLoginPage.ts`, `usePartnersPage.ts`, `usePartnerForm.ts`,
@@ -86,8 +103,9 @@ Read-only `GET`s against any record are fine.
     - Wrap form submits inside the hook: return `onSubmit = handleSubmit(fn)` so
       the component just does `<form onSubmit={onSubmit}>`.
     - Hook files contain NO JSX (keep them `.ts`). JSX-bearing config that's
-      pure presentation — TanStack Table `columns` with cell renderers, `Field`
-      sub-components — stays in the component file. Schemas, zod-inferred types
+      pure presentation — TanStack Table `columns` with cell renderers — stays in
+      the component file (but see the local-sub-components rule above: reusable or
+      standalone sub-components get their own file). Schemas, zod-inferred types
       (export them), and constants shared with the JSX live in the hook file and
       are imported by the component.
     - Trivial wrappers with only inline navigation handlers and no real state
@@ -190,8 +208,12 @@ Read-only `GET`s against any record are fine.
 
 ## Gotchas
 
-- The local npm cache (`~/.npm`) has root-owned files; run npm with
-  `npm_config_cache=/tmp/npm-cache-hp` to avoid `EACCES`.
+- The local npm cache (`~/.npm`) has root-owned files, which makes npm fail with
+  `EACCES`. `.claude/settings.json` sets `env.npm_config_cache=/tmp/npm-cache-hp`,
+  so inside Claude Code sessions plain `npm …` already uses a writable cache — do
+  NOT prefix commands with `npm_config_cache=…` anymore (the inline prefix also
+  broke permission-allowlist matching). In a manual terminal outside Claude Code,
+  you still need the prefix (or set the env var yourself).
 - `tsconfig` uses TypeScript 6 — `baseUrl` is removed; `paths` resolve without it.
 - `verbatimModuleSyntax` is on — use `import type` for type-only imports.
 - zod v4: don't use `z.coerce.number()` with the RHF resolver (input type
