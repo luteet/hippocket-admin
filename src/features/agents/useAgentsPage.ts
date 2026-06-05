@@ -65,6 +65,7 @@ export function useAgentsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		goToCreate: () => navigate('/agents/new'),
 		openAgent: (id: string) => navigate(`/agents/${id}`),
 	}
 }

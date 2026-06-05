@@ -11,5 +11,6 @@ export function useAgentDetailPage() {
 		agent,
 		isLoading,
 		goBack: () => navigate('/agents'),
+		goToEdit: () => navigate(`/agents/${id}/edit`),
 	}
 }

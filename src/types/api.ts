@@ -178,10 +178,79 @@ export interface Agent {
 	updated_at: string
 }
 
+/**
+ * Payload for creating an agent (POST /agents/). Mirrors the "Create Agent"
+ * example in the Postman collection. Internal counters (count_login, …) and
+ * `password_hash` are server-managed and intentionally omitted.
+ */
+export interface CreateAgentDto {
+	email: string
+	password: string
+	username?: string
+	first_name?: string
+	last_name?: string
+	phone?: string
+	company?: string
+	address?: string
+	role: AgentRole
+	status: AgentStatus
+	is_active: boolean
+	is_hide: boolean
+	is_new_user: boolean
+	default_admin: boolean
+	balance: number
+	balance_coin: number
+	chosen_group_id: number | null
+	group_ids: number[]
+	paypal_data?: string
+	venmo_id?: string
+	cash_app_info?: string
+	zelle?: string
+	license_number?: string
+	referral_code?: string | null
+	pending_email?: string | null
+}
+
+/**
+ * Payload for updating an agent (PUT /agents/{id}/). All fields optional;
+ * `password` is sent only when changing it (omit to keep the current one).
+ * `email` isn't part of the update — it changes via the pending-email flow.
+ */
+export interface UpdateAgentDto {
+	username?: string
+	first_name?: string
+	last_name?: string
+	phone?: string
+	company?: string
+	address?: string
+	role?: AgentRole
+	status?: AgentStatus
+	is_active?: boolean
+	is_new_user?: boolean
+	balance?: number
+	balance_coin?: number
+	chosen_group_id?: number | null
+	group_ids?: number[]
+	paypal_data?: string
+	venmo_id?: string
+	cash_app_info?: string
+	zelle?: string
+	license_number?: string
+	pending_email?: string | null
+	password?: string
+}
+
 export interface Group {
 	id: number
 	name: string
 	slug: string
+}
+
+// Lightweight group option from /refs/groups/ — note the numeric id (unlike the
+// string-id `RefOption` taxonomy lists).
+export interface GroupOption {
+	id: number
+	name: string
 }
 
 export interface ReferralListData {

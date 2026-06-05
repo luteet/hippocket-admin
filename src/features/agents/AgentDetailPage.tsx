@@ -7,24 +7,36 @@ import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DetailGrid, DetailRow } from '@/components/DetailList'
 import { useAgentDetailPage } from './useAgentDetailPage'
-import { formatDateTime, fullName } from './format'
+import { chosenGroupName, formatDateTime, fullName } from './format'
 
 export function AgentDetailPage() {
-	const { agent, isLoading, goBack } = useAgentDetailPage()
+	const { agent, isLoading, goBack, goToEdit } = useAgentDetailPage()
 
 	return (
 		<div>
 			<PageHeader
 				title="Agent"
 				actions={
-					<Button
-						variant="outline"
-						onClick={goBack}
-						aria-label="Back"
-					>
-						<Icon name="arrow-left" />
-						<span className="sm:inline hidden">Back</span>
-					</Button>
+					<>
+						<Button
+							variant="outline"
+							onClick={goBack}
+							aria-label="Back"
+						>
+							<Icon name="arrow-left" />
+							<span className="sm:inline hidden">Back</span>
+						</Button>
+						{agent && (
+							<Button
+								variant="secondary"
+								onClick={goToEdit}
+								aria-label="Edit"
+							>
+								<Icon name="pencil" />
+								<span className="sm:inline hidden">Edit</span>
+							</Button>
+						)}
+					</>
 				}
 			/>
 
@@ -86,6 +98,10 @@ export function AgentDetailPage() {
 								<DetailRow
 									label="Groups"
 									value={agent.group_names.join(', ')}
+								/>
+								<DetailRow
+									label="Chosen group"
+									value={chosenGroupName(agent)}
 								/>
 								<DetailRow
 									label="Balance"

@@ -4,6 +4,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { DataTable } from '@/components/DataTable'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -37,6 +38,7 @@ export function AgentsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		goToCreate,
 		openAgent,
 	} = useAgentsPage()
 
@@ -106,7 +108,16 @@ export function AgentsPage() {
 
 	return (
 		<div>
-			<PageHeader title="Agents" description="Browse registered agents" />
+			<PageHeader
+				title="Agents"
+				description="Browse registered agents"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+			/>
 
 			<div className="mb-4 flex flex-wrap gap-3 flex-col xs2:items-center xs2:flex-row">
 				<div className="relative xs2:max-w-xs flex-1">

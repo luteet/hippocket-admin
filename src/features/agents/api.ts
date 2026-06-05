@@ -1,5 +1,13 @@
 import { api } from '@/lib/api/client'
-import type { Agent, AgentRole, AgentStatus, AgentsData } from '@/types/api'
+import type {
+	Agent,
+	AgentRole,
+	AgentStatus,
+	AgentsData,
+	CreateAgentDto,
+	GroupOption,
+	UpdateAgentDto,
+} from '@/types/api'
 
 export interface AgentFilters {
 	offset: number
@@ -27,5 +35,23 @@ export async function listAgents(filters: AgentFilters): Promise<AgentsData> {
 
 export async function getAgent(id: string): Promise<Agent> {
 	const { data } = await api.get<Agent>(`/agents/${id}/`)
+	return data
+}
+
+export async function createAgent(dto: CreateAgentDto): Promise<Agent> {
+	const { data } = await api.post<Agent>('/agents/', dto)
+	return data
+}
+
+export async function updateAgent(
+	id: string,
+	dto: UpdateAgentDto,
+): Promise<Agent> {
+	const { data } = await api.put<Agent>(`/agents/${id}/`, dto)
+	return data
+}
+
+export async function listGroupRefs(): Promise<GroupOption[]> {
+	const { data } = await api.get<GroupOption[]>('/refs/groups/')
 	return data
 }
