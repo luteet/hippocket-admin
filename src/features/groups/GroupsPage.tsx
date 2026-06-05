@@ -27,6 +27,7 @@ export function GroupsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		openGroup,
 	} = useGroupsPage()
 
 	const columns = useMemo<ColumnDef<Group, unknown>[]>(
@@ -119,6 +120,7 @@ export function GroupsPage() {
 				emptyMessage="No groups found"
 				minWidth="600px"
 				skeletonRows={pagination.count}
+				onRowClick={(g) => openGroup(g.id)}
 				pagination={{
 					page: pagination.page,
 					pageCount: pagination.pageCount(data?.total ?? 0),

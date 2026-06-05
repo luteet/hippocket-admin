@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
@@ -13,6 +14,7 @@ export const DELETED_OPTIONS = [
 ]
 
 export function useGroupsPage() {
+	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const debouncedSearch = useDebouncedValue(search)
 	const [deleted, setDeleted] = useState(ALL)
@@ -40,5 +42,6 @@ export function useGroupsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		openGroup: (id: number) => navigate(`/groups/${id}`),
 	}
 }
