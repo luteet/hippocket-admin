@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useOutlet } from 'react-router'
 
 import type { IconName } from '@/components/Icon'
@@ -54,6 +54,18 @@ export function useAppShell() {
 	>({})
 
 	const pathname = location.pathname
+
+	// On mobile the page scrolls natively, so the drawer's backdrop doesn't
+	// stop the page underneath from scrolling. Lock the body while the drawer
+	// is open (mobile only) and restore the previous overflow on close.
+	useEffect(() => {
+		if (!isMobile || !mobileOpen) return
+		const previous = document.body.style.overflow
+		document.body.style.overflow = 'hidden'
+		return () => {
+			document.body.style.overflow = previous
+		}
+	}, [isMobile, mobileOpen])
 
 	const groupHasActiveRoute = (item: NavItem) =>
 		[item, ...(item.children ?? [])].some(
