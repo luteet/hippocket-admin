@@ -51,6 +51,10 @@ export async function updateAgent(
 	return data
 }
 
+export async function deleteAgent(id: string): Promise<void> {
+	await api.delete(`/agents/${id}/`)
+}
+
 export async function listGroupRefs(): Promise<GroupOption[]> {
 	const { data } = await api.get<GroupOption[]>('/refs/groups/')
 	return data

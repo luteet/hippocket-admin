@@ -5,12 +5,22 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { DetailGrid, DetailRow } from '@/components/DetailList'
 import { useAgentDetailPage } from './useAgentDetailPage'
 import { chosenGroupName, formatDateTime, fullName } from './format'
 
 export function AgentDetailPage() {
-	const { agent, isLoading, goBack, goToEdit } = useAgentDetailPage()
+	const {
+		agent,
+		isLoading,
+		confirmOpen,
+		setConfirmOpen,
+		isDeleting,
+		handleDelete,
+		goBack,
+		goToEdit,
+	} = useAgentDetailPage()
 
 	return (
 		<div>
@@ -27,14 +37,28 @@ export function AgentDetailPage() {
 							<span className="sm:inline hidden">Back</span>
 						</Button>
 						{agent && (
-							<Button
-								variant="secondary"
-								onClick={goToEdit}
-								aria-label="Edit"
-							>
-								<Icon name="pencil" />
-								<span className="sm:inline hidden">Edit</span>
-							</Button>
+							<>
+								<Button
+									variant="secondary"
+									onClick={goToEdit}
+									aria-label="Edit"
+								>
+									<Icon name="pencil" />
+									<span className="sm:inline hidden">
+										Edit
+									</span>
+								</Button>
+								<Button
+									variant="destructive"
+									onClick={() => setConfirmOpen(true)}
+									aria-label="Delete"
+								>
+									<Icon name="trash-2" />
+									<span className="sm:inline hidden">
+										Delete
+									</span>
+								</Button>
+							</>
 						)}
 					</>
 				}
@@ -169,6 +193,17 @@ export function AgentDetailPage() {
 					)}
 				</CardContent>
 			</Card>
+
+			<ConfirmDialog
+				open={confirmOpen}
+				onOpenChange={setConfirmOpen}
+				title="Delete agent?"
+				description={`Agent "${agent?.email ?? ''}" will be permanently deleted.`}
+				confirmLabel="Delete"
+				destructive
+				loading={isDeleting}
+				onConfirm={handleDelete}
+			/>
 		</div>
 	)
 }

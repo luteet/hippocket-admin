@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { CreateAgentDto, UpdateAgentDto } from '@/types/api'
 import {
 	createAgent,
+	deleteAgent,
 	getAgent,
 	listAgents,
 	listGroupRefs,
@@ -40,6 +41,14 @@ export function useUpdateAgent() {
 	return useMutation({
 		mutationFn: ({ id, dto }: { id: string; dto: UpdateAgentDto }) =>
 			updateAgent(id, dto),
+		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+export function useDeleteAgent() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: (id: string) => deleteAgent(id),
 		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
 	})
 }

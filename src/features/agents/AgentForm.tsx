@@ -291,9 +291,9 @@ function GroupMultiSelect({
 }) {
 	const label = selected.length
 		? options
-			.filter((o) => selected.includes(o.id))
-			.map((o) => o.name)
-			.join(', ')
+				.filter((o) => selected.includes(o.id))
+				.map((o) => o.name)
+				.join(', ')
 		: 'Select groups'
 
 	return (
@@ -353,7 +353,7 @@ function SectionTitle({
 	children: ReactNode
 }) {
 	return (
-		<div className={first ? "space-y-8" : "space-y-8 pt-6"}>
+		<div className={first ? 'space-y-8' : 'space-y-8 pt-6'}>
 			{!first && <Separator />}
 			<p className="text-lg font-medium text-muted-foreground">
 				{children}

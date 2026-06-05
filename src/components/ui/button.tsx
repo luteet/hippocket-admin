@@ -19,7 +19,7 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
 	secondary: 'is-secondary',
 	destructive: 'is-destructive',
 	outline: 'is-outline',
-	"outline-2": 'is-outline-2',
+	'outline-2': 'is-outline-2',
 	ghost: 'is-ghost',
 	link: 'is-link',
 }
