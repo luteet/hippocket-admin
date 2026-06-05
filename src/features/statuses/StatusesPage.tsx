@@ -4,6 +4,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { DataTable } from '@/components/DataTable'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
 	Select,
@@ -17,8 +18,16 @@ import type { Status } from '@/types/api'
 import { useStatusesPage } from './useStatusesPage'
 
 export function StatusesPage() {
-	const { search, setSearch, data, isLoading, isFetching, pagination } =
-		useStatusesPage()
+	const {
+		search,
+		setSearch,
+		data,
+		isLoading,
+		isFetching,
+		pagination,
+		goToCreate,
+		openStatus,
+	} = useStatusesPage()
 
 	const columns = useMemo<ColumnDef<Status, unknown>[]>(
 		() => [
@@ -50,6 +59,12 @@ export function StatusesPage() {
 			<PageHeader
 				title="Statuses"
 				description="Browse referral pipeline statuses"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
 			/>
 
 			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
@@ -90,6 +105,7 @@ export function StatusesPage() {
 				emptyMessage="No statuses found"
 				minWidth="480px"
 				skeletonRows={pagination.count}
+				onRowClick={(s) => openStatus(s.id)}
 				pagination={{
 					page: pagination.page,
 					pageCount: pagination.pageCount(data?.total ?? 0),

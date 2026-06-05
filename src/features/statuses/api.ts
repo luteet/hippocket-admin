@@ -1,5 +1,10 @@
 import { api } from '@/lib/api/client'
-import type { StatusData } from '@/types/api'
+import type {
+	CreateStatusDto,
+	Status,
+	StatusData,
+	UpdateStatusDto,
+} from '@/types/api'
 
 export interface StatusFilters {
 	offset: number
@@ -18,4 +23,28 @@ export async function listStatuses(
 
 	const { data } = await api.get<StatusData>('/statuses/', { params })
 	return data
+}
+
+// The API exposes no GET-by-id endpoint for statuses, and the set is small, so
+// fetch the full list and pick the matching record. Returns null when absent.
+export async function getStatus(id: number): Promise<Status | null> {
+	const { items } = await listStatuses({ offset: 0, count: 1000 })
+	return items.find((s) => s.id === id) ?? null
+}
+
+export async function createStatus(dto: CreateStatusDto): Promise<Status> {
+	const { data } = await api.post<Status>('/statuses/', dto)
+	return data
+}
+
+export async function updateStatus(
+	id: number,
+	dto: UpdateStatusDto,
+): Promise<Status> {
+	const { data } = await api.put<Status>(`/statuses/${id}/`, dto)
+	return data
+}
+
+export async function deleteStatus(id: number): Promise<void> {
+	await api.delete(`/statuses/${id}/`)
 }

@@ -11,3 +11,11 @@ export interface Status {
 	label: string
 	priority: number
 }
+
+export interface CreateStatusDto {
+	name: string
+	label: string
+	priority: number
+}
+
+export type UpdateStatusDto = CreateStatusDto

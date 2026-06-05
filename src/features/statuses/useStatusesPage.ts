@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useStatuses } from './hooks'
 
 export function useStatusesPage() {
+	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const debouncedSearch = useDebouncedValue(search)
 	const pagination = usePagination({ count: 20, storageKey: 'statuses' })
@@ -28,5 +30,7 @@ export function useStatusesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		goToCreate: () => navigate('/statuses/new'),
+		openStatus: (id: number) => navigate(`/statuses/${id}`),
 	}
 }
