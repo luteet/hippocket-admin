@@ -34,7 +34,7 @@ function NumberCell({ partner, field, getCell, setCell }: CellProps) {
 		<Input
 			type="number"
 			step="any"
-			className="h-8 w-28"
+			className="h-9 w-28"
 			placeholder="-"
 			value={getCell(partner, field)}
 			onChange={(e) => setCell(partner, field, e.target.value)}
@@ -148,7 +148,7 @@ export function PartnersPage() {
 						}
 					>
 						<SelectTrigger
-							className="h-8 w-28"
+							className="h-9 w-28"
 							onClick={stopRowClick}
 						>
 							<SelectValue />
@@ -225,8 +225,8 @@ export function PartnersPage() {
 				}
 			/>
 
-			<div className="mb-4 flex flex-wrap items-center gap-3">
-				<div className="relative max-w-sm flex-1">
+			<div className="mb-4 flex flex-wrap gap-3 flex-col xs2:items-center xs2:flex-row">
+				<div className="relative xs2:max-w-sm flex-1">
 					<Icon
 						name="search"
 						className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -243,7 +243,7 @@ export function PartnersPage() {
 					value={String(pagination.count)}
 					onValueChange={(v) => pagination.setCount(Number(v))}
 				>
-					<SelectTrigger className="ml-auto w-40">
+					<SelectTrigger className="ml-auto xs2:w-40">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>

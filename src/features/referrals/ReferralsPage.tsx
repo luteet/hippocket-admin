@@ -110,8 +110,8 @@ export function ReferralsPage() {
 				description="Pipeline log requests, statuses, and payouts"
 			/>
 
-			<div className="mb-4 flex flex-wrap items-center gap-3">
-				<div className="relative max-w-xs flex-1">
+			<div className="mb-4 flex flex-wrap gap-3 flex-col xs2:items-center xs2:flex-row">
+				<div className="relative xs2:max-w-xs flex-1">
 					<Icon
 						name="search"
 						className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -125,7 +125,7 @@ export function ReferralsPage() {
 				</div>
 
 				<Select value={statusLabel} onValueChange={setStatusLabel}>
-					<SelectTrigger className="w-44">
+					<SelectTrigger className="xs2:w-44">
 						<SelectValue placeholder="Status" />
 					</SelectTrigger>
 					<SelectContent>
@@ -139,7 +139,7 @@ export function ReferralsPage() {
 				</Select>
 
 				<Select value={isPaid} onValueChange={setIsPaid}>
-					<SelectTrigger className="w-40">
+					<SelectTrigger className="xs2:w-40">
 						<SelectValue placeholder="Payment" />
 					</SelectTrigger>
 					<SelectContent>
@@ -155,7 +155,7 @@ export function ReferralsPage() {
 					value={String(pagination.count)}
 					onValueChange={(v) => pagination.setCount(Number(v))}
 				>
-					<SelectTrigger className="ml-auto w-36">
+					<SelectTrigger className="ml-auto xs2:w-36">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>
@@ -173,6 +173,7 @@ export function ReferralsPage() {
 				data={data?.items ?? []}
 				isLoading={isLoading || isFetching}
 				emptyMessage="No pipeline logs found"
+				minWidth="1200px"
 				skeletonRows={pagination.count}
 				onRowClick={(r) => setOpenId(r.id)}
 				pagination={{
