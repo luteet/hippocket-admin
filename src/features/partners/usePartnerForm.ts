@@ -79,9 +79,9 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 			sms_notifications_enabled:
 				partner?.sms_notifications_enabled ?? false,
 			sms_phone: partner?.sms_phone ?? '',
-			location_id: '',
-			category_id: '',
-			service_id: '',
+			location_id: partner?.location_id ?? '',
+			category_id: partner?.category_id ?? '',
+			service_id: partner?.service_id ?? '',
 		},
 	})
 
@@ -107,9 +107,9 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 				is_hide_for_journey: partner.is_hide_for_journey,
 				sms_notifications_enabled: partner.sms_notifications_enabled,
 				sms_phone: partner.sms_phone,
-				location_id: '',
-				category_id: '',
-				service_id: '',
+				location_id: partner.location_id ?? '',
+				category_id: partner.category_id ?? '',
+				service_id: partner.service_id ?? '',
 			})
 		}
 	}, [partner, reset])
@@ -122,8 +122,8 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 	const categoryId = watch('category_id')
 	const serviceId = watch('service_id')
 
-	// Option lists for the create-only location/category/service selects.
-	// Skip the fetches in edit mode where these fields aren't shown.
+	// Option lists for the location/category/service selects (shown in both
+	// create and edit mode).
 	const { data: locationOptions } = useReferenceOptions(
 		'partner-locations',
 		'/refs/partner-locations/',
@@ -161,6 +161,9 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 						sms_notifications_enabled:
 							values.sms_notifications_enabled,
 						sms_phone: values.sms_phone,
+						location_id: values.location_id || null,
+						category_id: values.category_id || null,
+						service_id: values.service_id || null,
 					},
 				})
 				toast.success('Partner updated')
@@ -184,9 +187,9 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 					is_hide_for_journey: values.is_hide_for_journey,
 					sms_notifications_enabled: values.sms_notifications_enabled,
 					sms_phone: values.sms_phone,
-					location_id: values.location_id || undefined,
-					category_id: values.category_id || undefined,
-					service_id: values.service_id || undefined,
+					location_id: values.location_id || null,
+					category_id: values.category_id || null,
+					service_id: values.service_id || null,
 				})
 				toast.success('Partner created')
 				onSuccess(created)
@@ -198,11 +201,17 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 
 	const isPending = createMut.isPending || updateMut.isPending
 
+	// Creating new reference options isn't supported by the API yet.
+	const handleCreateRef = () => {
+		toast.info('Creating new options is under development')
+	}
+
 	return {
 		isEdit,
 		register,
 		errors,
 		setValue,
+		handleCreateRef,
 		valueType,
 		isHide,
 		isHideForJourney,

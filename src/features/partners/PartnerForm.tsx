@@ -39,6 +39,7 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 		locationOptions,
 		categoryOptions,
 		serviceOptions,
+		handleCreateRef,
 		isPending,
 		onSubmit,
 	} = usePartnerForm({ partner, onSuccess })
@@ -172,43 +173,46 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 				onCheckedChange={(v) => setValue('is_hide_for_journey', v)}
 			/>
 
-			{isEdit ? (
+			{isEdit && (
 				<SwitchField
 					id="is_hide"
 					label="Hidden"
 					checked={isHide}
 					onCheckedChange={(v) => setValue('is_hide', v)}
 				/>
-			) : (
-				<div className="space-y-4 rounded-md border border-dashed border-border p-3">
-					<Field label="Location">
-						<RefSelect
-							value={locationId}
-							options={locationOptions}
-							placeholder="Select a location"
-							onChange={(v) => setValue('location_id', v)}
-						/>
-					</Field>
-					<Field label="Category">
-						<RefSelect
-							value={categoryId}
-							options={categoryOptions}
-							placeholder="Select a category"
-							onChange={(v) => setValue('category_id', v)}
-						/>
-					</Field>
-					<Field label="Service">
-						<RefSelect
-							value={serviceId}
-							options={serviceOptions}
-							placeholder="Select a service"
-							onChange={(v) => setValue('service_id', v)}
-						/>
-					</Field>
-				</div>
 			)}
 
-			<div className="flex justify-end gap-2">
+			<SectionTitle>Taxonomies</SectionTitle>
+
+			<Field label="Location">
+				<RefSelect
+					value={locationId}
+					options={locationOptions}
+					placeholder="Select a location"
+					onChange={(v) => setValue('location_id', v)}
+					onCreate={handleCreateRef}
+				/>
+			</Field>
+			<Field label="Category">
+				<RefSelect
+					value={categoryId}
+					options={categoryOptions}
+					placeholder="Select a category"
+					onChange={(v) => setValue('category_id', v)}
+					onCreate={handleCreateRef}
+				/>
+			</Field>
+			<Field label="Service">
+				<RefSelect
+					value={serviceId}
+					options={serviceOptions}
+					placeholder="Select a service"
+					onChange={(v) => setValue('service_id', v)}
+					onCreate={handleCreateRef}
+				/>
+			</Field>
+
+			<div className="flex justify-end gap-2 pt-4">
 				<Button type="button" variant="outline" onClick={onCancel}>
 					Cancel
 				</Button>
@@ -228,25 +232,57 @@ function RefSelect({
 	options,
 	placeholder,
 	onChange,
+	onCreate,
 }: {
 	value?: string
 	options: RefOption[]
 	placeholder: string
 	onChange: (value: string) => void
+	onCreate: () => void
 }) {
 	return (
-		<Select value={value || undefined} onValueChange={onChange}>
-			<SelectTrigger>
-				<SelectValue placeholder={placeholder} />
-			</SelectTrigger>
-			<SelectContent>
-				{options.map((o) => (
-					<SelectItem key={o.id} value={o.id}>
-						{o.name}
-					</SelectItem>
-				))}
-			</SelectContent>
-		</Select>
+		<div className="flex gap-2">
+			<div className="relative flex-1">
+				<Select value={value || undefined} onValueChange={onChange}>
+					<SelectTrigger
+						className={value ? '[&>span]:pr-8' : undefined}
+					>
+						<SelectValue placeholder={placeholder} />
+					</SelectTrigger>
+					<SelectContent>
+						{options.map((o) => (
+							<SelectItem key={o.id} value={o.id}>
+								{o.name}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+				{value && (
+					<button
+						type="button"
+						aria-label="Clear selection"
+						onPointerDown={(e) => e.stopPropagation()}
+						onClick={(e) => {
+							e.stopPropagation()
+							onChange('')
+						}}
+						className="absolute right-8 top-1/2 -translate-y-1/2 rounded-sm p-1 text-muted-foreground hover:text-foreground"
+					>
+						<Icon name="x" className="size-4" />
+					</button>
+				)}
+			</div>
+			<Button
+				type="button"
+				variant="outline"
+				size="icon"
+				className="h-10 sm2:h-14"
+				aria-label="Create new option"
+				onClick={onCreate}
+			>
+				<Icon name="plus" className="size-4" />
+			</Button>
+		</div>
 	)
 }
 

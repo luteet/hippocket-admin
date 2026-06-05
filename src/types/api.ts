@@ -77,9 +77,9 @@ export interface CreatePartnerDto {
 	sms_phone?: string
 	custom_keywords?: string
 	is_hide_for_journey?: boolean
-	location_id?: string
-	category_id?: string
-	service_id?: string
+	location_id?: string | null
+	category_id?: string | null
+	service_id?: string | null
 }
 
 export interface UpdatePartnerDto {
@@ -101,6 +101,9 @@ export interface UpdatePartnerDto {
 	hippocket_fee?: number
 	sms_notifications_enabled?: boolean
 	sms_phone?: string
+	location_id?: string | null
+	category_id?: string | null
+	service_id?: string | null
 }
 
 export interface PartnerReview {

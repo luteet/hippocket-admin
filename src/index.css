@@ -38,6 +38,7 @@
 	--color-sidebar-ring: var(--sidebar-ring);
 
 	/* Custom breakpoint below Tailwind's sm (640px) */
+	--breakpoint-sm2: 576px;
 	--breakpoint-xs: 420px;
 	--breakpoint-xs2: 360px;
 
