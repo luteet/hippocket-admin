@@ -225,8 +225,8 @@ export function PartnersPage() {
 				}
 			/>
 
-			<div className="mb-4 flex flex-wrap gap-3 flex-col xs2:items-center xs2:flex-row">
-				<div className="relative xs2:max-w-sm flex-1">
+			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
+				<div className="relative sm:max-w-sm flex-1">
 					<Icon
 						name="search"
 						className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -243,7 +243,7 @@ export function PartnersPage() {
 					value={String(pagination.count)}
 					onValueChange={(v) => pagination.setCount(Number(v))}
 				>
-					<SelectTrigger className="ml-auto xs2:w-40">
+					<SelectTrigger className="ml-auto sm:w-40">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>

@@ -119,8 +119,8 @@ export function AgentsPage() {
 				}
 			/>
 
-			<div className="mb-4 flex flex-wrap gap-3 flex-col xs2:items-center xs2:flex-row">
-				<div className="relative xs2:max-w-xs flex-1">
+			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
+				<div className="relative sm:max-w-xs flex-1 min-w-40">
 					<Icon
 						name="search"
 						className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -134,7 +134,7 @@ export function AgentsPage() {
 				</div>
 
 				<Select value={role} onValueChange={setRole}>
-					<SelectTrigger className="xs2:w-36">
+					<SelectTrigger className="sm:w-36">
 						<SelectValue placeholder="Role" />
 					</SelectTrigger>
 					<SelectContent>
@@ -148,7 +148,7 @@ export function AgentsPage() {
 				</Select>
 
 				<Select value={status} onValueChange={setStatus}>
-					<SelectTrigger className="xs2:w-36">
+					<SelectTrigger className="sm:w-36">
 						<SelectValue placeholder="Status" />
 					</SelectTrigger>
 					<SelectContent>
@@ -162,7 +162,7 @@ export function AgentsPage() {
 				</Select>
 
 				<Select value={isActive} onValueChange={setIsActive}>
-					<SelectTrigger className="xs2:w-36">
+					<SelectTrigger className="sm:w-36">
 						<SelectValue placeholder="Active" />
 					</SelectTrigger>
 					<SelectContent>
@@ -178,7 +178,7 @@ export function AgentsPage() {
 					value={String(pagination.count)}
 					onValueChange={(v) => pagination.setCount(Number(v))}
 				>
-					<SelectTrigger className="ml-auto xs2:w-36">
+					<SelectTrigger className="ml-auto sm:w-36">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>

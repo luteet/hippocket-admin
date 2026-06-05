@@ -90,8 +90,8 @@ export function GroupsPage() {
 				}
 			/>
 
-			<div className="mb-4 flex flex-wrap gap-3 flex-col xs2:items-center xs2:flex-row">
-				<div className="relative xs2:max-w-xs flex-1">
+			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
+				<div className="relative sm:max-w-xs flex-1">
 					<Icon
 						name="search"
 						className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -105,7 +105,7 @@ export function GroupsPage() {
 				</div>
 
 				<Select value={deleted} onValueChange={setDeleted}>
-					<SelectTrigger className="xs2:w-36">
+					<SelectTrigger className="sm:w-36">
 						<SelectValue placeholder="Status" />
 					</SelectTrigger>
 					<SelectContent>
@@ -121,7 +121,7 @@ export function GroupsPage() {
 					value={String(pagination.count)}
 					onValueChange={(v) => pagination.setCount(Number(v))}
 				>
-					<SelectTrigger className="ml-auto xs2:w-36">
+					<SelectTrigger className="ml-auto sm:w-36">
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>
