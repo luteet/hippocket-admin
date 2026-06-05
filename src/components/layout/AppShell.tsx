@@ -1,44 +1,16 @@
 import { Suspense } from 'react'
-import { NavLink } from 'react-router'
 import { AnimatePresence } from 'motion/react'
 
 import { Icon } from '@/components/Icon'
-import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { PageTransition } from '@/components/PageTransition'
 import { PageFallback } from '@/components/PageFallback'
 import { Scrollbar } from '@/components/Scrollbar'
-import { useAppShell, type NavItem } from './useAppShell'
-
-// A leaf navigation link. Shared by top-level items and group children
-// (`isSub` switches it to the nested styling).
-function NavItemLink({
-	item,
-	isSub,
-	onNavigate,
-}: {
-	item: NavItem
-	isSub?: boolean
-	onNavigate: () => void
-}) {
-	return (
-		<NavLink
-			to={item.to}
-			onClick={onNavigate}
-			className={({ isActive }) =>
-				cn('nav-link', isSub && 'nav-sublink', isActive && 'is-active')
-			}
-		>
-			{/* Child links drop the icon to save horizontal space. */}
-			{!isSub && <Icon name={item.icon} className="nav-link__icon" />}
-			<span className="nav-link__label">{item.label}</span>
-		</NavLink>
-	)
-}
+import { Sidebar } from './Sidebar'
+import { useAppShell } from './useAppShell'
 
 export function AppShell() {
 	const {
-		logout,
 		pathname,
 		outlet,
 		isMobile,
@@ -47,7 +19,6 @@ export function AppShell() {
 		mobileOpen,
 		openMobile,
 		closeMobile,
-		navItems,
 		isGroupOpen,
 		toggleGroup,
 	} = useAppShell()
@@ -61,109 +32,14 @@ export function AppShell() {
 				onClick={closeMobile}
 			/>
 
-			{/* Sidebar */}
-			<aside
-				className="sidebar"
-				data-collapsed={collapsed}
-				data-open={mobileOpen}
-			>
-				{/* Header: brand + toggles */}
-				<div className="sidebar__header">
-					{!collapsed && <span className="brand">HipPocket</span>}
-					{/* Desktop collapse toggle */}
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={toggleCollapsed}
-						aria-label="Toggle sidebar"
-						className="hidden size-9 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground md:inline-flex"
-					>
-						{collapsed ? (
-							<Icon name="panel-left-open" />
-						) : (
-							<Icon name="panel-left-close" />
-						)}
-					</Button>
-					{/* Mobile close */}
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={closeMobile}
-						aria-label="Close menu"
-						className="ml-auto text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-foreground md:hidden"
-					>
-						<Icon name="x" />
-					</Button>
-				</div>
-
-				<nav className="nav">
-					{navItems.map((item) =>
-						item.children ? (
-							<div
-								key={item.to}
-								className="nav-group"
-								data-open={isGroupOpen(item)}
-							>
-								<div className="nav-group__row">
-									<NavItemLink
-										item={item}
-										onNavigate={closeMobile}
-									/>
-									<button
-										type="button"
-										className="nav-group__toggle"
-										onClick={() => toggleGroup(item)}
-										aria-label={`Toggle ${item.label}`}
-										aria-expanded={isGroupOpen(item)}
-									>
-										<Icon
-											name="chevron-down"
-											className="nav-group__chevron"
-										/>
-									</button>
-								</div>
-								<div className="nav-group__children">
-									<div className="nav-group__children-inner">
-										{item.children.map((child) => (
-											<NavItemLink
-												key={child.to}
-												item={child}
-												isSub
-												onNavigate={closeMobile}
-											/>
-										))}
-									</div>
-								</div>
-							</div>
-						) : (
-							<NavItemLink
-								key={item.to}
-								item={item}
-								onNavigate={closeMobile}
-							/>
-						),
-					)}
-				</nav>
-
-				{/* Logout */}
-				<div className="sidebar__footer">
-					<Button
-						variant="ghost"
-						onClick={logout}
-						className={cn(
-							'w-full gap-3 text-sidebar-foreground/90 hover:bg-sidebar-accent hover:text-sidebar-foreground',
-							collapsed
-								? 'md:justify-center md:px-0'
-								: 'justify-start',
-						)}
-					>
-						<Icon name="log-out" className="size-5 shrink-0" />
-						<span className={cn(collapsed && 'md:hidden')}>
-							Sign out
-						</span>
-					</Button>
-				</div>
-			</aside>
+			<Sidebar
+				collapsed={collapsed}
+				toggleCollapsed={toggleCollapsed}
+				mobileOpen={mobileOpen}
+				closeMobile={closeMobile}
+				isGroupOpen={isGroupOpen}
+				toggleGroup={toggleGroup}
+			/>
 
 			{/* Content */}
 			<div className="content">

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useLocation, useOutlet } from 'react-router'
 
 import type { IconName } from '@/components/Icon'
-import { useAuth } from '@/features/auth/AuthContext'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 // A single navigation entry. A `children` array turns it into a WordPress-style
@@ -39,7 +38,6 @@ export const NAV_ITEMS: NavItem[] = [
 ]
 
 export function useAppShell() {
-	const { logout } = useAuth()
 	const location = useLocation()
 	// On mobile we drop the custom (OverlayScrollbars) scroll in favour of the
 	// native full-page scroll. Mirror the SCSS breakpoint (md = 768px).
@@ -89,7 +87,6 @@ export function useAppShell() {
 		}))
 
 	return {
-		logout,
 		pathname,
 		outlet,
 		isMobile,
@@ -98,7 +95,6 @@ export function useAppShell() {
 		mobileOpen,
 		openMobile: () => setMobileOpen(true),
 		closeMobile: () => setMobileOpen(false),
-		navItems: NAV_ITEMS,
 		isGroupOpen,
 		toggleGroup,
 	}
