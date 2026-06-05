@@ -40,16 +40,7 @@ export function StatusesPage() {
 						{row.original.label}
 					</span>
 				),
-			},
-			{
-				accessorKey: 'priority',
-				header: 'Priority',
-				cell: ({ row }) => (
-					<span className="tabular-nums">
-						{row.original.priority}
-					</span>
-				),
-			},
+			}
 		],
 		[],
 	)
@@ -103,7 +94,7 @@ export function StatusesPage() {
 				data={data?.items ?? []}
 				isLoading={isLoading || isFetching}
 				emptyMessage="No statuses found"
-				minWidth="480px"
+				minWidth="320px"
 				skeletonRows={pagination.count}
 				onRowClick={(s) => openStatus(s.id)}
 				pagination={{
