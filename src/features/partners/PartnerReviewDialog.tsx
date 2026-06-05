@@ -1,5 +1,3 @@
-import { type ReactNode } from 'react'
-
 import { Icon } from '@/components/Icon'
 import {
 	Dialog,
@@ -10,7 +8,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
+import { Field } from '@/components/Field'
 import type { PartnerReview } from '@/types/api'
 import { usePartnerReviewDialog } from './usePartnerReviewDialog'
 
@@ -69,23 +67,5 @@ export function PartnerReviewDialog({
 				</form>
 			</DialogContent>
 		</Dialog>
-	)
-}
-
-function Field({
-	label,
-	error,
-	children,
-}: {
-	label: string
-	error?: string
-	children: ReactNode
-}) {
-	return (
-		<div className="space-y-4">
-			<Label>{label}</Label>
-			{children}
-			{error && <p className="text-xs text-destructive">{error}</p>}
-		</div>
 	)
 }

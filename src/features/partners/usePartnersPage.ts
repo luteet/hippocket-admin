@@ -8,6 +8,10 @@ import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { Partner, UpdatePartnerDto, ValueType } from '@/types/api'
 import { usePartners, useUpdatePartner } from './hooks'
 
+/** Stop row-click navigation when interacting with an inline editor. */
+export const stopRowClick = (e: { stopPropagation: () => void }) =>
+	e.stopPropagation()
+
 /** Partner fields editable inline in the table. */
 export type EditableField =
 	| 'potential_value'

@@ -17,31 +17,8 @@ import {
 } from '@/components/ui/select'
 import { PAGE_SIZE_OPTIONS } from '@/hooks/usePagination'
 import type { Partner } from '@/types/api'
-import { usePartnersPage, type EditableField } from './usePartnersPage'
-
-/** Stop row-click navigation when interacting with an inline editor. */
-const stopRowClick = (e: { stopPropagation: () => void }) => e.stopPropagation()
-
-interface CellProps {
-	partner: Partner
-	field: EditableField
-	getCell: (partner: Partner, field: EditableField) => string
-	setCell: (partner: Partner, field: EditableField, value: string) => void
-}
-
-function NumberCell({ partner, field, getCell, setCell }: CellProps) {
-	return (
-		<Input
-			type="number"
-			step="any"
-			className="h-9 w-28"
-			placeholder="-"
-			value={getCell(partner, field)}
-			onChange={(e) => setCell(partner, field, e.target.value)}
-			onClick={stopRowClick}
-		/>
-	)
-}
+import { usePartnersPage, stopRowClick } from './usePartnersPage'
+import { NumberCell } from './components/NumberCell'
 
 export function PartnersPage() {
 	const {

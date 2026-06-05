@@ -1,4 +1,3 @@
-import { type ReactNode } from 'react'
 import { AnimatePresence } from 'motion/react'
 
 import { Icon } from '@/components/Icon'
@@ -11,8 +10,10 @@ import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { DetailGrid, DetailRow } from '@/components/DetailList'
+import { TabButton } from '@/components/TabButton'
 import { formatDateTime } from '@/lib/format'
 import { useGroupDetailPage } from './useGroupDetailPage'
+import { ColorRow } from './components/ColorRow'
 
 export function GroupDetailPage() {
 	const {
@@ -237,40 +238,5 @@ export function GroupDetailPage() {
 				onConfirm={handleDelete}
 			/>
 		</div>
-	)
-}
-
-function ColorRow({ label, value }: { label: string; value: string }) {
-	return (
-		<DetailRow label={label}>
-			<div className="flex items-center gap-2">
-				<span
-					className="size-5 rounded-full border"
-					style={{ backgroundColor: value }}
-				/>
-				<span className="tabular-nums">{value || '—'}</span>
-			</div>
-		</DetailRow>
-	)
-}
-
-function TabButton({
-	active,
-	onClick,
-	children,
-}: {
-	active: boolean
-	onClick: () => void
-	children: ReactNode
-}) {
-	return (
-		<button
-			type="button"
-			onClick={onClick}
-			data-active={active}
-			className="-mb-px border-b-2 border-transparent px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[active=true]:border-primary data-[active=true]:text-foreground"
-		>
-			{children}
-		</button>
 	)
 }

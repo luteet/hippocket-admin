@@ -1,12 +1,7 @@
-import { type ReactNode } from 'react'
-
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { Switch } from '@/components/ui/switch'
 import {
 	Select,
 	SelectContent,
@@ -14,8 +9,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import type { Partner, RefOption } from '@/types/api'
+import { Field } from '@/components/Field'
+import { SectionTitle } from '@/components/SectionTitle'
+import { SwitchField } from '@/components/SwitchField'
+import type { Partner } from '@/types/api'
 import { usePartnerForm, type PartnerFormValues } from './usePartnerForm'
+import { RefSelect } from './components/RefSelect'
 
 interface Props {
 	partner?: Partner | null
@@ -233,119 +232,5 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 				</Button>
 			</div>
 		</form>
-	)
-}
-
-function RefSelect({
-	value,
-	options,
-	placeholder,
-	onChange,
-	onCreate,
-}: {
-	value?: string
-	options: RefOption[]
-	placeholder: string
-	onChange: (value: string) => void
-	onCreate: () => void
-}) {
-	return (
-		<div className="flex gap-2">
-			<div className="relative flex-1">
-				<Select value={value || undefined} onValueChange={onChange}>
-					<SelectTrigger
-						className={value ? '[&>span]:pr-8' : undefined}
-					>
-						<SelectValue placeholder={placeholder} />
-					</SelectTrigger>
-					<SelectContent>
-						{options.map((o) => (
-							<SelectItem key={o.id} value={o.id}>
-								{o.name}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-				{value && (
-					<button
-						type="button"
-						aria-label="Clear selection"
-						onPointerDown={(e) => e.stopPropagation()}
-						onClick={(e) => {
-							e.stopPropagation()
-							onChange('')
-						}}
-						className="absolute right-8 top-1/2 -translate-y-1/2 rounded-sm p-1 text-muted-foreground hover:text-foreground"
-					>
-						<Icon name="x" className="size-4" />
-					</button>
-				)}
-			</div>
-			<Button
-				type="button"
-				variant="outline"
-				size="icon"
-				className="h-10 sm2:h-14"
-				aria-label="Create new option"
-				onClick={onCreate}
-			>
-				<Icon name="plus" className="size-4" />
-			</Button>
-		</div>
-	)
-}
-
-function SectionTitle({ children }: { children: ReactNode }) {
-	return (
-		<div className="space-y-8 pt-6">
-			<Separator />
-			<p className="text-lg font-medium text-muted-foreground">
-				{children}
-			</p>
-		</div>
-	)
-}
-
-function SwitchField({
-	id,
-	label,
-	checked,
-	onCheckedChange,
-}: {
-	id: string
-	label: string
-	checked: boolean
-	onCheckedChange: (checked: boolean) => void
-}) {
-	return (
-		<Label
-			htmlFor={id}
-			className="flex cursor-pointer items-center justify-between rounded-md border border-border p-4 text-sm"
-		>
-			{label}
-			<Switch
-				id={id}
-				checked={checked}
-				onCheckedChange={onCheckedChange}
-			/>
-		</Label>
-	)
-}
-
-function Field({
-	label,
-	error,
-	children,
-}: {
-	label: string
-	error?: string
-	children: ReactNode
-}) {
-	return (
-		<div className="space-y-3">
-			<Label>{label}</Label>
-			{children}
-			{error && <p className="text-xs text-destructive">{error}</p>}
-		</div>
 	)
 }
