@@ -63,6 +63,11 @@ const AgentEditPage = lazy(() =>
 		default: m.AgentEditPage,
 	})),
 )
+const GroupsPage = lazy(() =>
+	import('@/features/groups/GroupsPage').then((m) => ({
+		default: m.GroupsPage,
+	})),
+)
 // One parameterized page serves the three partner-taxonomy sections; the `kind`
 // prop selects the labels and the `/refs/partner-*` endpoint it reads.
 const ReferenceListPage = lazy(() =>
@@ -104,7 +109,7 @@ function AppRoutes({ location }: { location: Location }) {
 				<Route path="agents/new" element={<AgentCreatePage />} />
 				<Route path="agents/:id" element={<AgentDetailPage />} />
 				<Route path="agents/:id/edit" element={<AgentEditPage />} />
-				<Route path="groups" element={<ComingSoon title="Groups" />} />
+				<Route path="groups" element={<GroupsPage />} />
 				<Route
 					path="statuses"
 					element={<ComingSoon title="Statuses" />}
