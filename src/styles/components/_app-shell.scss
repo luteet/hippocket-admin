@@ -243,15 +243,15 @@
 		//gap: 0.625rem; // 2.5
 		//padding-left: 0.625rem;
 
-		@media (min-width: 768px) {
+		@media (min-width: 48rem) {
 			padding-left: 0;
 		}
 
 		> main {
-			@media (min-width: 768px) {
+			@media (min-width: 48rem) {
 				padding-left: 3rem; // md:gap-12
 			}
-			@media (min-width: 1024px) {
+			@media (min-width: 75rem) {
 				padding-left: 6.25rem; // lg:gap-25
 			}
 		}
@@ -280,11 +280,11 @@
 		padding-bottom: 2.5rem;
 		padding-right: 0.625rem; // pr-2.5
 
-		@media (min-width: 768px) {
+		@media (min-width: 48rem) {
 			padding-top: 4.5rem;
 			padding-right: 3rem; // md:pr-12
 		}
-		@media (min-width: 1024px) {
+		@media (min-width: 75rem) {
 			padding-right: 6.25rem; // lg:pr-25
 		}
 	}
