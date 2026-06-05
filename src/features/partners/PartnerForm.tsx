@@ -216,7 +216,7 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 				<Button
 					type="button"
 					variant="outline"
-					className="flex-auto xs:flex-none"
+					className="flex-auto xs:min-w-32 xs:flex-none"
 					onClick={onCancel}
 				>
 					Cancel
@@ -224,7 +224,7 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 				<Button
 					type="submit"
 					disabled={isPending}
-					className="flex-auto xs:flex-none"
+					className="flex-auto xs:min-w-32 xs:flex-none"
 				>
 					{isPending && (
 						<Icon name="loader" className="animate-spin" />

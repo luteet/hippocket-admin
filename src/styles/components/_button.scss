@@ -85,7 +85,7 @@
 		}
 
 		// No border — a light card surface keeps it distinct on the gray bg.
-		&.is-outline {
+		&.is-outline, &.is-outline-2 {
 			background-color: var(--card);
 			color: inherit;
 			border: 1px solid var(--primary);
@@ -94,6 +94,10 @@
 				background-color: var(--muted);
 				color: var(--foreground);
 			}
+		}
+
+		&.is-outline-2 {
+			border-color: var(--input);
 		}
 
 		&.is-ghost {

@@ -180,20 +180,6 @@ export function AgentForm({ agent, onSuccess, onCancel }: Props) {
 							))}
 						</SelectContent>
 					</Select>
-					{chosenGroupId && (
-						<button
-							type="button"
-							aria-label="Clear selection"
-							onPointerDown={(e) => e.stopPropagation()}
-							onClick={(e) => {
-								e.stopPropagation()
-								setChosenGroup('')
-							}}
-							className="absolute right-8 top-1/2 -translate-y-1/2 rounded-sm p-1 text-muted-foreground hover:text-foreground"
-						>
-							<Icon name="x" className="size-4" />
-						</button>
-					)}
 				</div>
 			</Field>
 
@@ -274,7 +260,7 @@ export function AgentForm({ agent, onSuccess, onCancel }: Props) {
 				<Button
 					type="button"
 					variant="outline"
-					className="flex-auto xs:flex-none"
+					className="flex-auto xs:min-w-32 xs:flex-none"
 					onClick={onCancel}
 				>
 					Cancel
@@ -282,7 +268,7 @@ export function AgentForm({ agent, onSuccess, onCancel }: Props) {
 				<Button
 					type="submit"
 					disabled={isPending}
-					className="flex-auto xs:flex-none"
+					className="flex-auto xs:min-w-32 xs:flex-none"
 				>
 					{isPending && (
 						<Icon name="loader" className="animate-spin" />
@@ -315,8 +301,8 @@ function GroupMultiSelect({
 			<DropdownMenuTrigger asChild>
 				<Button
 					type="button"
-					variant="outline"
-					className="w-full justify-between font-normal"
+					variant="outline-2"
+					className="w-full justify-between text-base font-normal"
 				>
 					<span
 						className={
