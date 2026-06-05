@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
@@ -179,6 +179,18 @@ function AdminMultiSelect({
 	selected: string[]
 	onToggle: (id: string) => void
 }) {
+	const [open, setOpen] = useState(false)
+	const [query, setQuery] = useState('')
+	const searchRef = useRef<HTMLInputElement>(null)
+
+	// Radix Menu auto-focuses the first item on open; move focus to the search
+	// field instead so the user can type immediately.
+	useEffect(() => {
+		if (!open) return
+		const id = requestAnimationFrame(() => searchRef.current?.focus())
+		return () => cancelAnimationFrame(id)
+	}, [open])
+
 	const label = selected.length
 		? options
 				.filter((o) => selected.includes(o.id))
@@ -186,8 +198,22 @@ function AdminMultiSelect({
 				.join(', ')
 		: 'Select admins'
 
+	const filtered = useMemo(() => {
+		const q = query.trim().toLowerCase()
+		if (!q) return options
+		return options.filter((o) =>
+			`${o.email} ${o.name} ${o.id}`.toLowerCase().includes(q),
+		)
+	}, [options, query])
+
 	return (
-		<DropdownMenu>
+		<DropdownMenu
+			open={open}
+			onOpenChange={(next) => {
+				setOpen(next)
+				if (!next) setQuery('')
+			}}
+		>
 			<DropdownMenuTrigger asChild>
 				<Button
 					type="button"
@@ -206,13 +232,30 @@ function AdminMultiSelect({
 					<Icon name="chevron-down" className="size-4 opacity-50" />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="max-h-64 w-(--radix-dropdown-menu-trigger-width) overflow-y-auto">
-				{options.length === 0 ? (
+			<DropdownMenuContent className="max-h-72 w-(--radix-dropdown-menu-trigger-width) overflow-y-auto">
+				<div className="sticky top-0 z-10 -mt-1 bg-popover p-1">
+					<div className="relative">
+						<Icon
+							name="search"
+							className="pointer-events-none absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+						/>
+						<Input
+							ref={searchRef}
+							value={query}
+							onChange={(e) => setQuery(e.target.value)}
+							// Stop the menu's typeahead/navigation from stealing keystrokes.
+							onKeyDown={(e) => e.stopPropagation()}
+							placeholder="Search admins"
+							className="h-8 pl-8 text-sm"
+						/>
+					</div>
+				</div>
+				{filtered.length === 0 ? (
 					<div className="px-2 py-1.5 text-sm text-muted-foreground">
-						No agents
+						{options.length === 0 ? 'No agents' : 'No matches'}
 					</div>
 				) : (
-					options.map((o) => {
+					filtered.map((o) => {
 						const checked = selected.includes(o.id)
 						return (
 							<DropdownMenuItem
