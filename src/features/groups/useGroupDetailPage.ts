@@ -18,6 +18,7 @@ export function useGroupDetailPage() {
 		tab,
 		setTab,
 		goBack: () => navigate('/groups'),
+		goToEdit: () => navigate(`/groups/${id}/edit`),
 		openAgent: (agentId: string) => navigate(`/agents/${agentId}`),
 	}
 }

@@ -4,6 +4,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { DataTable } from '@/components/DataTable'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -28,6 +29,7 @@ export function GroupsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		goToCreate,
 		openGroup,
 	} = useGroupsPage()
 
@@ -77,7 +79,16 @@ export function GroupsPage() {
 
 	return (
 		<div>
-			<PageHeader title="Groups" description="Browse partner groups" />
+			<PageHeader
+				title="Groups"
+				description="Browse partner groups"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+			/>
 
 			<div className="mb-4 flex flex-wrap gap-3 flex-col xs2:items-center xs2:flex-row">
 				<div className="relative xs2:max-w-xs flex-1">

@@ -14,7 +14,7 @@ import { formatDateTime } from '@/lib/format'
 import { useGroupDetailPage } from './useGroupDetailPage'
 
 export function GroupDetailPage() {
-	const { group, isLoading, tab, setTab, goBack, openAgent } =
+	const { group, isLoading, tab, setTab, goBack, goToEdit, openAgent } =
 		useGroupDetailPage()
 
 	return (
@@ -22,14 +22,26 @@ export function GroupDetailPage() {
 			<PageHeader
 				title="Group"
 				actions={
-					<Button
-						variant="outline"
-						onClick={goBack}
-						aria-label="Back"
-					>
-						<Icon name="arrow-left" />
-						<span className="sm:inline hidden">Back</span>
-					</Button>
+					<>
+						<Button
+							variant="outline"
+							onClick={goBack}
+							aria-label="Back"
+						>
+							<Icon name="arrow-left" />
+							<span className="sm:inline hidden">Back</span>
+						</Button>
+						{group && (
+							<Button
+								variant="secondary"
+								onClick={goToEdit}
+								aria-label="Edit"
+							>
+								<Icon name="pencil" />
+								<span className="sm:inline hidden">Edit</span>
+							</Button>
+						)}
+					</>
 				}
 			/>
 

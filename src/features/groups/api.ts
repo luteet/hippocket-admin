@@ -1,5 +1,11 @@
 import { api } from '@/lib/api/client'
-import type { Group, GroupsData } from '@/types/api'
+import type {
+	AgentOption,
+	CreateGroupDto,
+	Group,
+	GroupsData,
+	UpdateGroupDto,
+} from '@/types/api'
 
 export interface GroupFilters {
 	offset: number
@@ -25,5 +31,25 @@ export async function listGroups(filters: GroupFilters): Promise<GroupsData> {
 
 export async function getGroup(id: number): Promise<Group> {
 	const { data } = await api.get<Group>(`/groups/${id}/`)
+	return data
+}
+
+export async function createGroup(dto: CreateGroupDto): Promise<Group> {
+	const { data } = await api.post<Group>('/groups/', dto)
+	return data
+}
+
+export async function updateGroup(
+	id: number,
+	dto: UpdateGroupDto,
+): Promise<Group> {
+	const { data } = await api.put<Group>(`/groups/${id}/`, dto)
+	return data
+}
+
+export async function listAgentRefs(): Promise<AgentOption[]> {
+	const { data } = await api.get<AgentOption[]>('/refs/agents/', {
+		params: { limit: 200 },
+	})
 	return data
 }

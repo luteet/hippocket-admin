@@ -1,6 +1,14 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { getGroup, listGroups, type GroupFilters } from './api'
+import type { CreateGroupDto, UpdateGroupDto } from '@/types/api'
+import {
+	createGroup,
+	getGroup,
+	listAgentRefs,
+	listGroups,
+	updateGroup,
+	type GroupFilters,
+} from './api'
 
 const KEY = 'groups'
 
@@ -16,5 +24,30 @@ export function useGroup(id: number | undefined) {
 		queryKey: [KEY, 'detail', id],
 		queryFn: () => getGroup(id as number),
 		enabled: id !== undefined,
+	})
+}
+
+export function useCreateGroup() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: (dto: CreateGroupDto) => createGroup(dto),
+		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+export function useUpdateGroup() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: ({ id, dto }: { id: number; dto: UpdateGroupDto }) =>
+			updateGroup(id, dto),
+		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+export function useAgentOptions() {
+	return useQuery({
+		queryKey: ['refs', 'agents'],
+		queryFn: listAgentRefs,
+		staleTime: 5 * 60_000,
 	})
 }

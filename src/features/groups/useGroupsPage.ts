@@ -42,6 +42,7 @@ export function useGroupsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		goToCreate: () => navigate('/groups/new'),
 		openGroup: (id: number) => navigate(`/groups/${id}`),
 	}
 }
