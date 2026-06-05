@@ -14,6 +14,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { PAGE_SIZE_OPTIONS } from '@/hooks/usePagination'
+import { formatDateTime } from '@/lib/format'
 import type { Group } from '@/types/api'
 import { useGroupsPage, DELETED_OPTIONS } from './useGroupsPage'
 
@@ -60,6 +61,15 @@ export function GroupsPage() {
 					) : (
 						<Badge variant="success">Active</Badge>
 					),
+			},
+			{
+				accessorKey: 'deleted_at',
+				header: 'Deleted At',
+				cell: ({ row }) => (
+					<span className="text-muted-foreground">
+						{formatDateTime(row.original.deleted_at)}
+					</span>
+				),
 			},
 		],
 		[],
