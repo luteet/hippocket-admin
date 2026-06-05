@@ -28,7 +28,6 @@ export function PartnerReviewsTab({ partnerId }: Props) {
 
 	return (
 		<div className="max-w-2xl space-y-4">
-
 			{isLoading ? (
 				<div className="space-y-3">
 					<Skeleton className="h-24 w-full" />

@@ -122,23 +122,60 @@ export interface CreatePartnerReviewDto {
 
 export type UpdatePartnerReviewDto = CreatePartnerReviewDto
 
+export interface AgentsData {
+	count: number
+	items: Agent[]
+	offset: number
+	total: number
+}
+
+/** Agent's `role` — the kind of account. */
+export type AgentRole = 'source' | 'partner' | 'buyer'
+
+/** Agent's `status` — the sub-type within a role. */
+export type AgentStatus =
+	| 'agent'
+	| 'apartment'
+	| 'real'
+	| 'service'
+	| 'referral'
+
 export interface Agent {
 	id: string
 	email: string
+	username: string
 	first_name: string
 	last_name: string
 	phone: string
+	company: string
+	address: string
+	role: AgentRole
+	status: AgentStatus
 	is_active: boolean
+	is_hide: boolean
+	is_new_user: boolean
+	default_admin: boolean
 	balance: number
 	balance_coin: number
-	chosen_group: string
-}
-
-export interface UpdateAgentDto {
-	first_name?: string
-	last_name?: string
-	phone?: string
-	chosen_group_slug?: string
+	pending_email: string | null
+	chosen_group_id: number | null
+	chosen_group_slug: string | null
+	group_ids: number[]
+	group_names: string[]
+	paypal_data: string
+	venmo_id: string
+	cash_app_info: string
+	zelle: string
+	license_number: string
+	referral_code: string | null
+	count_login: number
+	upload_contact: number
+	count_chat_messages: number
+	/** ISO timestamp; null if the agent has never logged in. */
+	last_login: string | null
+	avatar_url: string | null
+	created_at: string
+	updated_at: string
 }
 
 export interface Group {

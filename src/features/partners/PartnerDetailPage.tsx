@@ -46,9 +46,7 @@ export function PartnerDetailPage() {
 							aria-label="Back"
 						>
 							<Icon name="arrow-left" />
-							<span className="sm:inline hidden">
-								Back
-							</span>
+							<span className="sm:inline hidden">Back</span>
 						</Button>
 						{partner && (
 							<>
@@ -183,11 +181,11 @@ export function PartnerDetailPage() {
 												label="Potential value"
 												value={
 													partner.potential_value !=
-														null
+													null
 														? formatAmount(
-															partner.potential_value,
-															partner.value_type,
-														)
+																partner.potential_value,
+																partner.value_type,
+															)
 														: ''
 												}
 											/>
