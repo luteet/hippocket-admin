@@ -1,0 +1,26 @@
+// Reveal: fade + lift-in used to stagger dashboard blocks on load. CSS-driven
+// (not motion) on purpose — the dashboard renders inside an
+// `<AnimatePresence initial={false}>`, whose PresenceContext cascades and
+// suppresses nested motion mount animations. The per-item stagger comes from
+// `--reveal-delay`, set inline by the <Reveal> component.
+@layer components {
+	.reveal {
+		animation: reveal-in 0.45s ease-out both;
+		animation-delay: var(--reveal-delay, 0s);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.reveal {
+			animation: none;
+		}
+	}
+}
+
+@keyframes reveal-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

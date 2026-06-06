@@ -7,6 +7,7 @@ import { DataTable } from '@/components/DataTable'
 import type { GroupOverview } from '@/types/api'
 import { useDashboardPage } from './useDashboardPage'
 import { StatCard } from './components/StatCard'
+import { Reveal } from './components/Reveal'
 
 const money = (n: number) => `$${n.toFixed(2)}`
 const num = (n: number) => n.toLocaleString('en-US')
@@ -90,46 +91,52 @@ export function DashboardPage() {
 		},
 	]
 
+	// Continuous reveal order: metric cards, then the Financial section, then the
+	// Groups overview — each block delayed a touch more than the last.
+	const financialStart = metrics.length + 1
+	const groupsStart = financialStart + financial.length + 1
+
 	return (
 		<div className="space-y-8">
 			<PageHeader title="Dashboard" description="Platform overview" />
 
 			<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-				{metrics.map((m) => (
-					<StatCard
-						key={m.label}
-						label={m.label}
-						value={m.value}
-						to={m.to}
-					/>
+				{metrics.map((m, i) => (
+					<Reveal key={m.label} index={i}>
+						<StatCard label={m.label} value={m.value} to={m.to} />
+					</Reveal>
 				))}
 			</div>
 
 			<div>
-				<h2 className="mb-3 text-lg font-medium text-muted-foreground">
-					Financial
-				</h2>
+				<Reveal index={metrics.length}>
+					<h2 className="mb-3 text-lg font-medium text-muted-foreground">
+						Financial
+					</h2>
+				</Reveal>
 				<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-					{financial.map((m) => (
-						<StatCard
-							key={m.label}
-							label={m.label}
-							value={m.value}
-						/>
+					{financial.map((m, i) => (
+						<Reveal key={m.label} index={financialStart + i}>
+							<StatCard label={m.label} value={m.value} />
+						</Reveal>
 					))}
 				</div>
 			</div>
 
 			<div>
-				<h2 className="mb-3 text-lg font-medium text-muted-foreground">
-					Groups overview
-				</h2>
-				<DataTable
-					columns={columns}
-					data={stats.groups_overview}
-					emptyMessage="No groups"
-					minWidth="480px"
-				/>
+				<Reveal index={groupsStart}>
+					<h2 className="mb-3 text-lg font-medium text-muted-foreground">
+						Groups overview
+					</h2>
+				</Reveal>
+				<Reveal index={groupsStart + 1}>
+					<DataTable
+						columns={columns}
+						data={stats.groups_overview}
+						emptyMessage="No groups"
+						minWidth="480px"
+					/>
+				</Reveal>
 			</div>
 		</div>
 	)
