@@ -23,7 +23,7 @@ export function PageSizeSelect({
 			value={String(count)}
 			onValueChange={(v) => onCountChange(Number(v))}
 		>
-			<SelectTrigger className={cn('sm:w-36', className)}>
+			<SelectTrigger className={cn('sm:w-38', className)}>
 				<SelectValue />
 			</SelectTrigger>
 			<SelectContent>
