@@ -52,12 +52,12 @@ export const NAV_ITEMS: NavItem[] = [
 		children: [
 			{
 				to: '/ai-chat/messages',
-				label: 'AI Chat Messages',
+				label: 'Messages',
 				icon: 'message-square',
 			},
 			{
 				to: '/ai-chat/sessions',
-				label: 'AI Chat Sessions',
+				label: 'Sessions',
 				icon: 'users',
 			},
 		],
