@@ -20,6 +20,10 @@ export function useGroupsPage() {
 	const [deleted, setDeleted] = useState(ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'groups' })
 
+	// How many popover filters are set — shown as a badge on the Filters button.
+	const activeFilterCount = deleted !== ALL ? 1 : 0
+	const clearFilters = () => setDeleted(ALL)
+
 	// Reset to the first page when any filter changes.
 	useEffect(() => {
 		pagination.reset()
@@ -38,6 +42,8 @@ export function useGroupsPage() {
 		setSearch,
 		deleted,
 		setDeleted,
+		activeFilterCount,
+		clearFilters,
 		data,
 		isLoading,
 		isFetching,

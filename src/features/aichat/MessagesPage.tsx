@@ -2,23 +2,15 @@ import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
-import { PageHeader } from '@/components/layout/PageHeader'
-import { DataTable } from '@/components/DataTable'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
-import { PAGE_SIZE_OPTIONS } from '@/hooks/usePagination'
+import { ListPage } from '@/components/list/ListPage'
+import { FiltersPopover } from '@/components/list/FiltersPopover'
+import { FilterSelect } from '@/components/list/FilterSelect'
 import type { AiMessage } from '@/types/api'
 import { useMessagesPage, ALL, ROLE_OPTIONS } from './useMessagesPage'
 import { formatDateTime, previewContent } from './format'
 import { RoleBadge } from './components/RoleBadge'
-import { SessionSelect } from './components/SessionSelect'
+import { SessionFilter } from './components/SessionFilter'
 
 export function MessagesPage() {
 	const {
@@ -28,6 +20,8 @@ export function MessagesPage() {
 		setRole,
 		sessionId,
 		setSessionId,
+		activeFilterCount,
+		clearFilters,
 		sessionRefs,
 		sessionsLoading,
 		data,
@@ -86,87 +80,46 @@ export function MessagesPage() {
 	)
 
 	return (
-		<div>
-			<PageHeader
-				title="AI Chat Messages"
-				description="Individual messages exchanged with the AI assistant"
-				actions={
-					<Button onClick={goToCreate}>
-						<Icon name="plus" />
-						Add
-					</Button>
-				}
-			/>
-
-			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
-				<div className="relative sm:max-w-xs flex-1 min-w-40">
-					<Icon
-						name="search"
-						className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+		<ListPage
+			title="AI Chat Messages"
+			description="Individual messages exchanged with the AI assistant"
+			actions={
+				<Button onClick={goToCreate}>
+					<Icon name="plus" />
+					Add
+				</Button>
+			}
+			search={search}
+			onSearchChange={setSearch}
+			searchPlaceholder="Search messages…"
+			filters={
+				<FiltersPopover
+					activeCount={activeFilterCount}
+					onClear={clearFilters}
+				>
+					<FilterSelect
+						label="Role"
+						value={role}
+						onChange={setRole}
+						options={ROLE_OPTIONS}
+						allOption={{ value: ALL, label: 'All roles' }}
 					/>
-					<Input
-						placeholder="Search messages…"
-						className="pl-9"
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-					/>
-				</div>
-
-				<Select value={role} onValueChange={setRole}>
-					<SelectTrigger className="sm:w-36">
-						<SelectValue placeholder="Role" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value={ALL}>All roles</SelectItem>
-						{ROLE_OPTIONS.map((o) => (
-							<SelectItem key={o.value} value={o.value}>
-								{o.label}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-
-				<div className="sm:w-64">
-					<SessionSelect
+					<SessionFilter
 						value={sessionId}
 						options={sessionRefs}
 						loading={sessionsLoading}
 						onChange={setSessionId}
-						allOption={{ value: ALL, label: 'All sessions' }}
 					/>
-				</div>
-
-				<Select
-					value={String(pagination.count)}
-					onValueChange={(v) => pagination.setCount(Number(v))}
-				>
-					<SelectTrigger className="ml-auto sm:w-36">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						{PAGE_SIZE_OPTIONS.map((n) => (
-							<SelectItem key={n} value={String(n)}>
-								{n} per page
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			</div>
-
-			<DataTable
-				columns={columns}
-				data={data?.items ?? []}
-				isLoading={isLoading || isFetching}
-				emptyMessage="No messages found"
-				minWidth="900px"
-				skeletonRows={pagination.count}
-				onRowClick={(m) => openMessage(m.id)}
-				pagination={{
-					page: pagination.page,
-					pageCount: pagination.pageCount(data?.total ?? 0),
-					onPageChange: pagination.goTo,
-				}}
-			/>
-		</div>
+				</FiltersPopover>
+			}
+			pagination={pagination}
+			data={data}
+			isLoading={isLoading}
+			isFetching={isFetching}
+			columns={columns}
+			emptyMessage="No messages found"
+			minWidth="900px"
+			onRowClick={(m) => openMessage(m.id)}
+		/>
 	)
 }

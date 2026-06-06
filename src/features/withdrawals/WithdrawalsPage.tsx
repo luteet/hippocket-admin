@@ -3,19 +3,11 @@ import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
-import { PageHeader } from '@/components/layout/PageHeader'
-import { DataTable } from '@/components/DataTable'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
-import { PAGE_SIZE_OPTIONS } from '@/hooks/usePagination'
+import { ListPage } from '@/components/list/ListPage'
+import { FiltersPopover } from '@/components/list/FiltersPopover'
+import { FilterSelect } from '@/components/list/FilterSelect'
 import type { Withdrawal } from '@/types/api'
 import {
 	useWithdrawalsPage,
@@ -38,6 +30,8 @@ export function WithdrawalsPage() {
 		setStatus,
 		method,
 		setMethod,
+		activeFilterCount,
+		clearFilters,
 		data,
 		isLoading,
 		isFetching,
@@ -100,91 +94,47 @@ export function WithdrawalsPage() {
 	)
 
 	return (
-		<div>
-			<PageHeader
-				title="Withdrawals"
-				description="Browse agent withdrawal requests"
-				actions={
-					<Button onClick={goToCreate}>
-						<Icon name="plus" />
-						Add
-					</Button>
-				}
-			/>
-
-			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
-				<div className="relative sm:max-w-xs flex-1 min-w-40">
-					<Icon
-						name="search"
-						className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-					/>
-					<Input
-						placeholder="Search by agent…"
-						className="pl-9"
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-					/>
-				</div>
-
-				<Select value={status} onValueChange={setStatus}>
-					<SelectTrigger className="sm:w-36">
-						<SelectValue placeholder="Status" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value={ALL}>All statuses</SelectItem>
-						{STATUS_OPTIONS.map((o) => (
-							<SelectItem key={o.value} value={o.value}>
-								{o.label}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-
-				<Select value={method} onValueChange={setMethod}>
-					<SelectTrigger className="sm:w-36">
-						<SelectValue placeholder="Method" />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value={ALL}>All methods</SelectItem>
-						{METHOD_OPTIONS.map((o) => (
-							<SelectItem key={o.value} value={o.value}>
-								{o.label}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-
-				<Select
-					value={String(pagination.count)}
-					onValueChange={(v) => pagination.setCount(Number(v))}
+		<ListPage
+			title="Withdrawals"
+			description="Browse agent withdrawal requests"
+			actions={
+				<Button onClick={goToCreate}>
+					<Icon name="plus" />
+					Add
+				</Button>
+			}
+			search={search}
+			onSearchChange={setSearch}
+			searchPlaceholder="Search by agent…"
+			filters={
+				<FiltersPopover
+					activeCount={activeFilterCount}
+					onClear={clearFilters}
 				>
-					<SelectTrigger className="ml-auto sm:w-36">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						{PAGE_SIZE_OPTIONS.map((n) => (
-							<SelectItem key={n} value={String(n)}>
-								{n} per page
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			</div>
-
-			<DataTable
-				columns={columns}
-				data={data?.items ?? []}
-				isLoading={isLoading || isFetching}
-				emptyMessage="No withdrawals found"
-				minWidth="800px"
-				skeletonRows={pagination.count}
-				onRowClick={(w) => openWithdrawal(w.id)}
-				pagination={{
-					page: pagination.page,
-					pageCount: pagination.pageCount(data?.total ?? 0),
-					onPageChange: pagination.goTo,
-				}}
-			/>
-		</div>
+					<FilterSelect
+						label="Status"
+						value={status}
+						onChange={setStatus}
+						options={STATUS_OPTIONS}
+						allOption={{ value: ALL, label: 'All statuses' }}
+					/>
+					<FilterSelect
+						label="Method"
+						value={method}
+						onChange={setMethod}
+						options={METHOD_OPTIONS}
+						allOption={{ value: ALL, label: 'All methods' }}
+					/>
+				</FiltersPopover>
+			}
+			pagination={pagination}
+			data={data}
+			isLoading={isLoading}
+			isFetching={isFetching}
+			columns={columns}
+			emptyMessage="No withdrawals found"
+			minWidth="800px"
+			onRowClick={(w) => openWithdrawal(w.id)}
+		/>
 	)
 }

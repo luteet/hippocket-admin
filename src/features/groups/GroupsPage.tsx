@@ -2,19 +2,11 @@ import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
-import { PageHeader } from '@/components/layout/PageHeader'
-import { DataTable } from '@/components/DataTable'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
-import { PAGE_SIZE_OPTIONS } from '@/hooks/usePagination'
+import { ListPage } from '@/components/list/ListPage'
+import { FiltersPopover } from '@/components/list/FiltersPopover'
+import { FilterSelect } from '@/components/list/FilterSelect'
 import { formatDateTime } from '@/lib/format'
 import type { Group } from '@/types/api'
 import { useGroupsPage, DELETED_OPTIONS } from './useGroupsPage'
@@ -25,6 +17,8 @@ export function GroupsPage() {
 		setSearch,
 		deleted,
 		setDeleted,
+		activeFilterCount,
+		clearFilters,
 		data,
 		isLoading,
 		isFetching,
@@ -78,76 +72,39 @@ export function GroupsPage() {
 	)
 
 	return (
-		<div>
-			<PageHeader
-				title="Groups"
-				description="Browse partner groups"
-				actions={
-					<Button onClick={goToCreate}>
-						<Icon name="plus" />
-						Add
-					</Button>
-				}
-			/>
-
-			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
-				<div className="relative sm:max-w-xs flex-1">
-					<Icon
-						name="search"
-						className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-					/>
-					<Input
-						placeholder="Search groups…"
-						className="pl-9"
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-					/>
-				</div>
-
-				<Select value={deleted} onValueChange={setDeleted}>
-					<SelectTrigger className="sm:w-36">
-						<SelectValue placeholder="Status" />
-					</SelectTrigger>
-					<SelectContent>
-						{DELETED_OPTIONS.map((o) => (
-							<SelectItem key={o.value} value={o.value}>
-								{o.label}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-
-				<Select
-					value={String(pagination.count)}
-					onValueChange={(v) => pagination.setCount(Number(v))}
+		<ListPage
+			title="Groups"
+			description="Browse partner groups"
+			actions={
+				<Button onClick={goToCreate}>
+					<Icon name="plus" />
+					Add
+				</Button>
+			}
+			search={search}
+			onSearchChange={setSearch}
+			searchPlaceholder="Search groups…"
+			filters={
+				<FiltersPopover
+					activeCount={activeFilterCount}
+					onClear={clearFilters}
 				>
-					<SelectTrigger className="ml-auto sm:w-36">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						{PAGE_SIZE_OPTIONS.map((n) => (
-							<SelectItem key={n} value={String(n)}>
-								{n} per page
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			</div>
-
-			<DataTable
-				columns={columns}
-				data={data?.items ?? []}
-				isLoading={isLoading || isFetching}
-				emptyMessage="No groups found"
-				minWidth="600px"
-				skeletonRows={pagination.count}
-				onRowClick={(g) => openGroup(g.id)}
-				pagination={{
-					page: pagination.page,
-					pageCount: pagination.pageCount(data?.total ?? 0),
-					onPageChange: pagination.goTo,
-				}}
-			/>
-		</div>
+					<FilterSelect
+						label="Status"
+						value={deleted}
+						onChange={setDeleted}
+						options={DELETED_OPTIONS}
+					/>
+				</FiltersPopover>
+			}
+			pagination={pagination}
+			data={data}
+			isLoading={isLoading}
+			isFetching={isFetching}
+			columns={columns}
+			emptyMessage="No groups found"
+			minWidth="600px"
+			onRowClick={(g) => openGroup(g.id)}
+		/>
 	)
 }

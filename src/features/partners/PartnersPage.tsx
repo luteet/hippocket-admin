@@ -3,10 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { Icon } from '@/components/Icon'
-import { PageHeader } from '@/components/layout/PageHeader'
-import { DataTable } from '@/components/DataTable'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
 	Select,
@@ -15,7 +12,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { PAGE_SIZE_OPTIONS } from '@/hooks/usePagination'
+import { ListPage } from '@/components/list/ListPage'
 import type { Partner } from '@/types/api'
 import { usePartnersPage, stopRowClick } from './usePartnersPage'
 import { NumberCell } from './components/NumberCell'
@@ -190,97 +187,62 @@ export function PartnersPage() {
 	)
 
 	return (
-		<div className={isDirty ? 'pb-24' : undefined}>
-			<PageHeader
-				title="Partners"
-				description="Manage partners and their fees"
-				actions={
-					<Button onClick={goToCreate}>
-						<Icon name="plus" />
-						Add
-					</Button>
-				}
-			/>
-
-			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
-				<div className="relative sm:max-w-sm flex-1">
-					<Icon
-						name="search"
-						className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-					/>
-					<Input
-						placeholder="Search partners…"
-						className="pl-9"
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-					/>
-				</div>
-
-				<Select
-					value={String(pagination.count)}
-					onValueChange={(v) => pagination.setCount(Number(v))}
-				>
-					<SelectTrigger className="ml-auto sm:w-40">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						{PAGE_SIZE_OPTIONS.map((n) => (
-							<SelectItem key={n} value={String(n)}>
-								{n} per page
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			</div>
-
-			<DataTable
-				columns={columns}
-				data={data?.items ?? []}
-				isLoading={isLoading || isFetching}
-				emptyMessage="No partners found"
-				minWidth="1800px"
-				skeletonRows={pagination.count}
-				onRowClick={(p) => openPartner(p.id)}
-				pagination={{
-					page: pagination.page,
-					pageCount: pagination.pageCount(data?.total ?? 0),
-					onPageChange: pagination.goTo,
-				}}
-			/>
-
-			<AnimatePresence>
-				{isDirty && (
-					<motion.div
-						initial={{ opacity: 0, x: '-50%', y: 24 }}
-						animate={{ opacity: 1, x: '-50%', y: 0 }}
-						exit={{ opacity: 0, x: '-50%', y: 24 }}
-						transition={{ duration: 0.2, ease: 'easeOut' }}
-						className="fixed bottom-6 left-1/2 z-50"
-					>
-						<div className="flex items-center gap-4 rounded-full border border-border bg-card px-5 py-3 shadow-lg">
-							<span className="text-sm text-muted-foreground">
-								{dirtyCount} partner
-								{dirtyCount > 1 ? 's' : ''} changed
-							</span>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={discard}
-								disabled={isSaving}
-							>
-								Discard
-							</Button>
-							<Button
-								size="sm"
-								onClick={handleSaveAll}
-								disabled={isSaving}
-							>
-								{isSaving ? 'Saving…' : 'Save All'}
-							</Button>
-						</div>
-					</motion.div>
-				)}
-			</AnimatePresence>
-		</div>
+		<ListPage
+			title="Partners"
+			description="Manage partners and their fees"
+			actions={
+				<Button onClick={goToCreate}>
+					<Icon name="plus" />
+					Add
+				</Button>
+			}
+			search={search}
+			onSearchChange={setSearch}
+			searchPlaceholder="Search partners…"
+			pagination={pagination}
+			data={data}
+			isLoading={isLoading}
+			isFetching={isFetching}
+			columns={columns}
+			emptyMessage="No partners found"
+			minWidth="1800px"
+			onRowClick={(p) => openPartner(p.id)}
+			className={isDirty ? 'pb-24' : undefined}
+			footer={
+				<AnimatePresence>
+					{isDirty && (
+						<motion.div
+							initial={{ opacity: 0, x: '-50%', y: 24 }}
+							animate={{ opacity: 1, x: '-50%', y: 0 }}
+							exit={{ opacity: 0, x: '-50%', y: 24 }}
+							transition={{ duration: 0.2, ease: 'easeOut' }}
+							className="fixed bottom-6 left-1/2 z-50"
+						>
+							<div className="flex items-center gap-4 rounded-full border border-border bg-card px-5 py-3 shadow-lg">
+								<span className="text-sm text-muted-foreground">
+									{dirtyCount} partner
+									{dirtyCount > 1 ? 's' : ''} changed
+								</span>
+								<Button
+									variant="outline"
+									size="sm"
+									onClick={discard}
+									disabled={isSaving}
+								>
+									Discard
+								</Button>
+								<Button
+									size="sm"
+									onClick={handleSaveAll}
+									disabled={isSaving}
+								>
+									{isSaving ? 'Saving…' : 'Save All'}
+								</Button>
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
+			}
+		/>
 	)
 }

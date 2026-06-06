@@ -17,12 +17,16 @@ export function SessionSelect({
 	loading,
 	onChange,
 	allOption,
+	container,
 }: {
 	value?: string
 	options: AiSession[]
 	loading?: boolean
 	onChange: (value: string) => void
 	allOption?: { value: string; label: string }
+	// Portal target for the dropdown — pass the filters popover body when used
+	// as a list filter so opening it doesn't dismiss the popover.
+	container?: HTMLElement | null
 }) {
 	return (
 		<Select value={value || undefined} onValueChange={onChange}>
@@ -33,7 +37,7 @@ export function SessionSelect({
 					}
 				/>
 			</SelectTrigger>
-			<SelectContent>
+			<SelectContent container={container}>
 				{allOption && (
 					<SelectItem value={allOption.value}>
 						{allOption.label}

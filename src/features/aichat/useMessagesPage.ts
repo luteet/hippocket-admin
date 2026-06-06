@@ -29,6 +29,14 @@ export function useMessagesPage() {
 
 	const { data: sessionRefs, isLoading: sessionsLoading } = useSessionRefs()
 
+	// How many popover filters are set — shown as a badge on the Filters button.
+	const activeFilterCount =
+		(role !== ALL ? 1 : 0) + (sessionId !== ALL ? 1 : 0)
+	const clearFilters = () => {
+		setRole(ALL)
+		setSessionId(ALL)
+	}
+
 	// Reset to the first page when any filter changes.
 	useEffect(() => {
 		pagination.reset()
@@ -50,6 +58,8 @@ export function useMessagesPage() {
 		setRole,
 		sessionId,
 		setSessionId,
+		activeFilterCount,
+		clearFilters,
 		sessionRefs: sessionRefs ?? [],
 		sessionsLoading,
 		data,

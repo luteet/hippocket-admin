@@ -37,6 +37,17 @@ export function useAgentsPage() {
 	const [isActive, setIsActive] = useState(ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'agents' })
 
+	// How many popover filters are set — shown as a badge on the Filters button.
+	const activeFilterCount =
+		(role !== ALL ? 1 : 0) +
+		(status !== ALL ? 1 : 0) +
+		(isActive !== ALL ? 1 : 0)
+	const clearFilters = () => {
+		setRole(ALL)
+		setStatus(ALL)
+		setIsActive(ALL)
+	}
+
 	// Reset to the first page when any filter changes.
 	useEffect(() => {
 		pagination.reset()
@@ -61,6 +72,8 @@ export function useAgentsPage() {
 		setStatus,
 		isActive,
 		setIsActive,
+		activeFilterCount,
+		clearFilters,
 		data,
 		isLoading,
 		isFetching,

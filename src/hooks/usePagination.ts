@@ -69,3 +69,6 @@ export function usePagination({
 
 	return { page, offset, count, goTo, reset, setCount, pageCount }
 }
+
+/** The object returned by `usePagination`. */
+export type Pagination = ReturnType<typeof usePagination>

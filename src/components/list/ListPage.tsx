@@ -1,0 +1,108 @@
+import type { ReactNode } from 'react'
+import type { ColumnDef } from '@tanstack/react-table'
+
+import { PageHeader } from '@/components/layout/PageHeader'
+import { DataTable } from '@/components/DataTable'
+import type { Pagination } from '@/hooks/usePagination'
+import { SearchInput } from './SearchInput'
+import { PageSizeSelect } from './PageSizeSelect'
+
+interface ListPageProps<TData> {
+	// Header
+	title: string
+	description?: string
+	/** Header actions, typically the "Add" button. */
+	actions?: ReactNode
+
+	// Toolbar
+	search: string
+	onSearchChange: (value: string) => void
+	searchPlaceholder?: string
+	/** A <FiltersPopover> with the page's filter fields, if the page has any. */
+	filters?: ReactNode
+
+	// Data + pagination (the usePagination object and the list result)
+	pagination: Pagination
+	data?: { items: TData[]; total: number }
+	isLoading?: boolean
+	isFetching?: boolean
+
+	// Table
+	columns: ColumnDef<TData, unknown>[]
+	emptyMessage?: string
+	minWidth?: string
+	onRowClick?: (row: TData) => void
+
+	/** Extra content after the table (e.g. Partners' sticky save bar). */
+	footer?: ReactNode
+	/** Extra classes on the outer wrapper (e.g. `pb-24` when a footer bar shows). */
+	className?: string
+}
+
+// The shared shell for every list page: a header, a toolbar (search + optional
+// filters popover + page-size select), and a paginated DataTable, all wired to
+// the page's `usePagination` object and `{ items, total }` result. Columns and
+// any filter fields stay in the page file as config; this owns the boilerplate.
+export function ListPage<TData>({
+	title,
+	description,
+	actions,
+	search,
+	onSearchChange,
+	searchPlaceholder,
+	filters,
+	pagination,
+	data,
+	isLoading,
+	isFetching,
+	columns,
+	emptyMessage = 'No data',
+	minWidth,
+	onRowClick,
+	footer,
+	className,
+}: ListPageProps<TData>) {
+	return (
+		<div className={className}>
+			<PageHeader
+				title={title}
+				description={description}
+				actions={actions}
+			/>
+
+			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
+				<SearchInput
+					value={search}
+					onChange={onSearchChange}
+					placeholder={searchPlaceholder}
+					className="sm:max-w-xs flex-1 min-w-40"
+				/>
+
+				<div className="ml-auto flex gap-3">
+					{filters}
+					<PageSizeSelect
+						count={pagination.count}
+						onCountChange={pagination.setCount}
+					/>
+				</div>
+			</div>
+
+			<DataTable
+				columns={columns}
+				data={data?.items ?? []}
+				isLoading={isLoading || isFetching}
+				emptyMessage={emptyMessage}
+				minWidth={minWidth}
+				skeletonRows={pagination.count}
+				onRowClick={onRowClick}
+				pagination={{
+					page: pagination.page,
+					pageCount: pagination.pageCount(data?.total ?? 0),
+					onPageChange: pagination.goTo,
+				}}
+			/>
+
+			{footer}
+		</div>
+	)
+}

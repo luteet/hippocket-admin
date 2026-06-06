@@ -29,6 +29,14 @@ export function useWithdrawalsPage() {
 	const [method, setMethod] = useState(ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'withdrawals' })
 
+	// How many popover filters are set — shown as a badge on the Filters button.
+	const activeFilterCount =
+		(status !== ALL ? 1 : 0) + (method !== ALL ? 1 : 0)
+	const clearFilters = () => {
+		setStatus(ALL)
+		setMethod(ALL)
+	}
+
 	// Reset to the first page when any filter changes.
 	useEffect(() => {
 		pagination.reset()
@@ -50,6 +58,8 @@ export function useWithdrawalsPage() {
 		setStatus,
 		method,
 		setMethod,
+		activeFilterCount,
+		clearFilters,
 		data,
 		isLoading,
 		isFetching,

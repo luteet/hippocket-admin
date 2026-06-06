@@ -40,14 +40,24 @@ export function DatePicker({
 	placeholder = 'Pick a date',
 	container,
 	align = 'start',
+	open: openProp,
+	onOpenChange,
 }: {
 	value: string
 	onChange: (value: string) => void
 	placeholder?: string
 	container?: HTMLElement | null
 	align?: 'start' | 'center' | 'end'
+	/** Optional controlled open state (e.g. coordinated by FiltersPopover). */
+	open?: boolean
+	onOpenChange?: (open: boolean) => void
 }) {
-	const [open, setOpen] = useState(false)
+	const [openState, setOpenState] = useState(false)
+	const open = openProp ?? openState
+	const setOpen = (next: boolean) => {
+		onOpenChange?.(next)
+		if (openProp === undefined) setOpenState(next)
+	}
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>

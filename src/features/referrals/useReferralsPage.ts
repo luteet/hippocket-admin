@@ -35,6 +35,14 @@ export function useReferralsPage() {
 		return map
 	}, [partnerRefs])
 
+	// How many popover filters are set — shown as a badge on the Filters button.
+	const activeFilterCount =
+		(statusLabel !== ALL ? 1 : 0) + (isPaid !== ALL ? 1 : 0)
+	const clearFilters = () => {
+		setStatusLabel(ALL)
+		setIsPaid(ALL)
+	}
+
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,6 +63,8 @@ export function useReferralsPage() {
 		setStatusLabel,
 		isPaid,
 		setIsPaid,
+		activeFilterCount,
+		clearFilters,
 		statuses,
 		statusNameByLabel,
 		partnerIdByName,
