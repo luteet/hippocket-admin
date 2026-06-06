@@ -20,7 +20,7 @@ export function NotFound() {
 						moved.
 					</p>
 					<Button asChild className="mt-2">
-						<Link to="/partners">Back to Partners</Link>
+						<Link to="/">Back to Dashboard</Link>
 					</Button>
 				</CardContent>
 			</Card>

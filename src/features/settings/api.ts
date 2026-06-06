@@ -1,0 +1,177 @@
+import { api } from '@/lib/api/client'
+import type {
+	AdminSettings,
+	CreateFormConfigDto,
+	CreateGroupFormPriceDto,
+	FormConfig,
+	FormConfigData,
+	GroupFormPrice,
+	GroupFormPriceData,
+	LinkName,
+	LinkNameData,
+	LinkNameDto,
+	Statistics,
+	TokenCourse,
+	TokenCourseData,
+	TokenCourseDto,
+	UpdateFormConfigDto,
+	UpdateGroupFormPriceDto,
+	UpdateSettingsDto,
+} from '@/types/api'
+
+// All System (base) endpoints. The four list resources share the
+// `{ items, total, offset, count }` envelope and support `?search=` +
+// offset/count pagination (confirmed against the dev API).
+export interface ListParams {
+	offset: number
+	count: number
+	search?: string
+}
+
+function listParams(params: ListParams): Record<string, string | number> {
+	const query: Record<string, string | number> = {
+		offset: params.offset,
+		count: params.count,
+	}
+	if (params.search) query.search = params.search
+	return query
+}
+
+// --- Settings (singleton) -------------------------------------------------
+export async function getSettings(): Promise<AdminSettings> {
+	const { data } = await api.get<AdminSettings>('/settings/')
+	return data
+}
+
+export async function updateSettings(
+	dto: UpdateSettingsDto,
+): Promise<AdminSettings> {
+	const { data } = await api.put<AdminSettings>('/settings/', dto)
+	return data
+}
+
+// --- Statistics (read-only) -----------------------------------------------
+export async function getStatistics(): Promise<Statistics> {
+	const { data } = await api.get<Statistics>('/statistics/')
+	return data
+}
+
+// --- Token Courses (/coin-courses/) ---------------------------------------
+export async function listTokenCourses(
+	params: ListParams,
+): Promise<TokenCourseData> {
+	const { data } = await api.get<TokenCourseData>('/coin-courses/', {
+		params: listParams(params),
+	})
+	return data
+}
+
+export async function createTokenCourse(
+	dto: TokenCourseDto,
+): Promise<TokenCourse> {
+	const { data } = await api.post<TokenCourse>('/coin-courses/', dto)
+	return data
+}
+
+export async function updateTokenCourse(
+	id: string,
+	dto: TokenCourseDto,
+): Promise<TokenCourse> {
+	const { data } = await api.put<TokenCourse>(`/coin-courses/${id}/`, dto)
+	return data
+}
+
+export async function deleteTokenCourse(id: string): Promise<void> {
+	await api.delete(`/coin-courses/${id}/`)
+}
+
+// --- Link Names (/link-names/) --------------------------------------------
+export async function listLinkNames(params: ListParams): Promise<LinkNameData> {
+	const { data } = await api.get<LinkNameData>('/link-names/', {
+		params: listParams(params),
+	})
+	return data
+}
+
+export async function createLinkName(dto: LinkNameDto): Promise<LinkName> {
+	const { data } = await api.post<LinkName>('/link-names/', dto)
+	return data
+}
+
+export async function updateLinkName(
+	id: string,
+	dto: LinkNameDto,
+): Promise<LinkName> {
+	const { data } = await api.put<LinkName>(`/link-names/${id}/`, dto)
+	return data
+}
+
+export async function deleteLinkName(id: string): Promise<void> {
+	await api.delete(`/link-names/${id}/`)
+}
+
+// --- Form Configurations (/form-configs/) ---------------------------------
+export async function listFormConfigs(
+	params: ListParams,
+): Promise<FormConfigData> {
+	const { data } = await api.get<FormConfigData>('/form-configs/', {
+		params: listParams(params),
+	})
+	return data
+}
+
+export async function getFormConfig(id: string): Promise<FormConfig> {
+	const { data } = await api.get<FormConfig>(`/form-configs/${id}/`)
+	return data
+}
+
+export async function createFormConfig(
+	dto: CreateFormConfigDto,
+): Promise<FormConfig> {
+	const { data } = await api.post<FormConfig>('/form-configs/', dto)
+	return data
+}
+
+export async function updateFormConfig(
+	id: string,
+	dto: UpdateFormConfigDto,
+): Promise<FormConfig> {
+	const { data } = await api.put<FormConfig>(`/form-configs/${id}/`, dto)
+	return data
+}
+
+export async function deleteFormConfig(id: string): Promise<void> {
+	await api.delete(`/form-configs/${id}/`)
+}
+
+// --- Group Form Prices (/group-form-prices/) ------------------------------
+export async function listGroupFormPrices(
+	params: ListParams,
+): Promise<GroupFormPriceData> {
+	const { data } = await api.get<GroupFormPriceData>('/group-form-prices/', {
+		params: listParams(params),
+	})
+	return data
+}
+
+export async function createGroupFormPrice(
+	dto: CreateGroupFormPriceDto,
+): Promise<GroupFormPrice> {
+	const { data } = await api.post<GroupFormPrice>('/group-form-prices/', dto)
+	return data
+}
+
+export async function updateGroupFormPrice(
+	id: string,
+	dto: UpdateGroupFormPriceDto,
+): Promise<GroupFormPrice> {
+	const { data } = await api.put<GroupFormPrice>(
+		`/group-form-prices/${id}/`,
+		dto,
+	)
+	return data
+}
+
+export async function deleteGroupFormPrice(id: string): Promise<void> {
+	await api.delete(`/group-form-prices/${id}/`)
+}

@@ -5,6 +5,7 @@ import { forwardRef, type SVGProps } from 'react'
 export type IconName =
 	| 'search'
 	| 'arrow-left'
+	| 'arrow-right'
 	| 'check'
 	| 'plus'
 	| 'pencil'
@@ -36,6 +37,12 @@ export type IconName =
 	| 'filter'
 	| 'calendar'
 	| 'message-square'
+	| 'layout-dashboard'
+	| 'settings'
+	| 'coins'
+	| 'link'
+	| 'file-text'
+	| 'badge-dollar'
 
 const SPRITE_URL = `${import.meta.env.BASE_URL}img/sprites.svg`
 

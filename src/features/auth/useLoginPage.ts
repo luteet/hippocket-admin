@@ -1,5 +1,3 @@
-import { useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -15,15 +13,8 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>
 
-interface LocationState {
-	from?: { pathname: string }
-}
-
 export function useLoginPage() {
-	const { login, isAuthenticated } = useAuth()
-	const navigate = useNavigate()
-	const location = useLocation()
-	const from = (location.state as LocationState | null)?.from?.pathname ?? '/'
+	const { login } = useAuth()
 
 	const {
 		register,
@@ -34,14 +25,11 @@ export function useLoginPage() {
 		defaultValues: { username: '', password: '' },
 	})
 
-	useEffect(() => {
-		if (isAuthenticated) navigate(from, { replace: true })
-	}, [isAuthenticated, from, navigate])
-
+	// Signing in flips isAuthenticated, which makes Pages swap the login screen
+	// for the admin shell in place — no navigation needed.
 	const onSubmit = handleSubmit(async (values) => {
 		try {
 			await login(values.username, values.password)
-			navigate(from, { replace: true })
 		} catch (error) {
 			toast.error(getApiErrorMessage(error, 'Failed to sign in'))
 		}

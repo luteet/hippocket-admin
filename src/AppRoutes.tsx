@@ -1,5 +1,5 @@
 import { Fragment, lazy, type ComponentType } from 'react'
-import { Navigate, Route, Routes, type Location } from 'react-router'
+import { Route, Routes, type Location } from 'react-router'
 
 import { AppShell } from '@/components/layout/AppShell'
 import { NotFound } from '@/components/layout/NotFound'
@@ -145,6 +145,67 @@ const SessionCreatePage = lazyNamed(
 // `slug` prop selects the labels and which `event` (if any) is pinned.
 const LogsPage = lazyNamed(() => import('@/features/logs/LogsPage'), 'LogsPage')
 
+// System (base): a read-only dashboard, the General settings singleton, and four
+// list-CRUD resources (no detail page — rows open straight into Edit).
+const DashboardPage = lazyNamed(
+	() => import('@/features/settings/dashboard/DashboardPage'),
+	'DashboardPage',
+)
+const GeneralSettingsPage = lazyNamed(
+	() => import('@/features/settings/general/GeneralSettingsPage'),
+	'GeneralSettingsPage',
+)
+const TokenCoursesPage = lazyNamed(
+	() => import('@/features/settings/token-courses/TokenCoursesPage'),
+	'TokenCoursesPage',
+)
+const TokenCourseCreatePage = lazyNamed(
+	() => import('@/features/settings/token-courses/TokenCourseCreatePage'),
+	'TokenCourseCreatePage',
+)
+const TokenCourseEditPage = lazyNamed(
+	() => import('@/features/settings/token-courses/TokenCourseEditPage'),
+	'TokenCourseEditPage',
+)
+const LinkNamesPage = lazyNamed(
+	() => import('@/features/settings/link-names/LinkNamesPage'),
+	'LinkNamesPage',
+)
+const LinkNameCreatePage = lazyNamed(
+	() => import('@/features/settings/link-names/LinkNameCreatePage'),
+	'LinkNameCreatePage',
+)
+const LinkNameEditPage = lazyNamed(
+	() => import('@/features/settings/link-names/LinkNameEditPage'),
+	'LinkNameEditPage',
+)
+const FormConfigsPage = lazyNamed(
+	() => import('@/features/settings/form-configs/FormConfigsPage'),
+	'FormConfigsPage',
+)
+const FormConfigCreatePage = lazyNamed(
+	() => import('@/features/settings/form-configs/FormConfigCreatePage'),
+	'FormConfigCreatePage',
+)
+const FormConfigEditPage = lazyNamed(
+	() => import('@/features/settings/form-configs/FormConfigEditPage'),
+	'FormConfigEditPage',
+)
+const GroupFormPricesPage = lazyNamed(
+	() => import('@/features/settings/group-form-prices/GroupFormPricesPage'),
+	'GroupFormPricesPage',
+)
+const GroupFormPriceCreatePage = lazyNamed(
+	() =>
+		import('@/features/settings/group-form-prices/GroupFormPriceCreatePage'),
+	'GroupFormPriceCreatePage',
+)
+const GroupFormPriceEditPage = lazyNamed(
+	() =>
+		import('@/features/settings/group-form-prices/GroupFormPriceEditPage'),
+	'GroupFormPriceEditPage',
+)
+
 // One parameterized set of pages serves the four partner-taxonomy sections; the
 // `kind` prop selects the labels and the `/catalogs/*` endpoint it reads/writes.
 const ReferenceListPage = lazyNamed(
@@ -180,7 +241,7 @@ const REFERENCE_KINDS = [
 type CrudPages = {
 	List: ComponentType
 	Create?: ComponentType
-	Detail: ComponentType
+	Detail?: ComponentType
 	Edit?: ComponentType
 }
 
@@ -256,6 +317,39 @@ const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
 			Detail: SessionDetailPage,
 		},
 	},
+	// System (base) resources — no detail page: a row opens straight into Edit.
+	{
+		path: 'token-courses',
+		pages: {
+			List: TokenCoursesPage,
+			Create: TokenCourseCreatePage,
+			Edit: TokenCourseEditPage,
+		},
+	},
+	{
+		path: 'link-names',
+		pages: {
+			List: LinkNamesPage,
+			Create: LinkNameCreatePage,
+			Edit: LinkNameEditPage,
+		},
+	},
+	{
+		path: 'form-configs',
+		pages: {
+			List: FormConfigsPage,
+			Create: FormConfigCreatePage,
+			Edit: FormConfigEditPage,
+		},
+	},
+	{
+		path: 'group-form-prices',
+		pages: {
+			List: GroupFormPricesPage,
+			Create: GroupFormPriceCreatePage,
+			Edit: GroupFormPriceEditPage,
+		},
+	},
 ]
 
 // The four CRUD routes for one section. Returned as a Fragment (not a component)
@@ -266,7 +360,7 @@ function crudRoutes(path: string, { List, Create, Detail, Edit }: CrudPages) {
 		<Fragment key={path}>
 			<Route path={path} element={<List />} />
 			{Create && <Route path={`${path}/new`} element={<Create />} />}
-			<Route path={`${path}/:id`} element={<Detail />} />
+			{Detail && <Route path={`${path}/:id`} element={<Detail />} />}
 			{Edit && <Route path={`${path}/:id/edit`} element={<Edit />} />}
 		</Fragment>
 	)
@@ -274,12 +368,16 @@ function crudRoutes(path: string, { List, Create, Detail, Edit }: CrudPages) {
 
 // The authenticated route tree. `location` is passed explicitly so that while
 // this branch is exiting (logout), AnimatePresence keeps rendering the route
-// the user was last on instead of following the URL change to /login.
+// the user was last on instead of following the URL change to the root.
 export function AppRoutes({ location }: { location: Location }) {
 	return (
 		<Routes location={location}>
 			<Route element={<AppShell />}>
-				<Route index element={<Navigate to="/partners" replace />} />
+				{/* Dashboard is the root page (shares the `/` path with the
+				    login screen, which Pages.tsx swaps in when logged out). */}
+				<Route index element={<DashboardPage />} />
+				{/* General settings singleton — the Settings group's own page. */}
+				<Route path="settings" element={<GeneralSettingsPage />} />
 				{CRUD_SECTIONS.map(({ path, pages }) =>
 					crudRoutes(path, pages),
 				)}

@@ -23,6 +23,7 @@ export type NavItem = {
 }
 
 export const NAV_ITEMS: NavItem[] = [
+	{ to: '/', label: 'Dashboard', icon: 'layout-dashboard', end: true },
 	{
 		to: '/partners',
 		label: 'Partners',
@@ -59,6 +60,24 @@ export const NAV_ITEMS: NavItem[] = [
 				to: '/ai-chat/sessions',
 				label: 'Sessions',
 				icon: 'users',
+			},
+		],
+	},
+	{
+		// Parent has its own page (/settings — the General singleton); the rest
+		// of System (base) hangs off it. `end` so it highlights only on /settings.
+		to: '/settings',
+		label: 'Settings',
+		icon: 'settings',
+		end: true,
+		children: [
+			{ to: '/token-courses', label: 'Token Courses', icon: 'coins' },
+			{ to: '/link-names', label: 'Links', icon: 'link' },
+			{ to: '/form-configs', label: 'Forms', icon: 'file-text' },
+			{
+				to: '/group-form-prices',
+				label: 'Form Prices',
+				icon: 'badge-dollar',
 			},
 		],
 	},

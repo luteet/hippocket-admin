@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useLocation } from 'react-router'
+import { useLocation } from 'react-router'
 import { AnimatePresence, motion } from 'motion/react'
 
 import { useAuth } from '@/features/auth/AuthContext'
@@ -34,23 +34,12 @@ export function Pages() {
 					exit={{ opacity: 0 }}
 					transition={AUTH_FADE}
 				>
-					{/* Unauthenticated: only /login exists. Any other path
-					    redirects to /login, normalizing the URL and stashing the
-					    requested path in state.from so useLoginPage can send the
-					    user back there after a successful sign-in. */}
-					<Routes location={location}>
-						<Route path="/login" element={<LoginPage />} />
-						<Route
-							path="*"
-							element={
-								<Navigate
-									to="/login"
-									replace
-									state={{ from: location }}
-								/>
-							}
-						/>
-					</Routes>
+					{/* Unauthenticated: the login screen lives at the root path
+					    (and renders regardless of the current URL). Signing in
+					    flips isAuthenticated, so this swaps to the admin shell in
+					    place — no redirect; whatever path is in the URL is then
+					    rendered by AppRoutes. */}
+					<LoginPage />
 				</motion.div>
 			)}
 		</AnimatePresence>

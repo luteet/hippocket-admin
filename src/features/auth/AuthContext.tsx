@@ -32,10 +32,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		tokenStore.clear()
 		queryClient.clear()
 		setIsAuthenticated(false)
-		// Reset the URL to /login so it doesn't linger on the page the user
-		// signed out from. The exiting admin view keeps rendering its last
-		// route during the fade (AnimatePresence holds the captured element).
-		navigate('/login', { replace: true })
+		// Reset the URL to the root so it doesn't linger on the page the user
+		// signed out from (the login screen lives at `/`). The exiting admin
+		// view keeps rendering its last route during the fade (AnimatePresence
+		// holds the captured element).
+		navigate('/', { replace: true })
 	}, [navigate])
 
 	// React to a forced logout from the axios interceptor (refresh failed).
