@@ -18,6 +18,7 @@ export function NavItemLink({
 	return (
 		<NavLink
 			to={item.to}
+			end={item.end}
 			onClick={onNavigate}
 			className={({ isActive }) =>
 				cn('nav-link', isSub && 'nav-sublink', isActive && 'is-active')

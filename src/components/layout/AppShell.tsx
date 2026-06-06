@@ -21,6 +21,8 @@ export function AppShell() {
 		closeMobile,
 		isGroupOpen,
 		toggleGroup,
+		isGroupActive,
+		selectGroup,
 	} = useAppShell()
 
 	return (
@@ -39,6 +41,8 @@ export function AppShell() {
 				closeMobile={closeMobile}
 				isGroupOpen={isGroupOpen}
 				toggleGroup={toggleGroup}
+				isGroupActive={isGroupActive}
+				selectGroup={selectGroup}
 			/>
 
 			{/* Content */}

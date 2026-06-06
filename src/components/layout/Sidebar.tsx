@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/features/auth/AuthContext'
 import { NavItemLink } from './NavItemLink'
+import { NavGroupButton } from './NavGroupButton'
 import { NAV_ITEMS, type NavItem } from './useAppShell'
 
 export function Sidebar({
@@ -12,6 +13,8 @@ export function Sidebar({
 	closeMobile,
 	isGroupOpen,
 	toggleGroup,
+	isGroupActive,
+	selectGroup,
 }: {
 	collapsed: boolean
 	toggleCollapsed: () => void
@@ -19,6 +22,8 @@ export function Sidebar({
 	closeMobile: () => void
 	isGroupOpen: (item: NavItem) => boolean
 	toggleGroup: (item: NavItem) => void
+	isGroupActive: (item: NavItem) => boolean
+	selectGroup: (item: NavItem) => void
 }) {
 	const { logout } = useAuth()
 	return (
@@ -65,10 +70,21 @@ export function Sidebar({
 							data-open={isGroupOpen(item)}
 						>
 							<div className="nav-group__row">
-								<NavItemLink
-									item={item}
-									onNavigate={closeMobile}
-								/>
+								{item.groupOnly ? (
+									<NavGroupButton
+										item={item}
+										isActive={isGroupActive(item)}
+										onSelect={() => {
+											selectGroup(item)
+											closeMobile()
+										}}
+									/>
+								) : (
+									<NavItemLink
+										item={item}
+										onNavigate={closeMobile}
+									/>
+								)}
 								<button
 									type="button"
 									className="nav-group__toggle"

@@ -32,6 +32,9 @@ export type IconName =
 	| 'map-pin'
 	| 'wrench'
 	| 'loader'
+	| 'scroll-text'
+	| 'filter'
+	| 'calendar'
 
 const SPRITE_URL = `${import.meta.env.BASE_URL}img/sprites.svg`
 

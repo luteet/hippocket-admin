@@ -88,11 +88,16 @@ SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
 const SelectContent = forwardRef<
 	ElementRef<typeof SelectPrimitive.Content>,
-	ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = 'popper', ...props }, ref) => {
+	ComponentPropsWithoutRef<typeof SelectPrimitive.Content> & {
+		// Override the portal target. Defaults to <body>; pass a node inside a
+		// Popover/Dialog so the dropdown is part of that layer's DOM and
+		// interacting with it doesn't read as an "outside" dismissal.
+		container?: HTMLElement | null
+	}
+>(({ className, children, position = 'popper', container, ...props }, ref) => {
 	const closing = useContext(SelectCloseContext)
 	return (
-		<SelectPrimitive.Portal>
+		<SelectPrimitive.Portal container={container}>
 			<SelectPrimitive.Content
 				ref={ref}
 				className={cn(

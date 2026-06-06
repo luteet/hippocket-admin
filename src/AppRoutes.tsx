@@ -113,6 +113,10 @@ const WithdrawalEditPage = lazyNamed(
 	() => import('@/features/withdrawals/WithdrawalEditPage'),
 	'WithdrawalEditPage',
 )
+// One parameterized page serves the three read-only audit-log sections; the
+// `slug` prop selects the labels and which `event` (if any) is pinned.
+const LogsPage = lazyNamed(() => import('@/features/logs/LogsPage'), 'LogsPage')
+
 // One parameterized set of pages serves the four partner-taxonomy sections; the
 // `kind` prop selects the labels and the `/catalogs/*` endpoint it reads/writes.
 const ReferenceListPage = lazyNamed(
@@ -233,6 +237,17 @@ export function AppRoutes({ location }: { location: Location }) {
 				{CRUD_SECTIONS.map(({ path, pages }) =>
 					crudRoutes(path, pages),
 				)}
+				{/* Audit logs: one page, three views. The "all" view sits at
+				    the bare /logs path; the pinned-event views nest under it. */}
+				<Route path="logs" element={<LogsPage slug="all" />} />
+				<Route
+					path="logs/referrals-sent"
+					element={<LogsPage slug="referrals-sent" />}
+				/>
+				<Route
+					path="logs/referrals-closed"
+					element={<LogsPage slug="referrals-closed" />}
+				/>
 				{REFERENCE_KINDS.map((kind) => (
 					<Fragment key={kind}>
 						<Route

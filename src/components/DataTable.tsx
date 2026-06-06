@@ -4,6 +4,7 @@ import {
 	getCoreRowModel,
 	useReactTable,
 	type ColumnDef,
+	type RowData,
 } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import {
@@ -16,6 +17,15 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+
+// Opt-in per-column styling: set `meta: { className }` on a column def to apply
+// a class (e.g. a `min-w-[…]` width) to both its header and body cells.
+declare module '@tanstack/react-table' {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	interface ColumnMeta<TData extends RowData, TValue> {
+		className?: string
+	}
+}
 
 interface PaginationProps {
 	/** Current 0-based page index. */
@@ -115,7 +125,13 @@ export function DataTable<TData>({
 								className="hover:bg-transparent"
 							>
 								{headerGroup.headers.map((header) => (
-									<TableHead key={header.id}>
+									<TableHead
+										key={header.id}
+										className={
+											header.column.columnDef.meta
+												?.className
+										}
+									>
 										{header.isPlaceholder
 											? null
 											: flexRender(
@@ -164,7 +180,13 @@ export function DataTable<TData>({
 									}
 								>
 									{row.getVisibleCells().map((cell) => (
-										<TableCell key={cell.id}>
+										<TableCell
+											key={cell.id}
+											className={
+												cell.column.columnDef.meta
+													?.className
+											}
+										>
 											{flexRender(
 												cell.column.columnDef.cell,
 												cell.getContext(),
