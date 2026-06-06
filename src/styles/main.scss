@@ -73,6 +73,12 @@
 		font-family: 'Readex Pro', ui-sans-serif, system-ui, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
+
+		-webkit-tap-highlight-color: rgba(36, 148, 172, 0.25);
+
+		::selection {
+			background-color: rgba(36, 148, 172, 0.25);
+		}
 	}
 
 	// Pointer cursor on interactive elements (Tailwind v4 preflight defaults to default).
