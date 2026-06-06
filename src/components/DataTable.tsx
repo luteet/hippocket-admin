@@ -147,7 +147,13 @@ export function DataTable<TData>({
 							</TableRow>
 						))}
 					</TableHeader>
-					<TableBody>
+					{/* Re-key so the tbody remounts on each skeleton⇄data swap,
+					    replaying the `.table-fade` opacity transition instead of
+					    snapping between the two states. */}
+					<TableBody
+						key={isLoading ? 'loading' : 'loaded'}
+						className="table-fade"
+					>
 						{isLoading ? (
 							Array.from({ length: skeletonRows }).map((_, i) => (
 								<TableRow

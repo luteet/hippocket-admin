@@ -3,6 +3,7 @@ import { AnimatePresence } from 'motion/react'
 import { Icon } from '@/components/Icon'
 import { PageTransition } from '@/components/PageTransition'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { Reveal } from '@/components/Reveal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -32,200 +33,208 @@ export function GroupDetailPage() {
 
 	return (
 		<div>
-			<PageHeader
-				title="Group"
-				actions={
-					<>
-						<Button
-							variant="outline"
-							onClick={goBack}
-							aria-label="Back"
-						>
-							<Icon name="arrow-left" />
-							<span className="sm:inline hidden">Back</span>
-						</Button>
-						{group && (
-							<>
-								<Button
-									variant="secondary"
-									onClick={goToEdit}
-									aria-label="Edit"
-								>
-									<Icon name="pencil" />
-									<span className="sm:inline hidden">
-										Edit
-									</span>
-								</Button>
-								<Button
-									variant="destructive"
-									onClick={() => setConfirmOpen(true)}
-									aria-label="Delete"
-								>
-									<Icon name="trash-2" />
-									<span className="sm:inline hidden">
-										Delete
-									</span>
-								</Button>
-							</>
-						)}
-					</>
-				}
-			/>
+			<Reveal index={0}>
+				<PageHeader
+					title="Group"
+					actions={
+						<>
+							<Button
+								variant="outline"
+								onClick={goBack}
+								aria-label="Back"
+							>
+								<Icon name="arrow-left" />
+								<span className="sm:inline hidden">Back</span>
+							</Button>
+							{group && (
+								<>
+									<Button
+										variant="secondary"
+										onClick={goToEdit}
+										aria-label="Edit"
+									>
+										<Icon name="pencil" />
+										<span className="sm:inline hidden">
+											Edit
+										</span>
+									</Button>
+									<Button
+										variant="destructive"
+										onClick={() => setConfirmOpen(true)}
+										aria-label="Delete"
+									>
+										<Icon name="trash-2" />
+										<span className="sm:inline hidden">
+											Delete
+										</span>
+									</Button>
+								</>
+							)}
+						</>
+					}
+				/>
+			</Reveal>
 
-			<div className="mb-6 flex gap-1 border-b border-border">
-				<TabButton
-					active={tab === 'general'}
-					onClick={() => setTab('general')}
-				>
-					General
-				</TabButton>
-				<TabButton
-					active={tab === 'theme'}
-					onClick={() => setTab('theme')}
-				>
-					Theme
-				</TabButton>
-			</div>
+			<Reveal index={1}>
+				<div className="mb-6 flex gap-1 border-b border-border">
+					<TabButton
+						active={tab === 'general'}
+						onClick={() => setTab('general')}
+					>
+						General
+					</TabButton>
+					<TabButton
+						active={tab === 'theme'}
+						onClick={() => setTab('theme')}
+					>
+						Theme
+					</TabButton>
+				</div>
 
-			<AnimatePresence mode="wait" initial={false}>
-				<PageTransition key={tab}>
-					<Card className="max-w-2xl">
-						<CardContent className="pt-6">
-							{isLoading || !group ? (
-								<div className="space-y-3">
-									<Skeleton className="h-6 w-1/2" />
-									<Skeleton className="h-5 w-2/3" />
-									<Skeleton className="h-5 w-1/3" />
-								</div>
-							) : tab === 'theme' ? (
-								<DetailGrid>
-									<ColorRow
-										label="Accent"
-										value={group.color_accent}
-									/>
-									<ColorRow
-										label="Primary"
-										value={group.color_primary}
-									/>
-									<ColorRow
-										label="Secondary"
-										value={group.color_secondary}
-									/>
-									<ColorRow
-										label="Secondary (light)"
-										value={group.color_secondary_light}
-									/>
-									<ColorRow
-										label="Text"
-										value={group.color_text}
-									/>
-								</DetailGrid>
-							) : (
-								<div className="space-y-4">
-									<div className="flex items-center justify-between gap-4">
-										<div>
-											<p className="text-xl font-semibold">
-												{group.name}
-											</p>
-											<p className="pt-2 text-sm font-medium text-muted-foreground">
-												{group.slug}
-											</p>
-										</div>
-										{group.is_deleted ? (
-											<Badge variant="destructive">
-												Deleted
-											</Badge>
-										) : (
-											<Badge variant="success">
-												Active
-											</Badge>
-										)}
+				<AnimatePresence mode="wait" initial={false}>
+					<PageTransition key={tab}>
+						<Card className="max-w-2xl">
+							<CardContent className="pt-6">
+								{isLoading || !group ? (
+									<div className="space-y-3">
+										<Skeleton className="h-6 w-1/2" />
+										<Skeleton className="h-5 w-2/3" />
+										<Skeleton className="h-5 w-1/3" />
 									</div>
-
-									<Separator className="mt-8" />
-
-									<DetailGrid className="mt-8">
-										<DetailRow
-											label="Name"
-											value={group.name}
+								) : tab === 'theme' ? (
+									<DetailGrid>
+										<ColorRow
+											label="Accent"
+											value={group.color_accent}
 										/>
-										<DetailRow
-											label="Slug"
-											value={group.slug}
+										<ColorRow
+											label="Primary"
+											value={group.color_primary}
 										/>
-										<DetailRow
-											label="Title logo"
-											value={group.title_logo}
+										<ColorRow
+											label="Secondary"
+											value={group.color_secondary}
 										/>
-										<DetailRow label="Logo">
-											{group.logo_url ? (
-												<a
-													href={group.logo_url}
-													target="_blank"
-													rel="noreferrer"
-													className="text-primary hover:underline"
-												>
-													{group.logo_url}
-												</a>
-											) : (
-												<span className="text-muted-foreground">
-													—
-												</span>
-											)}
-										</DetailRow>
-										<DetailRow
-											label="People"
-											value={String(group.count_people)}
+										<ColorRow
+											label="Secondary (light)"
+											value={group.color_secondary_light}
 										/>
-										<DetailRow
-											label="Closed referrals"
-											value={String(
-												group.count_close_refferals,
-											)}
-										/>
-										<DetailRow label="Admins">
-											{group.admin_ids.length ? (
-												<div className="flex flex-col gap-1">
-													{group.admin_ids.map(
-														(adminId) => (
-															<button
-																key={adminId}
-																type="button"
-																onClick={() =>
-																	openAgent(
-																		adminId,
-																	)
-																}
-																className="text-left text-primary hover:underline"
-															>
-																{adminId}
-															</button>
-														),
-													)}
-												</div>
-											) : (
-												<span className="text-muted-foreground">
-													—
-												</span>
-											)}
-										</DetailRow>
-										<DetailRow
-											label="Deleted"
-											bool={group.is_deleted}
-										/>
-										<DetailRow
-											label="Deleted at"
-											value={formatDateTime(
-												group.deleted_at,
-											)}
+										<ColorRow
+											label="Text"
+											value={group.color_text}
 										/>
 									</DetailGrid>
-								</div>
-							)}
-						</CardContent>
-					</Card>
-				</PageTransition>
-			</AnimatePresence>
+								) : (
+									<div className="space-y-4">
+										<div className="flex items-center justify-between gap-4">
+											<div>
+												<p className="text-xl font-semibold">
+													{group.name}
+												</p>
+												<p className="pt-2 text-sm font-medium text-muted-foreground">
+													{group.slug}
+												</p>
+											</div>
+											{group.is_deleted ? (
+												<Badge variant="destructive">
+													Deleted
+												</Badge>
+											) : (
+												<Badge variant="success">
+													Active
+												</Badge>
+											)}
+										</div>
+
+										<Separator className="mt-8" />
+
+										<DetailGrid className="mt-8">
+											<DetailRow
+												label="Name"
+												value={group.name}
+											/>
+											<DetailRow
+												label="Slug"
+												value={group.slug}
+											/>
+											<DetailRow
+												label="Title logo"
+												value={group.title_logo}
+											/>
+											<DetailRow label="Logo">
+												{group.logo_url ? (
+													<a
+														href={group.logo_url}
+														target="_blank"
+														rel="noreferrer"
+														className="text-primary hover:underline"
+													>
+														{group.logo_url}
+													</a>
+												) : (
+													<span className="text-muted-foreground">
+														—
+													</span>
+												)}
+											</DetailRow>
+											<DetailRow
+												label="People"
+												value={String(
+													group.count_people,
+												)}
+											/>
+											<DetailRow
+												label="Closed referrals"
+												value={String(
+													group.count_close_refferals,
+												)}
+											/>
+											<DetailRow label="Admins">
+												{group.admin_ids.length ? (
+													<div className="flex flex-col gap-1">
+														{group.admin_ids.map(
+															(adminId) => (
+																<button
+																	key={
+																		adminId
+																	}
+																	type="button"
+																	onClick={() =>
+																		openAgent(
+																			adminId,
+																		)
+																	}
+																	className="text-left text-primary hover:underline"
+																>
+																	{adminId}
+																</button>
+															),
+														)}
+													</div>
+												) : (
+													<span className="text-muted-foreground">
+														—
+													</span>
+												)}
+											</DetailRow>
+											<DetailRow
+												label="Deleted"
+												bool={group.is_deleted}
+											/>
+											<DetailRow
+												label="Deleted at"
+												value={formatDateTime(
+													group.deleted_at,
+												)}
+											/>
+										</DetailGrid>
+									</div>
+								)}
+							</CardContent>
+						</Card>
+					</PageTransition>
+				</AnimatePresence>
+			</Reveal>
 
 			<ConfirmDialog
 				open={confirmOpen}

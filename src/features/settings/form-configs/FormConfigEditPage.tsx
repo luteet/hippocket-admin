@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router'
 
 import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { Reveal } from '@/components/Reveal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -18,15 +19,21 @@ export function FormConfigEditPage() {
 
 	return (
 		<div>
-			<PageHeader
-				title="Edit form"
-				actions={
-					<Button variant="outline" onClick={back} aria-label="Back">
-						<Icon name="arrow-left" />
-						<span className="sm:inline hidden">Back</span>
-					</Button>
-				}
-			/>
+			<Reveal index={0}>
+				<PageHeader
+					title="Edit form"
+					actions={
+						<Button
+							variant="outline"
+							onClick={back}
+							aria-label="Back"
+						>
+							<Icon name="arrow-left" />
+							<span className="sm:inline hidden">Back</span>
+						</Button>
+					}
+				/>
+			</Reveal>
 			<Card className="max-w-2xl">
 				<CardContent className="space-y-6 pt-6">
 					{isLoading || !item ? (
@@ -36,7 +43,7 @@ export function FormConfigEditPage() {
 							<Skeleton className="h-12 w-2/3" />
 						</div>
 					) : (
-						<>
+						<Reveal index={1}>
 							<FormConfigForm
 								item={item}
 								onSuccess={back}
@@ -51,7 +58,7 @@ export function FormConfigEditPage() {
 									/>
 								</div>
 							</div>
-						</>
+						</Reveal>
 					)}
 				</CardContent>
 			</Card>

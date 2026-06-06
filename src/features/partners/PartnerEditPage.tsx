@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router'
 
 import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { Reveal } from '@/components/Reveal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -15,19 +16,21 @@ export function PartnerEditPage() {
 
 	return (
 		<div>
-			<PageHeader
-				title="Edit partner"
-				actions={
-					<Button
-						variant="outline"
-						onClick={() => navigate(`/partners/${id}`)}
-						aria-label="Back"
-					>
-						<Icon name="arrow-left" />
-						<span className="sm:inline hidden">Back</span>
-					</Button>
-				}
-			/>
+			<Reveal index={0}>
+				<PageHeader
+					title="Edit partner"
+					actions={
+						<Button
+							variant="outline"
+							onClick={() => navigate(`/partners/${id}`)}
+							aria-label="Back"
+						>
+							<Icon name="arrow-left" />
+							<span className="sm:inline hidden">Back</span>
+						</Button>
+					}
+				/>
+			</Reveal>
 			<Card className="max-w-2xl">
 				<CardContent className="pt-6">
 					{isLoading || !partner ? (
@@ -37,11 +40,13 @@ export function PartnerEditPage() {
 							<Skeleton className="h-12 w-2/3" />
 						</div>
 					) : (
-						<PartnerForm
-							partner={partner}
-							onSuccess={(p) => navigate(`/partners/${p.id}`)}
-							onCancel={() => navigate(`/partners/${id}`)}
-						/>
+						<Reveal index={1}>
+							<PartnerForm
+								partner={partner}
+								onSuccess={(p) => navigate(`/partners/${p.id}`)}
+								onCancel={() => navigate(`/partners/${id}`)}
+							/>
+						</Reveal>
 					)}
 				</CardContent>
 			</Card>

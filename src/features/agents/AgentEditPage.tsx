@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router'
 
 import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { Reveal } from '@/components/Reveal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -15,19 +16,21 @@ export function AgentEditPage() {
 
 	return (
 		<div>
-			<PageHeader
-				title="Edit agent"
-				actions={
-					<Button
-						variant="outline"
-						onClick={() => navigate(`/agents/${id}`)}
-						aria-label="Back"
-					>
-						<Icon name="arrow-left" />
-						<span className="sm:inline hidden">Back</span>
-					</Button>
-				}
-			/>
+			<Reveal index={0}>
+				<PageHeader
+					title="Edit agent"
+					actions={
+						<Button
+							variant="outline"
+							onClick={() => navigate(`/agents/${id}`)}
+							aria-label="Back"
+						>
+							<Icon name="arrow-left" />
+							<span className="sm:inline hidden">Back</span>
+						</Button>
+					}
+				/>
+			</Reveal>
 			<Card className="max-w-2xl">
 				<CardContent className="pt-6">
 					{isLoading || !agent ? (
@@ -37,11 +40,13 @@ export function AgentEditPage() {
 							<Skeleton className="h-12 w-2/3" />
 						</div>
 					) : (
-						<AgentForm
-							agent={agent}
-							onSuccess={(a) => navigate(`/agents/${a.id}`)}
-							onCancel={() => navigate(`/agents/${id}`)}
-						/>
+						<Reveal index={1}>
+							<AgentForm
+								agent={agent}
+								onSuccess={(a) => navigate(`/agents/${a.id}`)}
+								onCancel={() => navigate(`/agents/${id}`)}
+							/>
+						</Reveal>
 					)}
 				</CardContent>
 			</Card>

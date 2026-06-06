@@ -1,5 +1,6 @@
 import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { Reveal } from '@/components/Reveal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -22,45 +23,47 @@ export function SessionDetailPage() {
 
 	return (
 		<div>
-			<PageHeader
-				title="AI Chat Session"
-				actions={
-					<>
-						<Button
-							variant="outline"
-							onClick={goBack}
-							aria-label="Back"
-						>
-							<Icon name="arrow-left" />
-							<span className="sm:inline hidden">Back</span>
-						</Button>
-						{session && (
-							<>
-								<Button
-									variant="secondary"
-									onClick={goToMessages}
-									aria-label="View messages"
-								>
-									<Icon name="message-square" />
-									<span className="sm:inline hidden">
-										Messages
-									</span>
-								</Button>
-								<Button
-									variant="destructive"
-									onClick={() => setConfirmOpen(true)}
-									aria-label="Delete"
-								>
-									<Icon name="trash-2" />
-									<span className="sm:inline hidden">
-										Delete
-									</span>
-								</Button>
-							</>
-						)}
-					</>
-				}
-			/>
+			<Reveal index={0}>
+				<PageHeader
+					title="AI Chat Session"
+					actions={
+						<>
+							<Button
+								variant="outline"
+								onClick={goBack}
+								aria-label="Back"
+							>
+								<Icon name="arrow-left" />
+								<span className="sm:inline hidden">Back</span>
+							</Button>
+							{session && (
+								<>
+									<Button
+										variant="secondary"
+										onClick={goToMessages}
+										aria-label="View messages"
+									>
+										<Icon name="message-square" />
+										<span className="sm:inline hidden">
+											Messages
+										</span>
+									</Button>
+									<Button
+										variant="destructive"
+										onClick={() => setConfirmOpen(true)}
+										aria-label="Delete"
+									>
+										<Icon name="trash-2" />
+										<span className="sm:inline hidden">
+											Delete
+										</span>
+									</Button>
+								</>
+							)}
+						</>
+					}
+				/>
+			</Reveal>
 
 			<Card className="max-w-2xl">
 				<CardContent className="pt-6">
@@ -71,29 +74,34 @@ export function SessionDetailPage() {
 							<Skeleton className="h-5 w-1/3" />
 						</div>
 					) : (
-						<DetailGrid>
-							<DetailRow
-								label="User"
-								value={session.user_email}
-							/>
-							<DetailRow
-								label="User ID"
-								value={session.user_id}
-							/>
-							<DetailRow
-								label="Messages"
-								value={String(session.messages_count)}
-							/>
-							<DetailRow label="Session ID" value={session.id} />
-							<DetailRow
-								label="Created"
-								value={formatDateTime(session.created_at)}
-							/>
-							<DetailRow
-								label="Updated"
-								value={formatDateTime(session.updated_at)}
-							/>
-						</DetailGrid>
+						<Reveal index={1}>
+							<DetailGrid>
+								<DetailRow
+									label="User"
+									value={session.user_email}
+								/>
+								<DetailRow
+									label="User ID"
+									value={session.user_id}
+								/>
+								<DetailRow
+									label="Messages"
+									value={String(session.messages_count)}
+								/>
+								<DetailRow
+									label="Session ID"
+									value={session.id}
+								/>
+								<DetailRow
+									label="Created"
+									value={formatDateTime(session.created_at)}
+								/>
+								<DetailRow
+									label="Updated"
+									value={formatDateTime(session.updated_at)}
+								/>
+							</DetailGrid>
+						</Reveal>
 					)}
 				</CardContent>
 			</Card>

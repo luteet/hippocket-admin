@@ -2,6 +2,7 @@ import { useNavigate, useParams } from 'react-router'
 
 import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
+import { Reveal } from '@/components/Reveal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -15,19 +16,21 @@ export function WithdrawalEditPage() {
 
 	return (
 		<div>
-			<PageHeader
-				title="Edit withdrawal"
-				actions={
-					<Button
-						variant="outline"
-						onClick={() => navigate(`/withdrawals/${id}`)}
-						aria-label="Back"
-					>
-						<Icon name="arrow-left" />
-						<span className="sm:inline hidden">Back</span>
-					</Button>
-				}
-			/>
+			<Reveal index={0}>
+				<PageHeader
+					title="Edit withdrawal"
+					actions={
+						<Button
+							variant="outline"
+							onClick={() => navigate(`/withdrawals/${id}`)}
+							aria-label="Back"
+						>
+							<Icon name="arrow-left" />
+							<span className="sm:inline hidden">Back</span>
+						</Button>
+					}
+				/>
+			</Reveal>
 			<Card className="max-w-2xl">
 				<CardContent className="pt-6">
 					{isLoading ? (
@@ -41,11 +44,15 @@ export function WithdrawalEditPage() {
 							Withdrawal not found
 						</p>
 					) : (
-						<WithdrawalForm
-							withdrawal={withdrawal}
-							onSuccess={(w) => navigate(`/withdrawals/${w.id}`)}
-							onCancel={() => navigate(`/withdrawals/${id}`)}
-						/>
+						<Reveal index={1}>
+							<WithdrawalForm
+								withdrawal={withdrawal}
+								onSuccess={(w) =>
+									navigate(`/withdrawals/${w.id}`)
+								}
+								onCancel={() => navigate(`/withdrawals/${id}`)}
+							/>
+						</Reveal>
 					)}
 				</CardContent>
 			</Card>

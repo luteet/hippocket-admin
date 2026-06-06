@@ -3,6 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { PageHeader } from '@/components/layout/PageHeader'
 import { DataTable } from '@/components/DataTable'
+import { Reveal } from '@/components/Reveal'
 import type { Pagination } from '@/hooks/usePagination'
 import { SearchInput } from './SearchInput'
 import { PageSizeSelect } from './PageSizeSelect'
@@ -64,45 +65,49 @@ export function ListPage<TData>({
 }: ListPageProps<TData>) {
 	return (
 		<div className={className}>
-			<PageHeader
-				title={title}
-				description={description}
-				actions={actions}
-			/>
+			<Reveal index={0}>
+				<PageHeader
+					title={title}
+					description={description}
+					actions={actions}
+				/>
+			</Reveal>
 
-			<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
-				<SearchInput
-					value={search}
-					onChange={onSearchChange}
-					placeholder={searchPlaceholder}
-					className="sm:max-w-xs flex-1 min-w-40"
+			<Reveal index={1}>
+				<div className="mb-4 flex flex-wrap gap-3 flex-col sm:items-center sm:flex-row">
+					<SearchInput
+						value={search}
+						onChange={onSearchChange}
+						placeholder={searchPlaceholder}
+						className="sm:max-w-xs flex-1 min-w-40"
+					/>
+
+					<div className="ml-auto flex gap-3">
+						{filters}
+						<PageSizeSelect
+							count={pagination.count}
+							onCountChange={pagination.setCount}
+						/>
+					</div>
+				</div>
+
+				<DataTable
+					columns={columns}
+					data={data?.items ?? []}
+					isLoading={isLoading || isFetching}
+					emptyMessage={emptyMessage}
+					minWidth={minWidth}
+					skeletonRows={pagination.count}
+					onRowClick={onRowClick}
+					pagination={{
+						page: pagination.page,
+						pageCount: pagination.pageCount(data?.total ?? 0),
+						onPageChange: pagination.goTo,
+					}}
 				/>
 
-				<div className="ml-auto flex gap-3">
-					{filters}
-					<PageSizeSelect
-						count={pagination.count}
-						onCountChange={pagination.setCount}
-					/>
-				</div>
-			</div>
-
-			<DataTable
-				columns={columns}
-				data={data?.items ?? []}
-				isLoading={isLoading || isFetching}
-				emptyMessage={emptyMessage}
-				minWidth={minWidth}
-				skeletonRows={pagination.count}
-				onRowClick={onRowClick}
-				pagination={{
-					page: pagination.page,
-					pageCount: pagination.pageCount(data?.total ?? 0),
-					onPageChange: pagination.goTo,
-				}}
-			/>
-
-			{footer}
+				{footer}
+			</Reveal>
 		</div>
 	)
 }

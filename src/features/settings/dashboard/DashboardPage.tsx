@@ -5,9 +5,9 @@ import { PageHeader } from '@/components/layout/PageHeader'
 import { Skeleton } from '@/components/ui/skeleton'
 import { DataTable } from '@/components/DataTable'
 import type { GroupOverview } from '@/types/api'
+import { Reveal } from '@/components/Reveal'
 import { useDashboardPage } from './useDashboardPage'
 import { StatCard } from './components/StatCard'
-import { Reveal } from './components/Reveal'
 
 const money = (n: number) => `$${n.toFixed(2)}`
 const num = (n: number) => n.toLocaleString('en-US')

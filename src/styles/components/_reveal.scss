@@ -9,8 +9,15 @@
 		animation-delay: var(--reveal-delay, 0s);
 	}
 
+	// Shorter fade for the DataTable body when it swaps between its skeleton and
+	// data states (the consumer re-keys the <tbody> so this replays each swap).
+	.table-fade {
+		animation: reveal-in 0.25s ease-out both;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
-		.reveal {
+		.reveal,
+		.table-fade {
 			animation: none;
 		}
 	}
