@@ -18,6 +18,7 @@ export function NumberCell({ partner, field, getCell, setCell }: CellProps) {
 			placeholder="-"
 			value={getCell(partner, field)}
 			onChange={(e) => setCell(partner, field, e.target.value)}
+			onMouseDown={stopRowClick}
 			onClick={stopRowClick}
 		/>
 	)

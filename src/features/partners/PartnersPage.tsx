@@ -114,24 +114,27 @@ export function PartnersPage() {
 			{
 				accessorKey: 'value_type',
 				header: 'Value type',
+				// The dropdown is portalled to <body>, but React events bubble
+				// through the component tree, so an option click would reach the
+				// row's onClick (→ openPartner). Stop it on a wrapper that sits
+				// above both the trigger and the portalled content in that tree.
 				cell: ({ row }) => (
-					<Select
-						value={getCell(row.original, 'value_type')}
-						onValueChange={(v) =>
-							setCell(row.original, 'value_type', v)
-						}
-					>
-						<SelectTrigger
-							className="h-9 w-28"
-							onClick={stopRowClick}
+					<div onMouseDown={stopRowClick} onClick={stopRowClick}>
+						<Select
+							value={getCell(row.original, 'value_type')}
+							onValueChange={(v) =>
+								setCell(row.original, 'value_type', v)
+							}
 						>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="money">Money</SelectItem>
-							<SelectItem value="tokens">Tokens</SelectItem>
-						</SelectContent>
-					</Select>
+							<SelectTrigger className="h-9 w-28">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="money">Money</SelectItem>
+								<SelectItem value="tokens">Tokens</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 				),
 			},
 			{

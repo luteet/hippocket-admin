@@ -97,7 +97,10 @@ export function DataTable<TData>({
 	// Where the press started — used to tell a real click apart from a drag
 	// (e.g. selecting text in an inline input). A drag releasing on the row
 	// fires `click` on the row, so without this it would navigate. We only
-	// trigger onRowClick when the pointer barely moved between down and up.
+	// trigger onRowClick for a genuine press-release on the row: the press must
+	// have been recorded here (a control that stops its own mousedown — an inline
+	// Select/Input — clears it, so its clicks, and any stray click an overlay
+	// fires on close, never navigate) and the pointer must have barely moved.
 	const downPos = useRef<{ x: number; y: number } | null>(null)
 
 	const handleRowClick = onRowClick
@@ -105,7 +108,7 @@ export function DataTable<TData>({
 				const start = downPos.current
 				downPos.current = null
 				if (
-					start &&
+					!start ||
 					Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
 				) {
 					return

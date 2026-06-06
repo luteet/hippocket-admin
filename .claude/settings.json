@@ -1,39 +1,42 @@
 {
-  "env": {
-    "npm_config_cache": "/tmp/npm-cache-hp"
-  },
-  "permissions": {
-    "allow": [
-      "Bash(npm run:*)",
-      "Bash(npm install:*)",
-      "Bash(npm uninstall:*)",
-      "Bash(npx prettier:*)",
-      "Bash(git status)",
-      "Bash(git status:*)",
-      "Bash(git diff:*)",
-      "Bash(git log:*)",
-      "Bash(git show:*)",
-      "Bash(git branch:*)",
-      "Bash(git add:*)",
-      "Bash(git stash:*)",
-      "Bash(ls:*)",
-      "Bash(cat:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
-      "Bash(find:*)",
-      "Bash(grep:*)",
-      "Bash(rg:*)",
-      "Bash(rm:*)",
-      "Bash(rmdir:*)",
-      "Bash(mkdir:*)",
-      "Bash(awk:*)",
-      "Bash(python3:*)",
-      "Bash(cd:*)",
-      "Bash(curl:*)",
-      "Bash(echo:*)",
-      "Bash(sed:*)",
-      "Bash(perl:*)",
-      "Bash(tr:*)"
-    ]
-  }
+    "env": {
+        "npm_config_cache": "/tmp/npm-cache-hp"
+    },
+    "permissions": {
+        "allow": [
+            "Bash(npm run:*)",
+            "Bash(npm install:*)",
+            "Bash(npm uninstall:*)",
+            "Bash(npx prettier:*)",
+            "Bash(git status)",
+            "Bash(git status:*)",
+            "Bash(git diff:*)",
+            "Bash(git log:*)",
+            "Bash(git show:*)",
+            "Bash(git branch:*)",
+            "Bash(git add:*)",
+            "Bash(git stash:*)",
+            "Bash(ls:*)",
+            "Bash(cat:*)",
+            "Bash(head:*)",
+            "Bash(tail:*)",
+            "Bash(find:*)",
+            "Bash(grep:*)",
+            "Bash(rg:*)",
+            "Bash(rm:*)",
+            "Bash(rmdir:*)",
+            "Bash(mkdir:*)",
+            "Bash(awk:*)",
+            "Bash(python3:*)",
+            "Bash(cd:*)",
+            "Bash(curl:*)",
+            "Bash(echo:*)",
+            "Bash(sed:*)",
+            "Bash(perl:*)",
+            "Bash(tr:*)",
+            "Bash(node:*)",
+            "Bash(pkill:*)",
+            "Bash(cp:*)"
+        ]
+    }
 }
