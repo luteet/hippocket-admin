@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
@@ -7,12 +8,12 @@ import { usePartnerRefs, useReferrals, useStatuses } from './hooks'
 export const ALL = '__all__'
 
 export function useReferralsPage() {
+	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const debouncedSearch = useDebouncedValue(search)
 	const [statusLabel, setStatusLabel] = useState(ALL)
 	const [isPaid, setIsPaid] = useState(ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'referrals' })
-	const [openId, setOpenId] = useState<string | null>(null)
 
 	const { data: statuses } = useStatuses()
 
@@ -61,7 +62,6 @@ export function useReferralsPage() {
 		isLoading,
 		isFetching,
 		pagination,
-		openId,
-		setOpenId,
+		goToDetail: (id: string) => navigate(`/referrals/${id}`),
 	}
 }

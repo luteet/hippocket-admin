@@ -23,6 +23,7 @@
       "Bash(find:*)",
       "Bash(grep:*)",
       "Bash(rg:*)",
+      "Bash(rm:*)",
       "Bash(python3:*)",
       "Bash(cd:*)",
       "Bash(curl:*)",

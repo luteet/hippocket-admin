@@ -1,9 +1,11 @@
 import { api } from '@/lib/api/client'
 import type {
+	GroupOption,
 	RefOption,
 	ReferralDetail,
 	ReferralListData,
 	StatusData,
+	UpdateReferralDto,
 } from '@/types/api'
 
 export interface ReferralFilters {
@@ -40,6 +42,18 @@ export async function getReferral(id: string): Promise<ReferralDetail> {
 	return data
 }
 
+export async function updateReferral(
+	id: string,
+	dto: UpdateReferralDto,
+): Promise<ReferralDetail> {
+	const { data } = await api.put<ReferralDetail>(`/referrals/${id}/`, dto)
+	return data
+}
+
+export async function deleteReferral(id: string): Promise<void> {
+	await api.delete(`/referrals/${id}/`)
+}
+
 export async function updateReferralStatus(
 	id: string,
 	newStatus: string,
@@ -69,5 +83,10 @@ export async function listPartnerRefs(): Promise<RefOption[]> {
 	const { data } = await api.get<RefOption[]>('/refs/partners/', {
 		params: { limit: 500 },
 	})
+	return data
+}
+
+export async function listGroupRefs(): Promise<GroupOption[]> {
+	const { data } = await api.get<GroupOption[]>('/refs/groups/')
 	return data
 }

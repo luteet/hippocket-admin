@@ -1,11 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
+import type { UpdateReferralDto } from '@/types/api'
 import {
+	deleteReferral,
 	getReferral,
+	listGroupRefs,
 	listPartnerRefs,
 	listReferrals,
 	listStatuses,
 	markReferralPaid,
+	updateReferral,
 	updateReferralStatus,
 	type ReferralFilters,
 } from './api'
@@ -40,6 +44,31 @@ export function usePartnerRefs() {
 		queryKey: ['refs', 'partners'],
 		queryFn: listPartnerRefs,
 		staleTime: 5 * 60_000,
+	})
+}
+
+export function useGroupOptions() {
+	return useQuery({
+		queryKey: ['refs', 'groups'],
+		queryFn: listGroupRefs,
+		staleTime: 5 * 60_000,
+	})
+}
+
+export function useUpdateReferral() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: ({ id, dto }: { id: string; dto: UpdateReferralDto }) =>
+			updateReferral(id, dto),
+		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+export function useDeleteReferral() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: (id: string) => deleteReferral(id),
+		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
 	})
 }
 

@@ -42,6 +42,16 @@ const ReferralsPage = lazy(() =>
 		default: m.ReferralsPage,
 	})),
 )
+const ReferralDetailPage = lazy(() =>
+	import('@/features/referrals/ReferralDetailPage').then((m) => ({
+		default: m.ReferralDetailPage,
+	})),
+)
+const ReferralEditPage = lazy(() =>
+	import('@/features/referrals/ReferralEditPage').then((m) => ({
+		default: m.ReferralEditPage,
+	})),
+)
 const AgentsPage = lazy(() =>
 	import('@/features/agents/AgentsPage').then((m) => ({
 		default: m.AgentsPage,
@@ -167,6 +177,11 @@ function AppRoutes({ location }: { location: Location }) {
 				<Route path="partners/:id" element={<PartnerDetailPage />} />
 				<Route path="partners/:id/edit" element={<PartnerEditPage />} />
 				<Route path="referrals" element={<ReferralsPage />} />
+				<Route path="referrals/:id" element={<ReferralDetailPage />} />
+				<Route
+					path="referrals/:id/edit"
+					element={<ReferralEditPage />}
+				/>
 				{REFERENCE_KINDS.map((kind) => (
 					<Fragment key={kind}>
 						<Route

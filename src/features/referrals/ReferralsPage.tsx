@@ -17,7 +17,6 @@ import {
 import { PAGE_SIZE_OPTIONS } from '@/hooks/usePagination'
 import type { ReferralListItem } from '@/types/api'
 import { useReferralsPage, ALL } from './useReferralsPage'
-import { ReferralDetailDialog } from './ReferralDetailDialog'
 
 const PAID_OPTIONS = [
 	{ value: ALL, label: 'All' },
@@ -40,8 +39,7 @@ export function ReferralsPage() {
 		isLoading,
 		isFetching,
 		pagination,
-		openId,
-		setOpenId,
+		goToDetail,
 	} = useReferralsPage()
 
 	const columns = useMemo<ColumnDef<ReferralListItem, unknown>[]>(
@@ -175,17 +173,12 @@ export function ReferralsPage() {
 				emptyMessage="No pipeline logs found"
 				minWidth="1200px"
 				skeletonRows={pagination.count}
-				onRowClick={(r) => setOpenId(r.id)}
+				onRowClick={(r) => goToDetail(r.id)}
 				pagination={{
 					page: pagination.page,
 					pageCount: pagination.pageCount(data?.total ?? 0),
 					onPageChange: pagination.goTo,
 				}}
-			/>
-
-			<ReferralDetailDialog
-				referralId={openId}
-				onOpenChange={(o) => !o && setOpenId(null)}
 			/>
 		</div>
 	)
