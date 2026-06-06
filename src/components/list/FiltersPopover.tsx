@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 
 import { Icon } from '@/components/Icon'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { Button } from '@/components/ui/button'
 import {
 	Popover,
@@ -29,6 +30,9 @@ export function FiltersPopover({
 	align?: 'start' | 'center' | 'end'
 }) {
 	const [open, setOpen] = useState(false)
+	// On mobile, anchor the popover to the left edge instead of the trigger's
+	// (right-side) end, so it opens into the screen rather than hugging the edge.
+	const isMobile = useMediaQuery('(max-width: 767.98px)')
 	const [filtersEl, setFiltersEl] = useState<HTMLDivElement | null>(null)
 	const [triggerEl, setTriggerEl] = useState<HTMLButtonElement | null>(null)
 	// Id of the filter field whose dropdown is currently open, so only one is
@@ -79,10 +83,13 @@ export function FiltersPopover({
 			</PopoverTrigger>
 			<PopoverContent
 				ref={setFiltersEl}
-				align={align}
+				align={isMobile ? 'start' : align}
+				// Keep some breathing room from the viewport edges so the popover
+				// isn't flush against the screen on narrow/mobile widths.
+				collisionPadding={12}
 				// pointer-events-auto: stay interactive while an open Select sets
 				// pointer-events:none on <body>.
-				className="w-80 pointer-events-auto"
+				className="w-[calc(100vw-1.5rem)] md:w-80 pointer-events-auto"
 				onInteractOutside={(e) => e.preventDefault()}
 			>
 				<div className="space-y-4">
