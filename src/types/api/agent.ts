@@ -5,6 +5,13 @@ export interface AgentsData {
 	total: number
 }
 
+/** Lightweight agent option from `/refs/agents/` — used for pickers. */
+export interface AgentRefOption {
+	id: string
+	email: string
+	name: string
+}
+
 /** Agent's `role` — the kind of account. */
 export type AgentRole = 'source' | 'partner' | 'buyer'
 

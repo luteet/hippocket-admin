@@ -10,7 +10,6 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { useAuth } from '@/features/auth/AuthContext'
 import { AppShell } from '@/components/layout/AppShell'
-import { ComingSoon } from '@/components/layout/ComingSoon'
 import { NotFound } from '@/components/layout/NotFound'
 import { LoginPage } from '@/features/auth/LoginPage'
 
@@ -103,6 +102,26 @@ const StatusEditPage = lazy(() =>
 		default: m.StatusEditPage,
 	})),
 )
+const WithdrawalsPage = lazy(() =>
+	import('@/features/withdrawals/WithdrawalsPage').then((m) => ({
+		default: m.WithdrawalsPage,
+	})),
+)
+const WithdrawalDetailPage = lazy(() =>
+	import('@/features/withdrawals/WithdrawalDetailPage').then((m) => ({
+		default: m.WithdrawalDetailPage,
+	})),
+)
+const WithdrawalCreatePage = lazy(() =>
+	import('@/features/withdrawals/WithdrawalCreatePage').then((m) => ({
+		default: m.WithdrawalCreatePage,
+	})),
+)
+const WithdrawalEditPage = lazy(() =>
+	import('@/features/withdrawals/WithdrawalEditPage').then((m) => ({
+		default: m.WithdrawalEditPage,
+	})),
+)
 // One parameterized page serves the three partner-taxonomy sections; the `kind`
 // prop selects the labels and the `/refs/partner-*` endpoint it reads.
 const ReferenceListPage = lazy(() =>
@@ -152,9 +171,18 @@ function AppRoutes({ location }: { location: Location }) {
 				<Route path="statuses/new" element={<StatusCreatePage />} />
 				<Route path="statuses/:id" element={<StatusDetailPage />} />
 				<Route path="statuses/:id/edit" element={<StatusEditPage />} />
+				<Route path="withdrawals" element={<WithdrawalsPage />} />
 				<Route
-					path="withdrawals"
-					element={<ComingSoon title="Withdrawals" />}
+					path="withdrawals/new"
+					element={<WithdrawalCreatePage />}
+				/>
+				<Route
+					path="withdrawals/:id"
+					element={<WithdrawalDetailPage />}
+				/>
+				<Route
+					path="withdrawals/:id/edit"
+					element={<WithdrawalEditPage />}
 				/>
 				{/* Unknown path: render the 404 inside the shell. */}
 				<Route path="*" element={<NotFound />} />

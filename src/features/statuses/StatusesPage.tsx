@@ -40,7 +40,7 @@ export function StatusesPage() {
 						{row.original.label}
 					</span>
 				),
-			}
+			},
 		],
 		[],
 	)
