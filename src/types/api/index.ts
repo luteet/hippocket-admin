@@ -5,6 +5,7 @@
 
 export * from './common'
 export * from './auth'
+export * from './catalog'
 export * from './partner'
 export * from './agent'
 export * from './group'

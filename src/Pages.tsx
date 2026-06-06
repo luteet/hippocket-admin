@@ -1,4 +1,4 @@
-import { lazy } from 'react'
+import { Fragment, lazy } from 'react'
 import {
 	Navigate,
 	Route,
@@ -122,13 +122,37 @@ const WithdrawalEditPage = lazy(() =>
 		default: m.WithdrawalEditPage,
 	})),
 )
-// One parameterized page serves the three partner-taxonomy sections; the `kind`
-// prop selects the labels and the `/refs/partner-*` endpoint it reads.
+// One parameterized set of pages serves the four partner-taxonomy sections; the
+// `kind` prop selects the labels and the `/catalogs/*` endpoint it reads/writes.
 const ReferenceListPage = lazy(() =>
 	import('@/features/references/ReferenceListPage').then((m) => ({
 		default: m.ReferenceListPage,
 	})),
 )
+const ReferenceCreatePage = lazy(() =>
+	import('@/features/references/ReferenceCreatePage').then((m) => ({
+		default: m.ReferenceCreatePage,
+	})),
+)
+const ReferenceDetailPage = lazy(() =>
+	import('@/features/references/ReferenceDetailPage').then((m) => ({
+		default: m.ReferenceDetailPage,
+	})),
+)
+const ReferenceEditPage = lazy(() =>
+	import('@/features/references/ReferenceEditPage').then((m) => ({
+		default: m.ReferenceEditPage,
+	})),
+)
+
+// The `kind` doubles as the URL segment, so the four CRUD routes are identical
+// per section — generate them instead of hand-listing 16 <Route>s.
+const REFERENCE_KINDS = [
+	'categories',
+	'segments',
+	'locations',
+	'services',
+] as const
 
 // The authenticated route tree. `location` is passed explicitly so that while
 // this branch is exiting (logout), AnimatePresence keeps rendering the route
@@ -143,22 +167,26 @@ function AppRoutes({ location }: { location: Location }) {
 				<Route path="partners/:id" element={<PartnerDetailPage />} />
 				<Route path="partners/:id/edit" element={<PartnerEditPage />} />
 				<Route path="referrals" element={<ReferralsPage />} />
-				<Route
-					path="categories"
-					element={<ReferenceListPage kind="categories" />}
-				/>
-				<Route
-					path="segments"
-					element={<ReferenceListPage kind="segments" />}
-				/>
-				<Route
-					path="locations"
-					element={<ReferenceListPage kind="locations" />}
-				/>
-				<Route
-					path="services"
-					element={<ReferenceListPage kind="services" />}
-				/>
+				{REFERENCE_KINDS.map((kind) => (
+					<Fragment key={kind}>
+						<Route
+							path={kind}
+							element={<ReferenceListPage kind={kind} />}
+						/>
+						<Route
+							path={`${kind}/new`}
+							element={<ReferenceCreatePage kind={kind} />}
+						/>
+						<Route
+							path={`${kind}/:id`}
+							element={<ReferenceDetailPage kind={kind} />}
+						/>
+						<Route
+							path={`${kind}/:id/edit`}
+							element={<ReferenceEditPage kind={kind} />}
+						/>
+					</Fragment>
+				))}
 				<Route path="agents" element={<AgentsPage />} />
 				<Route path="agents/new" element={<AgentCreatePage />} />
 				<Route path="agents/:id" element={<AgentDetailPage />} />

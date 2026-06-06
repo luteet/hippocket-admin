@@ -4,25 +4,55 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { DataTable } from '@/components/DataTable'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import type { RefOption } from '@/types/api'
+import type { CatalogRecord } from '@/types/api'
 import {
 	useReferenceListPage,
 	type ReferenceKind,
 } from './useReferenceListPage'
 
 export function ReferenceListPage({ kind }: { kind: ReferenceKind }) {
-	const { config, rows, total, search, setSearch, isLoading, isFetching } =
-		useReferenceListPage(kind)
+	const {
+		config,
+		rows,
+		total,
+		search,
+		setSearch,
+		isLoading,
+		isFetching,
+		goToCreate,
+		openItem,
+	} = useReferenceListPage(kind)
 
-	const columns = useMemo<ColumnDef<RefOption, unknown>[]>(
-		() => [{ accessorKey: 'name', header: 'Name' }],
+	const columns = useMemo<ColumnDef<CatalogRecord, unknown>[]>(
+		() => [
+			{ accessorKey: 'name', header: 'Name' },
+			{
+				accessorKey: 'sort',
+				header: 'Sort',
+				cell: ({ row }) => (
+					<span className="text-muted-foreground">
+						{row.original.sort}
+					</span>
+				),
+			},
+		],
 		[],
 	)
 
 	return (
 		<div>
-			<PageHeader title={config.title} description={config.description} />
+			<PageHeader
+				title={config.title}
+				description={config.description}
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+			/>
 
 			<div className="mb-4 flex flex-wrap items-center gap-3">
 				<div className="relative max-w-xs flex-1">
@@ -47,6 +77,8 @@ export function ReferenceListPage({ kind }: { kind: ReferenceKind }) {
 				data={rows}
 				isLoading={isLoading || isFetching}
 				emptyMessage={config.emptyMessage}
+				minWidth="320px"
+				onRowClick={(r) => openItem(r.id)}
 			/>
 		</div>
 	)
