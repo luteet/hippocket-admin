@@ -14,7 +14,7 @@ import {
 	useWithdrawalForm,
 	type WithdrawalFormValues,
 } from './useWithdrawalForm'
-import { AgentSelect } from './components/AgentSelect'
+import { AgentSelect } from '@/components/AgentSelect'
 import { METHOD_OPTIONS, STATUS_OPTIONS } from './useWithdrawalsPage'
 
 interface Props {

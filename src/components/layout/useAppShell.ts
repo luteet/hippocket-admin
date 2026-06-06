@@ -44,6 +44,25 @@ export const NAV_ITEMS: NavItem[] = [
 	{ to: '/groups', label: 'Groups', icon: 'boxes' },
 	{ to: '/withdrawals', label: 'Withdrawals', icon: 'wallet' },
 	{
+		to: '/ai-chat',
+		label: 'AI Chat',
+		icon: 'message-square',
+		// No page of its own — the parent button jumps to the first child.
+		groupOnly: true,
+		children: [
+			{
+				to: '/ai-chat/messages',
+				label: 'AI Chat Messages',
+				icon: 'message-square',
+			},
+			{
+				to: '/ai-chat/sessions',
+				label: 'AI Chat Sessions',
+				icon: 'users',
+			},
+		],
+	},
+	{
 		to: '/logs',
 		label: 'Audit Logs',
 		icon: 'scroll-text',

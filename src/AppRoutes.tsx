@@ -113,6 +113,34 @@ const WithdrawalEditPage = lazyNamed(
 	() => import('@/features/withdrawals/WithdrawalEditPage'),
 	'WithdrawalEditPage',
 )
+const MessagesPage = lazyNamed(
+	() => import('@/features/aichat/MessagesPage'),
+	'MessagesPage',
+)
+const MessageDetailPage = lazyNamed(
+	() => import('@/features/aichat/MessageDetailPage'),
+	'MessageDetailPage',
+)
+const MessageCreatePage = lazyNamed(
+	() => import('@/features/aichat/MessageCreatePage'),
+	'MessageCreatePage',
+)
+const MessageEditPage = lazyNamed(
+	() => import('@/features/aichat/MessageEditPage'),
+	'MessageEditPage',
+)
+const SessionsPage = lazyNamed(
+	() => import('@/features/aichat/SessionsPage'),
+	'SessionsPage',
+)
+const SessionDetailPage = lazyNamed(
+	() => import('@/features/aichat/SessionDetailPage'),
+	'SessionDetailPage',
+)
+const SessionCreatePage = lazyNamed(
+	() => import('@/features/aichat/SessionCreatePage'),
+	'SessionCreatePage',
+)
 // One parameterized page serves the three read-only audit-log sections; the
 // `slug` prop selects the labels and which `event` (if any) is pinned.
 const LogsPage = lazyNamed(() => import('@/features/logs/LogsPage'), 'LogsPage')
@@ -153,7 +181,7 @@ type CrudPages = {
 	List: ComponentType
 	Create?: ComponentType
 	Detail: ComponentType
-	Edit: ComponentType
+	Edit?: ComponentType
 }
 
 const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
@@ -210,6 +238,24 @@ const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
 			Edit: WithdrawalEditPage,
 		},
 	},
+	{
+		path: 'ai-chat/messages',
+		pages: {
+			List: MessagesPage,
+			Create: MessageCreatePage,
+			Detail: MessageDetailPage,
+			Edit: MessageEditPage,
+		},
+	},
+	{
+		// Sessions have no update endpoint, so no Edit page.
+		path: 'ai-chat/sessions',
+		pages: {
+			List: SessionsPage,
+			Create: SessionCreatePage,
+			Detail: SessionDetailPage,
+		},
+	},
 ]
 
 // The four CRUD routes for one section. Returned as a Fragment (not a component)
@@ -221,7 +267,7 @@ function crudRoutes(path: string, { List, Create, Detail, Edit }: CrudPages) {
 			<Route path={path} element={<List />} />
 			{Create && <Route path={`${path}/new`} element={<Create />} />}
 			<Route path={`${path}/:id`} element={<Detail />} />
-			<Route path={`${path}/:id/edit`} element={<Edit />} />
+			{Edit && <Route path={`${path}/:id/edit`} element={<Edit />} />}
 		</Fragment>
 	)
 }

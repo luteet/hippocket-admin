@@ -35,6 +35,7 @@ export type IconName =
 	| 'scroll-text'
 	| 'filter'
 	| 'calendar'
+	| 'message-square'
 
 const SPRITE_URL = `${import.meta.env.BASE_URL}img/sprites.svg`
 

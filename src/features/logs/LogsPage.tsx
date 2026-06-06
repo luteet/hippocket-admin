@@ -48,7 +48,9 @@ function LogsView() {
 				header: 'Event',
 				meta: { className: 'min-w-35' },
 				cell: ({ row }) => (
-					<span className="font-medium">{formatLogLabel(row.original.event)}</span>
+					<span className="font-medium">
+						{formatLogLabel(row.original.event)}
+					</span>
 				),
 			},
 			{

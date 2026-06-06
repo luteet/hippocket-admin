@@ -4,6 +4,7 @@
 // `@/types/api`.
 
 export * from './common'
+export * from './aichat'
 export * from './auth'
 export * from './catalog'
 export * from './partner'
