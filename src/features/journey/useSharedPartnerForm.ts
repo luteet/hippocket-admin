@@ -35,14 +35,17 @@ export function useSharedPartnerForm({ shared, onSuccess }: Params) {
 
 	const form = useForm<SharedPartnerFormValues>({
 		resolver: zodResolver(schema),
-		defaultValues: defaults(shared),
+		defaultValues: { agent_email: '' },
 	})
 	const { handleSubmit, reset } = form
 
-	// The edit page loads the record asynchronously — sync once it arrives.
+	// Apply the saved agent only once the option list has loaded. Radix Select
+	// resolves the selected value to its label by reading the matching item's
+	// text on mount; setting the value before the items exist leaves the
+	// trigger blank, so we wait for both the record and the options.
 	useEffect(() => {
-		if (shared) reset(defaults(shared))
-	}, [shared, reset])
+		if (shared && agentRefs) reset(defaults(shared))
+	}, [shared, agentRefs, reset])
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
