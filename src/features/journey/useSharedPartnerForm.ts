@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { getApiErrorMessage } from '@/lib/api/client'
 import type { SharedPartner } from '@/types/api'
 import {
-	useAgentRefOptions,
+	useAgentSearch,
 	useCreateSharedPartner,
 	useUpdateSharedPartner,
 } from './hooks'
@@ -32,11 +32,16 @@ export function useSharedPartnerForm({ shared, onSuccess }: Params) {
 	const createMut = useCreateSharedPartner()
 	const updateMut = useUpdateSharedPartner()
 
-	// Agents are searched server-side (there are more than the endpoint returns
-	// in one page); `agentSearch` is the current query driving the option list.
+	// Agents are searched server-side and paged in as the user scrolls (there
+	// are far more than fit one request); `agentSearch` drives the option list.
 	const [agentSearch, setAgentSearch] = useState('')
-	const { data: agentRefs, isFetching: agentsLoading } =
-		useAgentRefOptions(agentSearch)
+	const {
+		data: agentPages,
+		isFetching,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useAgentSearch(agentSearch)
 
 	const form = useForm<SharedPartnerFormValues>({
 		resolver: zodResolver(schema),
@@ -72,12 +77,21 @@ export function useSharedPartnerForm({ shared, onSuccess }: Params) {
 
 	return {
 		form,
-		agentOptions: (agentRefs ?? []).map((a) => ({
-			value: a.email,
-			label: a.name ? `${a.name} (${a.email})` : a.email,
-		})),
-		agentsLoading,
+		agentOptions: (agentPages?.pages ?? []).flatMap((p) =>
+			p.items.map((a) => ({
+				value: a.email,
+				label: a.name ? `${a.name} (${a.email})` : a.email,
+			})),
+		),
+		// Spinner for the initial/search load only — not while paging more in
+		// (that has its own indicator at the foot of the list).
+		agentsLoading: isFetching && !isFetchingNextPage,
 		onAgentSearch: setAgentSearch,
+		hasMoreAgents: hasNextPage,
+		loadingMoreAgents: isFetchingNextPage,
+		onLoadMoreAgents: () => {
+			if (hasNextPage && !isFetchingNextPage) fetchNextPage()
+		},
 		// On edit, name the saved agent in the trigger before any search runs.
 		selectedAgentLabel: shared?.agent_email,
 		isPending: createMut.isPending || updateMut.isPending,

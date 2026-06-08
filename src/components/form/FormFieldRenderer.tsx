@@ -82,6 +82,9 @@ export function FormFieldRenderer({
 									onSearch={field.onSearch}
 									loading={field.loading}
 									selectedLabel={field.selectedLabel}
+									onLoadMore={field.onLoadMore}
+									hasMore={field.hasMore}
+									loadingMore={field.loadingMore}
 								/>
 							) : (
 								<Select

@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query'
 
 import type {
 	CreateSharedPartnerDto,
@@ -12,7 +17,7 @@ import {
 	deleteSharedPartner,
 	deleteSharedPartnerEntry,
 	getSharedPartner,
-	listAgentRefs,
+	searchAgents,
 	listPartnerRefs,
 	listSharedPartners,
 	updateSharedPartner,
@@ -105,10 +110,19 @@ export function useDeleteSharedPartnerEntry(sharedId: string) {
 
 // ---- Reference pickers ----
 
-export function useAgentRefOptions(search?: string) {
-	return useQuery({
-		queryKey: ['refs', 'agents', search ?? ''],
-		queryFn: () => listAgentRefs(search),
+/**
+ * Paginated agent search for the owner picker. Each page is one `/agents/`
+ * request; the Combobox loads the next page as the user scrolls to the bottom.
+ */
+export function useAgentSearch(search: string) {
+	return useInfiniteQuery({
+		queryKey: ['agents', 'search', search],
+		queryFn: ({ pageParam }) => searchAgents(search, pageParam),
+		initialPageParam: 0,
+		getNextPageParam: (last) => {
+			const next = last.offset + last.items.length
+			return last.items.length > 0 && next < last.total ? next : undefined
+		},
 		staleTime: 5 * 60_000,
 		// Keep the previous results on screen while the next search loads, so the
 		// list doesn't flash empty between keystrokes.

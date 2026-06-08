@@ -31,7 +31,16 @@ interface ComboboxProps {
 	 * `options` (e.g. the saved selection before a server search returns it).
 	 */
 	selectedLabel?: string
+	/** Load the next page when the user scrolls near the bottom of the list. */
+	onLoadMore?: () => void
+	/** Another page is available to load. */
+	hasMore?: boolean
+	/** The next page is currently loading. */
+	loadingMore?: boolean
 }
+
+// Distance (px) from the bottom of the list at which the next page is fetched.
+const LOAD_MORE_THRESHOLD = 48
 
 const SEARCH_DEBOUNCE = 250
 
@@ -56,6 +65,9 @@ export function Combobox({
 	onSearch,
 	loading,
 	selectedLabel,
+	onLoadMore,
+	hasMore,
+	loadingMore,
 }: ComboboxProps) {
 	const [open, setOpen] = useState(false)
 	const [query, setQuery] = useState('')
@@ -96,6 +108,14 @@ export function Combobox({
 		onValueChange(next)
 		setOpen(false)
 		setQuery('')
+	}
+
+	function onListScroll(e: React.UIEvent<HTMLDivElement>) {
+		if (!onLoadMore || !hasMore || loadingMore) return
+		const el = e.currentTarget
+		const distanceToBottom =
+			el.scrollHeight - el.scrollTop - el.clientHeight
+		if (distanceToBottom < LOAD_MORE_THRESHOLD) onLoadMore()
 	}
 
 	function onInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -147,7 +167,11 @@ export function Combobox({
 						placeholder={searchPlaceholder}
 					/>
 				</div>
-				<div ref={listRef} className="max-h-60 overflow-y-auto p-1">
+				<div
+					ref={listRef}
+					onScroll={onListScroll}
+					className="max-h-60 overflow-y-auto p-1"
+				>
 					{loading && filtered.length === 0 ? (
 						<div className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground">
 							<Icon
@@ -181,6 +205,15 @@ export function Combobox({
 								{o.label}
 							</button>
 						))
+					)}
+					{loadingMore && filtered.length > 0 && (
+						<div className="flex items-center justify-center gap-2 px-2 py-2 text-sm text-muted-foreground">
+							<Icon
+								name="loader"
+								className="size-4 animate-spin"
+							/>
+							Loading more…
+						</div>
 					)}
 				</div>
 			</PopoverContent>

@@ -51,6 +51,12 @@ export interface SelectFormField extends FieldCommon {
 	/** Combobox-only: label for the current value when it isn't in `options`
 	 *  (e.g. a saved selection not yet returned by the server search). */
 	selectedLabel?: string
+	/** Combobox-only: load the next page when the user scrolls to the bottom. */
+	onLoadMore?: () => void
+	/** Combobox-only: another page is available to load. */
+	hasMore?: boolean
+	/** Combobox-only: the next page is currently loading. */
+	loadingMore?: boolean
 }
 
 export interface SwitchFormField extends FieldCommon {

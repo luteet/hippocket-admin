@@ -15,6 +15,9 @@ export function SharedPartnerForm({ shared, onSuccess, onCancel }: Props) {
 		agentOptions,
 		agentsLoading,
 		onAgentSearch,
+		hasMoreAgents,
+		loadingMoreAgents,
+		onLoadMoreAgents,
 		selectedAgentLabel,
 		isPending,
 		onSubmit,
@@ -32,6 +35,9 @@ export function SharedPartnerForm({ shared, onSuccess, onCancel }: Props) {
 			onSearch: onAgentSearch,
 			loading: agentsLoading,
 			selectedLabel: selectedAgentLabel,
+			onLoadMore: onLoadMoreAgents,
+			hasMore: hasMoreAgents,
+			loadingMore: loadingMoreAgents,
 		},
 	]
 
