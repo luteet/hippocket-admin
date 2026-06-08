@@ -4,6 +4,9 @@ import './index.css'
 import 'overlayscrollbars/overlayscrollbars.css'
 import './styles/main.scss'
 import App from './App.tsx'
+import { setupPreloadErrorReload } from '@/lib/preloadErrorReload'
+
+setupPreloadErrorReload()
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>

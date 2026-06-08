@@ -5,8 +5,11 @@ import { queryClient } from '@/lib/queryClient'
 import { Toaster } from '@/components/ui/sonner'
 import { AuthProvider } from '@/features/auth/AuthContext'
 import { Pages } from '@/Pages'
+import { useVersionCheck } from '@/hooks/useVersionCheck'
 
 export default function App() {
+	useVersionCheck()
+
 	return (
 		<QueryClientProvider client={queryClient}>
 			<BrowserRouter>
