@@ -8,6 +8,7 @@ import {
 	listAgentRefs,
 	listGroups,
 	updateGroup,
+	uploadGroupLogo,
 	type GroupFilters,
 } from './api'
 
@@ -50,6 +51,19 @@ export function useDeleteGroup() {
 	return useMutation({
 		mutationFn: (id: number) => deleteGroup(id),
 		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+/**
+ * Upload a group's logo. Deliberately does NOT invalidate the groups query: the
+ * edit form re-syncs (`reset`) whenever its cached group changes, so refetching
+ * here would wipe in-progress form edits. The logo is an independent action —
+ * the caller updates its own preview from the returned group instead.
+ */
+export function useUploadGroupLogo() {
+	return useMutation({
+		mutationFn: ({ id, file }: { id: number; file: File }) =>
+			uploadGroupLogo(id, file),
 	})
 }
 

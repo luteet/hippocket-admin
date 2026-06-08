@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge'
 import { DetailGrid } from '@/components/DetailList'
 import { DetailPage } from '@/components/detail/DetailPage'
 import { DetailBody } from '@/components/detail/DetailBody'
+import { MediaThumbnail } from '@/components/media/MediaThumbnail'
 import { formatDateTime } from '@/lib/format'
 import { useGroupDetailPage } from './useGroupDetailPage'
 import { ColorRow } from './components/ColorRow'
@@ -41,6 +42,14 @@ export function GroupDetailPage() {
 							heading={{
 								title: group.name,
 								subtitle: group.slug,
+								avatar: (
+									<MediaThumbnail
+										url={group.logo_url}
+										shape="square"
+										placeholderIcon="image"
+										fit="contain"
+									/>
+								),
 								badge: group.is_deleted ? (
 									<Badge variant="destructive">Deleted</Badge>
 								) : (
@@ -56,19 +65,13 @@ export function GroupDetailPage() {
 								},
 								{
 									label: 'Logo',
-									render: group.logo_url ? (
-										<a
-											href={group.logo_url}
-											target="_blank"
-											rel="noreferrer"
-											className="text-primary hover:underline"
-										>
-											{group.logo_url}
-										</a>
-									) : (
-										<span className="text-muted-foreground">
-											—
-										</span>
+									render: (
+										<MediaThumbnail
+											url={group.logo_url}
+											shape="square"
+											placeholderIcon="image"
+											fit="contain"
+										/>
 									),
 								},
 								{

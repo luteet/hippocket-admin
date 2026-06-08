@@ -56,27 +56,27 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 		// partner, so these only appear on edit.
 		isEdit && partner && { type: 'section', title: 'Media' },
 		isEdit &&
-		partner && {
-			type: 'custom',
-			label: 'Logo',
-			render: (
-				<LogoUpload
-					partnerId={partner.id}
-					logoUrl={partner.logo_url}
-				/>
-			),
-		},
+			partner && {
+				type: 'custom',
+				label: 'Logo',
+				render: (
+					<LogoUpload
+						partnerId={partner.id}
+						logoUrl={partner.logo_url}
+					/>
+				),
+			},
 		isEdit &&
-		partner && {
-			type: 'custom',
-			label: 'Video cover',
-			render: (
-				<PreviewUpload
-					partnerId={partner.id}
-					previewUrl={partner.preview_url}
-				/>
-			),
-		},
+			partner && {
+				type: 'custom',
+				label: 'Video cover',
+				render: (
+					<PreviewUpload
+						partnerId={partner.id}
+						previewUrl={partner.preview_url}
+					/>
+				),
+			},
 
 		{ type: 'section', title: 'Fees & value' },
 		{

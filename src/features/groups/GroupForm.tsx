@@ -4,6 +4,7 @@ import type { Group } from '@/types/api'
 import { useGroupForm } from './useGroupForm'
 import { ColorField } from './components/ColorField'
 import { AdminMultiSelect } from './components/AdminMultiSelect'
+import { LogoUpload } from './components/LogoUpload'
 
 interface Props {
 	group?: Group | null
@@ -38,6 +39,16 @@ export function GroupForm({ group, onSuccess, onCancel }: Props) {
 			placeholder: isEdit ? undefined : 'austin-team',
 		},
 		{ type: 'text', name: 'title_logo', label: 'Title logo' },
+		// Logo upload is a standalone action that needs an existing group, so it
+		// only appears on edit.
+		isEdit &&
+			group && {
+				type: 'custom',
+				label: 'Logo',
+				render: (
+					<LogoUpload groupId={group.id} logoUrl={group.logo_url} />
+				),
+			},
 		{
 			type: 'custom',
 			label: 'Admins',

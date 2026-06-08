@@ -54,6 +54,24 @@ export async function deleteGroup(id: number): Promise<void> {
 	await api.delete(`/groups/${id}/`)
 }
 
+/**
+ * Upload (replace) a group's logo. `PUT /groups/{id}/logo/` takes a
+ * `multipart/form-data` body with a single `file` field and returns the updated
+ * group detail (new link in `logo_url`). Let axios set the multipart
+ * Content-Type (and boundary) from the FormData — don't set it manually.
+ */
+export async function uploadGroupLogo(id: number, file: File): Promise<Group> {
+	const form = new FormData()
+	form.append('file', file)
+	// The axios instance defaults to `Content-Type: application/json`; clear it
+	// so axios detects the FormData and sets `multipart/form-data` *with the
+	// boundary*. Without this the body is mangled and the `file` field is lost.
+	const { data } = await api.put<Group>(`/groups/${id}/logo/`, form, {
+		headers: { 'Content-Type': undefined },
+	})
+	return data
+}
+
 export async function listAgentRefs(): Promise<AgentOption[]> {
 	const { data } = await api.get<AgentOption[]>('/refs/agents/', {
 		params: { limit: 200 },
