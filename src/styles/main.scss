@@ -103,8 +103,8 @@
 // Scrollbar: 10px wide, thumb is a gradient of the secondary color and a
 // slightly lighter secondary. Desktop only — on mobile we keep the native
 // scrollbar to match the native full-page scroll.
-@media (min-width: 768px) {
-	* {
+@media (hover: hover) {
+	*:not(.sidebar-inner) {
 		scrollbar-width: thin; // Firefox
 		scrollbar-color: var(--secondary) transparent;
 	}
