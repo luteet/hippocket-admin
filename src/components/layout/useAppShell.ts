@@ -35,6 +35,7 @@ export const NAV_ITEMS: NavItem[] = [
 			{ to: '/services', label: 'Services', icon: 'wrench' },
 		],
 	},
+	{ to: '/contacts', label: 'Contacts', icon: 'contact' },
 	{
 		to: '/referrals',
 		label: 'Pipeline',
