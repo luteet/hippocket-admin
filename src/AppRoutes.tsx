@@ -113,6 +113,14 @@ const StatusEditPage = lazyNamed(
 	() => import('@/features/statuses/StatusEditPage'),
 	'StatusEditPage',
 )
+const PaymentsPage = lazyNamed(
+	() => import('@/features/payments/PaymentsPage'),
+	'PaymentsPage',
+)
+const PaymentDetailPage = lazyNamed(
+	() => import('@/features/payments/PaymentDetailPage'),
+	'PaymentDetailPage',
+)
 const WithdrawalsPage = lazyNamed(
 	() => import('@/features/withdrawals/WithdrawalsPage'),
 	'WithdrawalsPage',
@@ -378,6 +386,15 @@ const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
 			Create: WithdrawalCreatePage,
 			Detail: WithdrawalDetailPage,
 			Edit: WithdrawalEditPage,
+		},
+	},
+	{
+		// Read-only: payments can't be created, updated or deleted (mirrors the
+		// Django admin). Rows open a detail page only.
+		path: 'payments',
+		pages: {
+			List: PaymentsPage,
+			Detail: PaymentDetailPage,
 		},
 	},
 	{

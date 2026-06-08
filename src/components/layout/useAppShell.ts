@@ -45,6 +45,7 @@ export const NAV_ITEMS: NavItem[] = [
 	{ to: '/agents', label: 'Agents', icon: 'users' },
 	{ to: '/groups', label: 'Groups', icon: 'boxes' },
 	{ to: '/withdrawals', label: 'Withdrawals', icon: 'wallet' },
+	{ to: '/payments', label: 'Payments', icon: 'badge-dollar' },
 	{
 		to: '/ai-chat',
 		label: 'AI Chat',
