@@ -1,5 +1,3 @@
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import {
 	Select,
 	SelectContent,
@@ -7,10 +5,9 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { Field } from '@/components/Field'
-import { SwitchField } from '@/components/SwitchField'
+import { FormLayout } from '@/components/form/FormLayout'
+import type { FormFieldEntry } from '@/components/form/types'
 import type { GroupFormPrice } from '@/types/api'
-import { FormActions } from '../components/FormActions'
 import { useGroupFormPriceForm } from './useGroupFormPriceForm'
 
 interface Props {
@@ -28,48 +25,36 @@ export function GroupFormPriceForm({
 }: Props) {
 	const {
 		isEdit,
-		register,
-		errors,
-		setValue,
-		formConfigId,
-		groupId,
-		isActive,
+		form,
 		formOptions,
 		groupOptions,
 		onSubmit,
 		isPending,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting,
 		handleDelete,
 	} = useGroupFormPriceForm({ item, onSuccess, onDeleted })
 
-	return (
-		<form onSubmit={onSubmit} className="space-y-6">
-			<Field label="Name" error={errors.name?.message}>
-				<Input {...register('name')} />
-			</Field>
-			<Field label="Form" error={errors.form_config_id?.message}>
-				<Select
-					value={formConfigId || undefined}
-					onValueChange={(v) => setValue('form_config_id', v)}
-				>
-					<SelectTrigger>
-						<SelectValue placeholder="Select a form" />
-					</SelectTrigger>
-					<SelectContent>
-						{formOptions.map((o) => (
-							<SelectItem key={o.id} value={o.id}>
-								{o.name}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			</Field>
-			<Field label="Group" error={errors.group_id?.message}>
+	const groupId = form.watch('group_id')
+
+	const fields: FormFieldEntry[] = [
+		{ type: 'text', name: 'name', label: 'Name' },
+		{
+			type: 'select',
+			name: 'form_config_id',
+			label: 'Form',
+			placeholder: 'Select a form',
+			options: formOptions.map((o) => ({ value: o.id, label: o.name })),
+		},
+		{
+			// group_id is numeric — the shadcn Select works with strings, so it
+			// can't go through the declarative `select` (which keeps strings).
+			type: 'custom',
+			label: 'Group',
+			name: 'group_id',
+			render: (
 				<Select
 					value={groupId ? String(groupId) : undefined}
-					onValueChange={(v) => setValue('group_id', Number(v))}
+					onValueChange={(v) => form.setValue('group_id', Number(v))}
 				>
 					<SelectTrigger>
 						<SelectValue placeholder="Select a group" />
@@ -82,35 +67,25 @@ export function GroupFormPriceForm({
 						))}
 					</SelectContent>
 				</Select>
-			</Field>
-			<Field label="Price" error={errors.price?.message}>
-				<Input
-					type="number"
-					step="0.01"
-					{...register('price', { valueAsNumber: true })}
-				/>
-			</Field>
-			<Field label="Comment" error={errors.comment?.message}>
-				<Textarea {...register('comment')} />
-			</Field>
-			<SwitchField
-				id="is_active"
-				label="Active"
-				checked={isActive}
-				onCheckedChange={(v) => setValue('is_active', v)}
-			/>
+			),
+		},
+		{ type: 'number', name: 'price', label: 'Price', step: '0.01' },
+		{ type: 'textarea', name: 'comment', label: 'Comment' },
+		{ type: 'switch', name: 'is_active', label: 'Active' },
+	]
 
-			<FormActions
-				isEdit={isEdit}
-				isPending={isPending}
-				isDeleting={isDeleting}
-				confirmOpen={confirmOpen}
-				setConfirmOpen={setConfirmOpen}
-				onDelete={handleDelete}
-				onCancel={onCancel}
-				deleteTitle="Delete form price?"
-				deleteDescription="This group form price will be permanently deleted."
-			/>
-		</form>
+	return (
+		<FormLayout
+			form={form}
+			fields={fields}
+			onSubmit={onSubmit}
+			onCancel={onCancel}
+			isPending={isPending}
+			isEdit={isEdit}
+			onDelete={handleDelete}
+			isDeleting={isDeleting}
+			deleteTitle="Delete form price?"
+			deleteDescription="This group form price will be permanently deleted."
+		/>
 	)
 }

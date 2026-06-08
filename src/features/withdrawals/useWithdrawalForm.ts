@@ -44,26 +44,16 @@ export function useWithdrawalForm({ withdrawal, onSuccess }: Params) {
 	const { data: agentOptions, isLoading: isLoadingAgents } =
 		useAgentRefOptions()
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<WithdrawalFormValues>({
+	const form = useForm<WithdrawalFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(withdrawal),
 	})
+	const { handleSubmit, reset } = form
 
 	// The edit page loads the withdrawal asynchronously — sync once it arrives.
 	useEffect(() => {
 		if (withdrawal) reset(defaults(withdrawal))
 	}, [withdrawal, reset])
-
-	const userId = watch('user_id')
-	const method = watch('method')
-	const status = watch('status')
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
@@ -92,14 +82,9 @@ export function useWithdrawalForm({ withdrawal, onSuccess }: Params) {
 
 	return {
 		isEdit,
-		register,
-		errors,
+		form,
 		isPending,
 		onSubmit,
-		setValue,
-		userId,
-		method,
-		status,
 		agentOptions: agentOptions ?? [],
 		isLoadingAgents,
 	}

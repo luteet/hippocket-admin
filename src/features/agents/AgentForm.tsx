@@ -1,6 +1,3 @@
-import { Icon } from '@/components/Icon'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
 	Select,
 	SelectContent,
@@ -8,12 +5,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { Field } from '@/components/Field'
-import { SectionTitle } from '@/components/SectionTitle'
-import { SwitchField } from '@/components/SwitchField'
+import { FormLayout } from '@/components/form/FormLayout'
+import type { FormFieldEntry } from '@/components/form/types'
 import type { Agent } from '@/types/api'
 import { ROLE_OPTIONS, STATUS_OPTIONS } from './useAgentsPage'
-import { useAgentForm, type AgentFormValues } from './useAgentForm'
+import { useAgentForm } from './useAgentForm'
 import { GroupMultiSelect } from './components/GroupMultiSelect'
 
 interface Props {
@@ -25,19 +21,11 @@ interface Props {
 export function AgentForm({ agent, onSuccess, onCancel }: Props) {
 	const {
 		isEdit,
-		register,
-		errors,
-		setValue,
-		role,
-		status,
+		form,
 		groupIds,
 		chosenGroupId,
 		toggleGroup,
 		setChosenGroup,
-		isActive,
-		isNewUser,
-		isHide,
-		defaultAdmin,
 		groupOptions,
 		isPending,
 		onSubmit,
@@ -46,106 +34,83 @@ export function AgentForm({ agent, onSuccess, onCancel }: Props) {
 	// The chosen (primary) group must be one of the selected memberships.
 	const chosenOptions = groupOptions.filter((g) => groupIds.includes(g.id))
 
-	return (
-		<form onSubmit={onSubmit} className="space-y-6">
-			<SectionTitle first>Account</SectionTitle>
-			<Field label="Email" error={errors.email?.message}>
-				<Input type="email" disabled={isEdit} {...register('email')} />
-			</Field>
-			{isEdit && (
-				<Field label="New email" error={errors.pending_email?.message}>
-					<Input
-						type="email"
-						placeholder="Pending — applied after the agent confirms it"
-						{...register('pending_email')}
-					/>
-				</Field>
-			)}
-			<Field
-				label={isEdit ? 'New password' : 'Password'}
-				error={errors.password?.message}
-			>
-				<Input
-					type="password"
-					autoComplete="new-password"
-					placeholder={
-						isEdit ? 'Leave blank to keep current' : undefined
-					}
-					{...register('password')}
-				/>
-			</Field>
-			<Field label="Username" error={errors.username?.message}>
-				<Input {...register('username')} />
-			</Field>
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<Field label="First name" error={errors.first_name?.message}>
-					<Input {...register('first_name')} />
-				</Field>
-				<Field label="Last name" error={errors.last_name?.message}>
-					<Input {...register('last_name')} />
-				</Field>
-			</div>
-			<Field label="Phone" error={errors.phone?.message}>
-				<Input {...register('phone')} />
-			</Field>
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<Field label="Company" error={errors.company?.message}>
-					<Input {...register('company')} />
-				</Field>
-				<Field label="Address" error={errors.address?.message}>
-					<Input {...register('address')} />
-				</Field>
-			</div>
+	const fields: FormFieldEntry[] = [
+		{ type: 'section', title: 'Account', first: true },
+		{
+			type: 'email',
+			name: 'email',
+			label: 'Email',
+			disabled: isEdit,
+		},
+		isEdit && {
+			type: 'email',
+			name: 'pending_email',
+			label: 'New email',
+			placeholder: 'Pending — applied after the agent confirms it',
+		},
+		{
+			type: 'password',
+			name: 'password',
+			label: isEdit ? 'New password' : 'Password',
+			autoComplete: 'new-password',
+			placeholder: isEdit ? 'Leave blank to keep current' : undefined,
+		},
+		{ type: 'text', name: 'username', label: 'Username' },
+		{
+			type: 'grid',
+			fields: [
+				{ type: 'text', name: 'first_name', label: 'First name' },
+				{ type: 'text', name: 'last_name', label: 'Last name' },
+			],
+		},
+		{ type: 'text', name: 'phone', label: 'Phone' },
+		{
+			type: 'grid',
+			fields: [
+				{ type: 'text', name: 'company', label: 'Company' },
+				{ type: 'text', name: 'address', label: 'Address' },
+			],
+		},
 
-			<SectionTitle>Classification</SectionTitle>
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<Field label="Role">
-					<Select
-						value={role}
-						onValueChange={(v) =>
-							setValue('role', v as AgentFormValues['role'])
-						}
-					>
-						<SelectTrigger>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							{ROLE_OPTIONS.map((o) => (
-								<SelectItem key={o.value} value={o.value}>
-									{o.label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</Field>
-				<Field label="Status">
-					<Select
-						value={status}
-						onValueChange={(v) =>
-							setValue('status', v as AgentFormValues['status'])
-						}
-					>
-						<SelectTrigger>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							{STATUS_OPTIONS.map((o) => (
-								<SelectItem key={o.value} value={o.value}>
-									{o.label}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</Field>
-			</div>
-			<Field label="Groups">
+		{ type: 'section', title: 'Classification' },
+		{
+			type: 'grid',
+			fields: [
+				{
+					type: 'select',
+					name: 'role',
+					label: 'Role',
+					options: ROLE_OPTIONS.map((o) => ({
+						value: o.value,
+						label: o.label,
+					})),
+				},
+				{
+					type: 'select',
+					name: 'status',
+					label: 'Status',
+					options: STATUS_OPTIONS.map((o) => ({
+						value: o.value,
+						label: o.label,
+					})),
+				},
+			],
+		},
+		{
+			type: 'custom',
+			label: 'Groups',
+			render: (
 				<GroupMultiSelect
 					options={groupOptions}
 					selected={groupIds}
 					onToggle={toggleGroup}
 				/>
-			</Field>
-			<Field label="Chosen group">
+			),
+		},
+		{
+			type: 'custom',
+			label: 'Chosen group',
+			render: (
 				<div className="relative">
 					<Select
 						value={chosenGroupId || undefined}
@@ -174,101 +139,58 @@ export function AgentForm({ agent, onSuccess, onCancel }: Props) {
 						</SelectContent>
 					</Select>
 				</div>
-			</Field>
+			),
+		},
 
-			<SectionTitle>Balance</SectionTitle>
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<Field label="Balance ($)" error={errors.balance?.message}>
-					<Input
-						type="number"
-						step="0.01"
-						{...register('balance', { valueAsNumber: true })}
-					/>
-				</Field>
-				<Field
-					label="Token balance"
-					error={errors.balance_coin?.message}
-				>
-					<Input
-						type="number"
-						step="0.01"
-						{...register('balance_coin', { valueAsNumber: true })}
-					/>
-				</Field>
-			</div>
+		{ type: 'section', title: 'Balance' },
+		{
+			type: 'grid',
+			fields: [
+				{
+					type: 'number',
+					name: 'balance',
+					label: 'Balance ($)',
+					step: '0.01',
+				},
+				{
+					type: 'number',
+					name: 'balance_coin',
+					label: 'Token balance',
+					step: '0.01',
+				},
+			],
+		},
 
-			<SectionTitle>Payment methods</SectionTitle>
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<Field label="PayPal" error={errors.paypal_data?.message}>
-					<Input {...register('paypal_data')} />
-				</Field>
-				<Field label="Venmo" error={errors.venmo_id?.message}>
-					<Input {...register('venmo_id')} />
-				</Field>
-				<Field label="Cash App" error={errors.cash_app_info?.message}>
-					<Input {...register('cash_app_info')} />
-				</Field>
-				<Field label="Zelle" error={errors.zelle?.message}>
-					<Input {...register('zelle')} />
-				</Field>
-			</div>
-			<Field
-				label="License number"
-				error={errors.license_number?.message}
-			>
-				<Input {...register('license_number')} />
-			</Field>
+		{ type: 'section', title: 'Payment methods' },
+		{
+			type: 'grid',
+			fields: [
+				{ type: 'text', name: 'paypal_data', label: 'PayPal' },
+				{ type: 'text', name: 'venmo_id', label: 'Venmo' },
+				{ type: 'text', name: 'cash_app_info', label: 'Cash App' },
+				{ type: 'text', name: 'zelle', label: 'Zelle' },
+			],
+		},
+		{ type: 'text', name: 'license_number', label: 'License number' },
 
-			<SectionTitle>Flags</SectionTitle>
-			<SwitchField
-				id="is_active"
-				label="Active"
-				checked={isActive}
-				onCheckedChange={(v) => setValue('is_active', v)}
-			/>
-			<SwitchField
-				id="is_new_user"
-				label="New user"
-				checked={isNewUser}
-				onCheckedChange={(v) => setValue('is_new_user', v)}
-			/>
-			{!isEdit && (
-				<>
-					<SwitchField
-						id="is_hide"
-						label="Hidden"
-						checked={isHide}
-						onCheckedChange={(v) => setValue('is_hide', v)}
-					/>
-					<SwitchField
-						id="default_admin"
-						label="Default admin"
-						checked={defaultAdmin}
-						onCheckedChange={(v) => setValue('default_admin', v)}
-					/>
-				</>
-			)}
+		{ type: 'section', title: 'Flags' },
+		{ type: 'switch', name: 'is_active', label: 'Active' },
+		{ type: 'switch', name: 'is_new_user', label: 'New user' },
+		!isEdit && { type: 'switch', name: 'is_hide', label: 'Hidden' },
+		!isEdit && {
+			type: 'switch',
+			name: 'default_admin',
+			label: 'Default admin',
+		},
+	]
 
-			<div className="flex justify-end gap-2 pt-4">
-				<Button
-					type="button"
-					variant="outline"
-					className="flex-auto xs:min-w-32 xs:flex-none"
-					onClick={onCancel}
-				>
-					Cancel
-				</Button>
-				<Button
-					type="submit"
-					disabled={isPending}
-					className="flex-auto xs:min-w-32 xs:flex-none"
-				>
-					{isPending && (
-						<Icon name="loader" className="animate-spin" />
-					)}
-					Save
-				</Button>
-			</div>
-		</form>
+	return (
+		<FormLayout
+			form={form}
+			fields={fields}
+			onSubmit={onSubmit}
+			onCancel={onCancel}
+			isPending={isPending}
+		/>
 	)
 }

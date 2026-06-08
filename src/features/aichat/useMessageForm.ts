@@ -37,26 +37,16 @@ export function useMessageForm({ message, onSuccess }: Params) {
 	const updateMut = useUpdateMessage()
 	const { data: sessionRefs, isLoading: sessionsLoading } = useSessionRefs()
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<MessageFormValues>({
+	const form = useForm<MessageFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(message),
 	})
+	const { handleSubmit, reset } = form
 
 	// The edit page loads the message asynchronously — sync once it arrives.
 	useEffect(() => {
 		if (message) reset(defaults(message))
 	}, [message, reset])
-
-	const sessionId = watch('session_id')
-	const role = watch('role')
-	const isVisible = watch('is_visible')
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
@@ -89,13 +79,7 @@ export function useMessageForm({ message, onSuccess }: Params) {
 
 	return {
 		isEdit,
-		register,
-		errors,
-		setValue,
-		sessionId,
-		setSessionId: (value: string) => setValue('session_id', value),
-		role,
-		isVisible,
+		form,
 		sessionRefs: sessionRefs ?? [],
 		sessionsLoading,
 		isPending: createMut.isPending || updateMut.isPending,

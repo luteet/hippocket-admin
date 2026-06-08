@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -30,17 +30,12 @@ export function useLinkNameForm({ item, onSuccess, onDeleted }: Params) {
 	const createMut = useCreateLinkName()
 	const updateMut = useUpdateLinkName()
 	const deleteMut = useDeleteLinkName()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm<LinkNameFormValues>({
+	const form = useForm<LinkNameFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: { name: item?.name ?? '', link: item?.link ?? '' },
 	})
+	const { handleSubmit, reset } = form
 
 	useEffect(() => {
 		if (item) reset({ name: item.name, link: item.link })
@@ -74,12 +69,9 @@ export function useLinkNameForm({ item, onSuccess, onDeleted }: Params) {
 
 	return {
 		isEdit,
-		register,
-		errors,
+		form,
 		onSubmit,
 		isPending: createMut.isPending || updateMut.isPending,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 	}

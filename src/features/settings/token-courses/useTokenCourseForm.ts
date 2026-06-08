@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -31,17 +31,12 @@ export function useTokenCourseForm({ item, onSuccess, onDeleted }: Params) {
 	const createMut = useCreateTokenCourse()
 	const updateMut = useUpdateTokenCourse()
 	const deleteMut = useDeleteTokenCourse()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm<TokenCourseFormValues>({
+	const form = useForm<TokenCourseFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: { coin_to_money: item?.coin_to_money ?? 0 },
 	})
+	const { handleSubmit, reset } = form
 
 	useEffect(() => {
 		if (item) reset({ coin_to_money: item.coin_to_money })
@@ -75,12 +70,9 @@ export function useTokenCourseForm({ item, onSuccess, onDeleted }: Params) {
 
 	return {
 		isEdit,
-		register,
-		errors,
+		form,
 		onSubmit,
 		isPending: createMut.isPending || updateMut.isPending,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 	}

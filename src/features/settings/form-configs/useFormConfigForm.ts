@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -47,25 +47,16 @@ export function useFormConfigForm({ item, onSuccess, onDeleted }: Params) {
 	const createMut = useCreateFormConfig()
 	const updateMut = useUpdateFormConfig()
 	const deleteMut = useDeleteFormConfig()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<FormConfigFormValues>({
+	const form = useForm<FormConfigFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(item),
 	})
+	const { handleSubmit, reset } = form
 
 	useEffect(() => {
 		if (item) reset(defaults(item))
 	}, [item, reset])
-
-	const isActive = watch('is_active')
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
@@ -106,14 +97,9 @@ export function useFormConfigForm({ item, onSuccess, onDeleted }: Params) {
 
 	return {
 		isEdit,
-		register,
-		errors,
-		setValue,
-		isActive,
+		form,
 		onSubmit,
 		isPending: createMut.isPending || updateMut.isPending,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 	}

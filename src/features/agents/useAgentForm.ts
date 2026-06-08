@@ -90,33 +90,19 @@ export function useAgentForm({ agent, onSuccess }: Params) {
 	const createMut = useCreateAgent()
 	const updateMut = useUpdateAgent()
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		setError,
-		getValues,
-		watch,
-		formState: { errors },
-	} = useForm<AgentFormValues>({
+	const form = useForm<AgentFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(agent),
 	})
+	const { handleSubmit, reset, setValue, setError, getValues } = form
 
 	// The edit page loads the agent asynchronously — sync the form once it arrives.
 	useEffect(() => {
 		if (agent) reset(defaults(agent))
 	}, [agent, reset])
 
-	const role = watch('role')
-	const status = watch('status')
-	const groupIds = watch('group_ids')
-	const chosenGroupId = watch('chosen_group_id')
-	const isActive = watch('is_active')
-	const isNewUser = watch('is_new_user')
-	const isHide = watch('is_hide')
-	const defaultAdmin = watch('default_admin')
+	const groupIds = form.watch('group_ids')
+	const chosenGroupId = form.watch('chosen_group_id')
 
 	const { data: groupOptions } = useGroupOptions()
 
@@ -224,19 +210,11 @@ export function useAgentForm({ agent, onSuccess }: Params) {
 
 	return {
 		isEdit,
-		register,
-		errors,
-		setValue,
-		role,
-		status,
+		form,
 		groupIds,
 		chosenGroupId,
 		toggleGroup,
 		setChosenGroup,
-		isActive,
-		isNewUser,
-		isHide,
-		defaultAdmin,
 		groupOptions: groupOptions ?? [],
 		isPending,
 		onSubmit,

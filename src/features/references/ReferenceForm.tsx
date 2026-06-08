@@ -1,8 +1,5 @@
-import { Icon } from '@/components/Icon'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Field } from '@/components/Field'
+import { FormLayout } from '@/components/form/FormLayout'
+import type { FormFieldEntry } from '@/components/form/types'
 import type { CatalogRecord } from '@/types/api'
 import { useReferenceForm } from './useReferenceForm'
 import type { ReferenceKind } from './useReferenceListPage'
@@ -15,66 +12,43 @@ interface Props {
 }
 
 export function ReferenceForm({ kind, item, onSuccess, onCancel }: Props) {
-	const { config, register, errors, isPending, onSubmit } = useReferenceForm({
+	const { config, form, isPending, onSubmit } = useReferenceForm({
 		kind,
 		item,
 		onSuccess,
 	})
 
+	const fields: FormFieldEntry[] = [
+		{
+			type: 'text',
+			name: 'name',
+			label: 'Name',
+			placeholder: config.singular,
+		},
+		{
+			type: 'textarea',
+			name: 'description',
+			label: 'Description',
+			placeholder: 'What this category covers…',
+			hidden: !config.hasContent,
+		},
+		{
+			type: 'textarea',
+			name: 'keywords',
+			label: 'Keywords',
+			placeholder: 'comma, separated, keywords',
+			hidden: !config.hasContent,
+		},
+		{ type: 'number', name: 'sort', label: 'Sort', placeholder: '0' },
+	]
+
 	return (
-		<form onSubmit={onSubmit} className="space-y-6">
-			<Field label="Name" error={errors.name?.message}>
-				<Input placeholder={config.singular} {...register('name')} />
-			</Field>
-
-			{config.hasContent && (
-				<>
-					<Field
-						label="Description"
-						error={errors.description?.message}
-					>
-						<Textarea
-							placeholder="What this category covers…"
-							{...register('description')}
-						/>
-					</Field>
-					<Field label="Keywords" error={errors.keywords?.message}>
-						<Textarea
-							placeholder="comma, separated, keywords"
-							{...register('keywords')}
-						/>
-					</Field>
-				</>
-			)}
-
-			<Field label="Sort" error={errors.sort?.message}>
-				<Input
-					type="number"
-					placeholder="0"
-					{...register('sort', { valueAsNumber: true })}
-				/>
-			</Field>
-
-			<div className="flex justify-end gap-2 pt-4">
-				<Button
-					type="button"
-					variant="outline"
-					className="flex-auto xs:min-w-32 xs:flex-none"
-					onClick={onCancel}
-				>
-					Cancel
-				</Button>
-				<Button
-					type="submit"
-					disabled={isPending}
-					className="flex-auto xs:min-w-32 xs:flex-none"
-				>
-					{isPending && (
-						<Icon name="loader" className="animate-spin" />
-					)}
-					Save
-				</Button>
-			</div>
-		</form>
+		<FormLayout
+			form={form}
+			fields={fields}
+			onSubmit={onSubmit}
+			onCancel={onCancel}
+			isPending={isPending}
+		/>
 	)
 }

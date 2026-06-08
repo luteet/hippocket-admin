@@ -50,15 +50,11 @@ export function useReferenceForm({ kind, item, onSuccess }: Params) {
 		config.endpoint,
 	)
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm<ReferenceFormValues>({
+	const form = useForm<ReferenceFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(item),
 	})
+	const { handleSubmit, reset } = form
 
 	// The edit page loads the record asynchronously — sync the form once it arrives.
 	useEffect(() => {
@@ -91,5 +87,5 @@ export function useReferenceForm({ kind, item, onSuccess }: Params) {
 
 	const isPending = createMut.isPending || updateMut.isPending
 
-	return { config, register, errors, isPending, onSubmit }
+	return { config, form, isPending, onSubmit }
 }

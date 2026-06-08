@@ -1,11 +1,6 @@
 import { useNavigate, useParams } from 'react-router'
 
-import { Icon } from '@/components/Icon'
-import { PageHeader } from '@/components/layout/PageHeader'
-import { Reveal } from '@/components/Reveal'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { FormPage } from '@/components/form/FormPage'
 import { useLinkName } from '../hooks'
 import { LinkNameForm } from './LinkNameForm'
 
@@ -16,41 +11,18 @@ export function LinkNameEditPage() {
 	const back = () => navigate('/link-names')
 
 	return (
-		<div>
-			<Reveal index={0}>
-				<PageHeader
-					title="Edit link"
-					actions={
-						<Button
-							variant="outline"
-							onClick={back}
-							aria-label="Back"
-						>
-							<Icon name="arrow-left" />
-							<span className="sm:inline hidden">Back</span>
-						</Button>
-					}
-				/>
-			</Reveal>
-			<Card className="max-w-2xl">
-				<CardContent className="pt-6">
-					{isLoading || !item ? (
-						<div className="space-y-3">
-							<Skeleton className="h-12 w-full" />
-							<Skeleton className="h-12 w-2/3" />
-						</div>
-					) : (
-						<Reveal index={1}>
-							<LinkNameForm
-								item={item}
-								onSuccess={back}
-								onCancel={back}
-								onDeleted={back}
-							/>
-						</Reveal>
-					)}
-				</CardContent>
-			</Card>
-		</div>
+		<FormPage
+			title="Edit link"
+			onBack={back}
+			isLoading={isLoading}
+			ready={Boolean(item)}
+		>
+			<LinkNameForm
+				item={item}
+				onSuccess={back}
+				onCancel={back}
+				onDeleted={back}
+			/>
+		</FormPage>
 	)
 }

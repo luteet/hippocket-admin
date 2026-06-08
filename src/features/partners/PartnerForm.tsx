@@ -1,19 +1,7 @@
-import { Icon } from '@/components/Icon'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select'
-import { Field } from '@/components/Field'
-import { SectionTitle } from '@/components/SectionTitle'
-import { SwitchField } from '@/components/SwitchField'
+import { FormLayout } from '@/components/form/FormLayout'
+import type { FormFieldEntry } from '@/components/form/types'
 import type { Partner } from '@/types/api'
-import { usePartnerForm, type PartnerFormValues } from './usePartnerForm'
+import { usePartnerForm } from './usePartnerForm'
 import { RefSelect } from './components/RefSelect'
 
 interface Props {
@@ -25,212 +13,153 @@ interface Props {
 export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 	const {
 		isEdit,
-		register,
-		errors,
-		setValue,
-		valueType,
-		isHide,
-		isHideForJourney,
-		smsEnabled,
-		locationId,
-		categoryId,
-		serviceId,
+		form,
+		handleCreateRef,
 		locationOptions,
 		categoryOptions,
 		serviceOptions,
-		handleCreateRef,
 		isPending,
 		onSubmit,
 	} = usePartnerForm({ partner, onSuccess })
 
-	return (
-		<form onSubmit={onSubmit} className="space-y-6">
-			<Field label="Name" error={errors.name?.message}>
-				<Input {...register('name')} />
-			</Field>
-			<Field label="Email" error={errors.email?.message}>
-				<Input type="email" {...register('email')} />
-			</Field>
-			<Field label="Phone" error={errors.phone?.message}>
-				<Input {...register('phone')} />
-			</Field>
+	const fields: FormFieldEntry[] = [
+		{ type: 'text', name: 'name', label: 'Name' },
+		{ type: 'email', name: 'email', label: 'Email' },
+		{ type: 'text', name: 'phone', label: 'Phone' },
 
-			<SectionTitle>Details</SectionTitle>
-			<Field label="Subtitle" error={errors.subtitle?.message}>
-				<Input {...register('subtitle')} />
-			</Field>
-			<Field
-				label="Short description"
-				error={errors.short_description?.message}
-			>
-				<Textarea rows={2} {...register('short_description')} />
-			</Field>
-			<Field label="Description" error={errors.description?.message}>
-				<Textarea rows={4} {...register('description')} />
-			</Field>
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<Field label="Website" error={errors.website?.message}>
-					<Input {...register('website')} />
-				</Field>
-				<Field label="Address" error={errors.address?.message}>
-					<Input {...register('address')} />
-				</Field>
-			</div>
-			<Field
-				label="Custom keywords"
-				error={errors.custom_keywords?.message}
-			>
-				<Input {...register('custom_keywords')} />
-			</Field>
+		{ type: 'section', title: 'Details' },
+		{ type: 'text', name: 'subtitle', label: 'Subtitle' },
+		{
+			type: 'textarea',
+			name: 'short_description',
+			label: 'Short description',
+			rows: 2,
+		},
+		{
+			type: 'textarea',
+			name: 'description',
+			label: 'Description',
+			rows: 4,
+		},
+		{
+			type: 'grid',
+			fields: [
+				{ type: 'text', name: 'website', label: 'Website' },
+				{ type: 'text', name: 'address', label: 'Address' },
+			],
+		},
+		{ type: 'text', name: 'custom_keywords', label: 'Custom keywords' },
 
-			<SectionTitle>Fees & value</SectionTitle>
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<Field label="Agent fee" error={errors.agent_fee?.message}>
-					<Input
-						type="number"
-						step="0.01"
-						{...register('agent_fee', { valueAsNumber: true })}
-					/>
-				</Field>
-				<Field label="Value type">
-					<Select
-						value={valueType}
-						onValueChange={(v) =>
-							setValue(
-								'value_type',
-								v as PartnerFormValues['value_type'],
-							)
-						}
-						disabled={isEdit}
-					>
-						<SelectTrigger>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="money">Money</SelectItem>
-							<SelectItem value="tokens">Tokens</SelectItem>
-						</SelectContent>
-					</Select>
-				</Field>
-				<Field
-					label="Potential value"
-					error={errors.potential_value?.message}
-				>
-					<Input
-						type="number"
-						step="0.01"
-						{...register('potential_value', {
-							setValueAs: (v) =>
-								v === '' || v == null ? null : Number(v),
-						})}
-					/>
-				</Field>
-				<Field
-					label="Group owner fee"
-					error={errors.group_owner_fee?.message}
-				>
-					<Input
-						type="number"
-						step="0.01"
-						{...register('group_owner_fee', {
-							valueAsNumber: true,
-						})}
-					/>
-				</Field>
-				<Field
-					label="Hippocket fee"
-					error={errors.hippocket_fee?.message}
-				>
-					<Input
-						type="number"
-						step="0.01"
-						{...register('hippocket_fee', {
-							valueAsNumber: true,
-						})}
-					/>
-				</Field>
-			</div>
+		{ type: 'section', title: 'Fees & value' },
+		{
+			type: 'grid',
+			fields: [
+				{
+					type: 'number',
+					name: 'agent_fee',
+					label: 'Agent fee',
+					step: '0.01',
+				},
+				{
+					type: 'select',
+					name: 'value_type',
+					label: 'Value type',
+					disabled: isEdit,
+					options: [
+						{ value: 'money', label: 'Money' },
+						{ value: 'tokens', label: 'Tokens' },
+					],
+				},
+				{
+					type: 'number',
+					name: 'potential_value',
+					label: 'Potential value',
+					step: '0.01',
+					registerOptions: {
+						setValueAs: (v) =>
+							v === '' || v == null ? null : Number(v),
+					},
+				},
+				{
+					type: 'number',
+					name: 'group_owner_fee',
+					label: 'Group owner fee',
+					step: '0.01',
+				},
+				{
+					type: 'number',
+					name: 'hippocket_fee',
+					label: 'Hippocket fee',
+					step: '0.01',
+				},
+			],
+		},
 
-			<SectionTitle>SMS notifications</SectionTitle>
-			<SwitchField
-				id="sms_notifications_enabled"
-				label="Active"
-				checked={smsEnabled}
-				onCheckedChange={(v) =>
-					setValue('sms_notifications_enabled', v)
-				}
-			/>
-			<Field label="Phone" error={errors.sms_phone?.message}>
-				<Input {...register('sms_phone')} />
-			</Field>
+		{ type: 'section', title: 'SMS notifications' },
+		{
+			type: 'switch',
+			name: 'sms_notifications_enabled',
+			label: 'Active',
+		},
+		{ type: 'text', name: 'sms_phone', label: 'Phone' },
 
-			<SectionTitle>Visibility</SectionTitle>
-			<SwitchField
-				id="is_hide_for_journey"
-				label="Hidden for journey"
-				checked={isHideForJourney}
-				onCheckedChange={(v) => setValue('is_hide_for_journey', v)}
-			/>
+		{ type: 'section', title: 'Visibility' },
+		{
+			type: 'switch',
+			name: 'is_hide_for_journey',
+			label: 'Hidden for journey',
+		},
+		isEdit && { type: 'switch', name: 'is_hide', label: 'Hidden' },
 
-			{isEdit && (
-				<SwitchField
-					id="is_hide"
-					label="Hidden"
-					checked={isHide}
-					onCheckedChange={(v) => setValue('is_hide', v)}
-				/>
-			)}
-
-			<SectionTitle>Taxonomies</SectionTitle>
-
-			<Field label="Location">
+		{ type: 'section', title: 'Taxonomies' },
+		{
+			type: 'custom',
+			label: 'Location',
+			render: (
 				<RefSelect
-					value={locationId}
+					value={form.watch('location_id')}
 					options={locationOptions}
 					placeholder="Select a location"
-					onChange={(v) => setValue('location_id', v)}
+					onChange={(v) => form.setValue('location_id', v)}
 					onCreate={handleCreateRef}
 				/>
-			</Field>
-			<Field label="Category">
+			),
+		},
+		{
+			type: 'custom',
+			label: 'Category',
+			render: (
 				<RefSelect
-					value={categoryId}
+					value={form.watch('category_id')}
 					options={categoryOptions}
 					placeholder="Select a category"
-					onChange={(v) => setValue('category_id', v)}
+					onChange={(v) => form.setValue('category_id', v)}
 					onCreate={handleCreateRef}
 				/>
-			</Field>
-			<Field label="Service">
+			),
+		},
+		{
+			type: 'custom',
+			label: 'Service',
+			render: (
 				<RefSelect
-					value={serviceId}
+					value={form.watch('service_id')}
 					options={serviceOptions}
 					placeholder="Select a service"
-					onChange={(v) => setValue('service_id', v)}
+					onChange={(v) => form.setValue('service_id', v)}
 					onCreate={handleCreateRef}
 				/>
-			</Field>
+			),
+		},
+	]
 
-			<div className="flex justify-end gap-2 pt-4">
-				<Button
-					type="button"
-					variant="outline"
-					className="flex-auto xs:min-w-32 xs:flex-none"
-					onClick={onCancel}
-				>
-					Cancel
-				</Button>
-				<Button
-					type="submit"
-					disabled={isPending}
-					className="flex-auto xs:min-w-32 xs:flex-none"
-				>
-					{isPending && (
-						<Icon name="loader" className="animate-spin" />
-					)}
-					Save
-				</Button>
-			</div>
-		</form>
+	return (
+		<FormLayout
+			form={form}
+			fields={fields}
+			onSubmit={onSubmit}
+			onCancel={onCancel}
+			isPending={isPending}
+		/>
 	)
 }

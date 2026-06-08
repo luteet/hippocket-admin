@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -48,30 +48,19 @@ export function useGroupFormPriceForm({ item, onSuccess, onDeleted }: Params) {
 	const createMut = useCreateGroupFormPrice()
 	const updateMut = useUpdateGroupFormPrice()
 	const deleteMut = useDeleteGroupFormPrice()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const { data: formOptions } = useFormConfigOptions()
 	const { data: groupOptions } = useGroupOptions()
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<GroupFormPriceFormValues>({
+	const form = useForm<GroupFormPriceFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(item),
 	})
+	const { handleSubmit, reset } = form
 
 	useEffect(() => {
 		if (item) reset(defaults(item))
 	}, [item, reset])
-
-	const formConfigId = watch('form_config_id')
-	const groupId = watch('group_id')
-	const isActive = watch('is_active')
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
@@ -101,18 +90,11 @@ export function useGroupFormPriceForm({ item, onSuccess, onDeleted }: Params) {
 
 	return {
 		isEdit,
-		register,
-		errors,
-		setValue,
-		formConfigId,
-		groupId,
-		isActive,
+		form,
 		formOptions: formOptions ?? [],
 		groupOptions: groupOptions ?? [],
 		onSubmit,
 		isPending: createMut.isPending || updateMut.isPending,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 	}

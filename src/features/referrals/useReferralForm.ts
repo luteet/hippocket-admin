@@ -68,28 +68,16 @@ export function useReferralForm({ referral, onSuccess }: Params) {
 	const { data: partnerOptions } = usePartnerRefs()
 	const { data: groupOptions } = useGroupOptions()
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<ReferralFormValues>({
+	const form = useForm<ReferralFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(referral),
 	})
+	const { handleSubmit, reset } = form
 
 	// The edit page loads the referral asynchronously — sync once it arrives.
 	useEffect(() => {
 		if (referral) reset(defaults(referral))
 	}, [referral, reset])
-
-	const statusId = watch('status_id')
-	const groupId = watch('referral_group_id')
-	const partnerId = watch('referral_partner_id')
-	const valueType = watch('value_type')
-	const isPaid = watch('is_paid')
 
 	const onSubmit = handleSubmit(async (values) => {
 		if (!referral) return
@@ -118,14 +106,7 @@ export function useReferralForm({ referral, onSuccess }: Params) {
 	})
 
 	return {
-		register,
-		errors,
-		setValue,
-		statusId,
-		groupId,
-		partnerId,
-		valueType,
-		isPaid,
+		form,
 		statusOptions: statuses?.items ?? [],
 		partnerOptions: partnerOptions ?? [],
 		groupOptions: groupOptions ?? [],

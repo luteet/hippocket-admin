@@ -51,17 +51,11 @@ export function useChatMessageForm({
 	const updateMut = useUpdateChatMessage()
 	const { data: chatRefs, isLoading: chatsLoading } = useChatRefs()
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<ChatMessageFormValues>({
+	const form = useForm<ChatMessageFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(message, initialChatId),
 	})
+	const { handleSubmit, reset, setValue, watch } = form
 
 	// The edit page loads the message asynchronously — sync once it arrives.
 	useEffect(() => {
@@ -70,7 +64,6 @@ export function useChatMessageForm({
 
 	const chatId = watch('chat_id')
 	const userId = watch('user_id')
-	const isRead = watch('is_read')
 
 	// The author must be one of the selected chat's two participants.
 	const selectedChat = (chatRefs ?? []).find((c) => c.id === chatId)
@@ -114,14 +107,9 @@ export function useChatMessageForm({
 
 	return {
 		isEdit,
-		register,
-		errors,
-		setValue,
+		form,
 		chatId,
 		setChatId,
-		userId,
-		setUserId: (value: string) => setValue('user_id', value),
-		isRead,
 		participants,
 		chatRefs: chatRefs ?? [],
 		chatsLoading,

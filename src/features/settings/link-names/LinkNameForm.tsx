@@ -1,7 +1,6 @@
-import { Input } from '@/components/ui/input'
-import { Field } from '@/components/Field'
+import { FormLayout } from '@/components/form/FormLayout'
+import type { FormFieldEntry } from '@/components/form/types'
 import type { LinkName } from '@/types/api'
-import { FormActions } from '../components/FormActions'
 import { useLinkNameForm } from './useLinkNameForm'
 
 interface Props {
@@ -12,42 +11,31 @@ interface Props {
 }
 
 export function LinkNameForm({ item, onSuccess, onCancel, onDeleted }: Props) {
-	const {
-		isEdit,
-		register,
-		errors,
-		onSubmit,
-		isPending,
-		confirmOpen,
-		setConfirmOpen,
-		isDeleting,
-		handleDelete,
-	} = useLinkNameForm({ item, onSuccess, onDeleted })
+	const { isEdit, form, onSubmit, isPending, isDeleting, handleDelete } =
+		useLinkNameForm({ item, onSuccess, onDeleted })
+
+	const fields: FormFieldEntry[] = [
+		{ type: 'text', name: 'name', label: 'Name' },
+		{
+			type: 'url',
+			name: 'link',
+			label: 'Link',
+			placeholder: 'https://example.com',
+		},
+	]
 
 	return (
-		<form onSubmit={onSubmit} className="space-y-6">
-			<Field label="Name" error={errors.name?.message}>
-				<Input {...register('name')} />
-			</Field>
-			<Field label="Link" error={errors.link?.message}>
-				<Input
-					type="url"
-					placeholder="https://example.com"
-					{...register('link')}
-				/>
-			</Field>
-
-			<FormActions
-				isEdit={isEdit}
-				isPending={isPending}
-				isDeleting={isDeleting}
-				confirmOpen={confirmOpen}
-				setConfirmOpen={setConfirmOpen}
-				onDelete={handleDelete}
-				onCancel={onCancel}
-				deleteTitle="Delete link?"
-				deleteDescription="This link will be permanently deleted."
-			/>
-		</form>
+		<FormLayout
+			form={form}
+			fields={fields}
+			onSubmit={onSubmit}
+			onCancel={onCancel}
+			isPending={isPending}
+			isEdit={isEdit}
+			onDelete={handleDelete}
+			isDeleting={isDeleting}
+			deleteTitle="Delete link?"
+			deleteDescription="This link will be permanently deleted."
+		/>
 	)
 }

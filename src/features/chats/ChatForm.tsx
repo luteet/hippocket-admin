@@ -1,7 +1,6 @@
-import { Icon } from '@/components/Icon'
 import { AgentSelect } from '@/components/AgentSelect'
-import { Button } from '@/components/ui/button'
-import { Field } from '@/components/Field'
+import { FormLayout } from '@/components/form/FormLayout'
+import type { FormFieldEntry } from '@/components/form/types'
 import type { Chat } from '@/types/api'
 import { useChatForm } from './useChatForm'
 
@@ -12,58 +11,49 @@ interface Props {
 }
 
 export function ChatForm({ chat, onSuccess, onCancel }: Props) {
-	const {
-		errors,
-		userA,
-		setUserA,
-		userB,
-		setUserB,
-		agentRefs,
-		agentsLoading,
-		isPending,
-		onSubmit,
-	} = useChatForm({ chat, onSuccess })
+	const { form, agentRefs, agentsLoading, isPending, onSubmit } = useChatForm(
+		{
+			chat,
+			onSuccess,
+		},
+	)
+
+	const fields: FormFieldEntry[] = [
+		{
+			type: 'custom',
+			label: 'Participant 1',
+			name: 'user_a',
+			render: (
+				<AgentSelect
+					value={form.watch('user_a')}
+					options={agentRefs}
+					loading={agentsLoading}
+					onChange={(v) => form.setValue('user_a', v)}
+				/>
+			),
+		},
+		{
+			type: 'custom',
+			label: 'Participant 2',
+			name: 'user_b',
+			render: (
+				<AgentSelect
+					value={form.watch('user_b')}
+					options={agentRefs}
+					loading={agentsLoading}
+					onChange={(v) => form.setValue('user_b', v)}
+				/>
+			),
+		},
+	]
 
 	return (
-		<form onSubmit={onSubmit} className="space-y-6">
-			<Field label="Participant 1" error={errors.user_a?.message}>
-				<AgentSelect
-					value={userA}
-					options={agentRefs}
-					loading={agentsLoading}
-					onChange={setUserA}
-				/>
-			</Field>
-
-			<Field label="Participant 2" error={errors.user_b?.message}>
-				<AgentSelect
-					value={userB}
-					options={agentRefs}
-					loading={agentsLoading}
-					onChange={setUserB}
-				/>
-			</Field>
-
-			<div className="flex justify-end gap-2 pt-4">
-				<Button
-					type="button"
-					variant="outline"
-					className="flex-auto xs:min-w-32 xs:flex-none"
-					onClick={onCancel}
-				>
-					Cancel
-				</Button>
-				<Button
-					type="submit"
-					disabled={isPending}
-					className="flex-auto xs:min-w-32 xs:flex-none"
-				>
-					{isPending && (
-						<Icon name="loader" className="animate-spin" />
-					)}
-					Save
-				</Button>
-			</div>
-		</form>
+		<FormLayout
+			form={form}
+			fields={fields}
+			onSubmit={onSubmit}
+			onCancel={onCancel}
+			isPending={isPending}
+		/>
 	)
 }

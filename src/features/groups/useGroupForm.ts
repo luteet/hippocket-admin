@@ -77,18 +77,11 @@ export function useGroupForm({ group, onSuccess }: Params) {
 	const updateMut = useUpdateGroup()
 	const [tab, setTab] = useState<GroupFormTab>('general')
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		getValues,
-		watch,
-		formState: { errors },
-	} = useForm<GroupFormValues>({
+	const form = useForm<GroupFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(group),
 	})
+	const { handleSubmit, reset, setValue, getValues, watch } = form
 
 	// The edit page loads the group asynchronously — sync the form once it arrives.
 	useEffect(() => {
@@ -165,8 +158,7 @@ export function useGroupForm({ group, onSuccess }: Params) {
 		isEdit,
 		tab,
 		setTab,
-		register,
-		errors,
+		form,
 		adminIds,
 		colors,
 		toggleAdmin,

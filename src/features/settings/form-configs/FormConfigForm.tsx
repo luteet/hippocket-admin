@@ -1,9 +1,6 @@
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Field } from '@/components/Field'
-import { SwitchField } from '@/components/SwitchField'
+import { FormLayout } from '@/components/form/FormLayout'
+import type { FormFieldEntry } from '@/components/form/types'
 import type { FormConfig } from '@/types/api'
-import { FormActions } from '../components/FormActions'
 import { useFormConfigForm } from './useFormConfigForm'
 
 interface Props {
@@ -19,68 +16,52 @@ export function FormConfigForm({
 	onCancel,
 	onDeleted,
 }: Props) {
-	const {
-		isEdit,
-		register,
-		errors,
-		setValue,
-		isActive,
-		onSubmit,
-		isPending,
-		confirmOpen,
-		setConfirmOpen,
-		isDeleting,
-		handleDelete,
-	} = useFormConfigForm({ item, onSuccess, onDeleted })
+	const { isEdit, form, onSubmit, isPending, isDeleting, handleDelete } =
+		useFormConfigForm({ item, onSuccess, onDeleted })
+
+	const fields: FormFieldEntry[] = [
+		{ type: 'text', name: 'name', label: 'Name' },
+		{
+			type: 'text',
+			name: 'slug',
+			label: 'Slug',
+			disabled: isEdit,
+			placeholder: 'make-an-offer',
+		},
+		{
+			type: 'text',
+			name: 'endpoint',
+			label: 'Endpoint',
+			placeholder: '/api/forms/...',
+		},
+		{
+			type: 'grid',
+			fields: [
+				{
+					type: 'number',
+					name: 'price',
+					label: 'Price',
+					step: '0.01',
+				},
+				{ type: 'text', name: 'currency', label: 'Currency' },
+			],
+		},
+		{ type: 'textarea', name: 'description', label: 'Description' },
+		{ type: 'switch', name: 'is_active', label: 'Active' },
+	]
 
 	return (
-		<form onSubmit={onSubmit} className="space-y-6">
-			<Field label="Name" error={errors.name?.message}>
-				<Input {...register('name')} />
-			</Field>
-			<Field label="Slug" error={errors.slug?.message}>
-				<Input
-					disabled={isEdit}
-					placeholder="make-an-offer"
-					{...register('slug')}
-				/>
-			</Field>
-			<Field label="Endpoint" error={errors.endpoint?.message}>
-				<Input placeholder="/api/forms/..." {...register('endpoint')} />
-			</Field>
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				<Field label="Price" error={errors.price?.message}>
-					<Input
-						type="number"
-						step="0.01"
-						{...register('price', { valueAsNumber: true })}
-					/>
-				</Field>
-				<Field label="Currency" error={errors.currency?.message}>
-					<Input {...register('currency')} />
-				</Field>
-			</div>
-			<Field label="Description" error={errors.description?.message}>
-				<Textarea {...register('description')} />
-			</Field>
-			<SwitchField
-				id="is_active"
-				label="Active"
-				checked={isActive}
-				onCheckedChange={(v) => setValue('is_active', v)}
-			/>
-
-			<FormActions
-				isEdit={isEdit}
-				isPending={isPending}
-				isDeleting={isDeleting}
-				confirmOpen={confirmOpen}
-				setConfirmOpen={setConfirmOpen}
-				onDelete={handleDelete}
-				onCancel={onCancel}
-				deleteTitle="Delete form?"
-				deleteDescription="This form configuration will be permanently deleted."
-			/>
-		</form>
+		<FormLayout
+			form={form}
+			fields={fields}
+			onSubmit={onSubmit}
+			onCancel={onCancel}
+			isPending={isPending}
+			isEdit={isEdit}
+			onDelete={handleDelete}
+			isDeleting={isDeleting}
+			deleteTitle="Delete form?"
+			deleteDescription="This form configuration will be permanently deleted."
+		/>
 	)
 }

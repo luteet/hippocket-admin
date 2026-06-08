@@ -50,14 +50,7 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 	const createMut = useCreatePartner()
 	const updateMut = useUpdatePartner()
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<PartnerFormValues>({
+	const form = useForm<PartnerFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: {
 			name: partner?.name ?? '',
@@ -84,6 +77,7 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 			service_id: partner?.service_id ?? '',
 		},
 	})
+	const { handleSubmit, reset } = form
 
 	// The edit page loads the partner asynchronously — sync the form once it arrives.
 	useEffect(() => {
@@ -113,14 +107,6 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 			})
 		}
 	}, [partner, reset])
-
-	const valueType = watch('value_type')
-	const isHide = watch('is_hide')
-	const isHideForJourney = watch('is_hide_for_journey')
-	const smsEnabled = watch('sms_notifications_enabled')
-	const locationId = watch('location_id')
-	const categoryId = watch('category_id')
-	const serviceId = watch('service_id')
 
 	// Option lists for the location/category/service selects (shown in both
 	// create and edit mode).
@@ -208,17 +194,8 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 
 	return {
 		isEdit,
-		register,
-		errors,
-		setValue,
+		form,
 		handleCreateRef,
-		valueType,
-		isHide,
-		isHideForJourney,
-		smsEnabled,
-		locationId,
-		categoryId,
-		serviceId,
 		locationOptions: locationOptions ?? [],
 		categoryOptions: categoryOptions ?? [],
 		serviceOptions: serviceOptions ?? [],

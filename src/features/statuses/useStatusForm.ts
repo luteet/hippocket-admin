@@ -37,15 +37,11 @@ export function useStatusForm({ status, onSuccess }: Params) {
 	const createMut = useCreateStatus()
 	const updateMut = useUpdateStatus()
 
-	const {
-		register,
-		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm<StatusFormValues>({
+	const form = useForm<StatusFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(status),
 	})
+	const { handleSubmit, reset } = form
 
 	// The edit page loads the status asynchronously — sync the form once it arrives.
 	useEffect(() => {
@@ -73,5 +69,5 @@ export function useStatusForm({ status, onSuccess }: Params) {
 
 	const isPending = createMut.isPending || updateMut.isPending
 
-	return { register, errors, isPending, onSubmit }
+	return { form, isPending, onSubmit }
 }

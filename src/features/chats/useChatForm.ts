@@ -40,24 +40,16 @@ export function useChatForm({ chat, onSuccess }: Params) {
 	const updateMut = useUpdateChat()
 	const { data: agentRefs, isLoading: agentsLoading } = useAgentRefOptions()
 
-	const {
-		handleSubmit,
-		reset,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<ChatFormValues>({
+	const form = useForm<ChatFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: defaults(chat),
 	})
+	const { handleSubmit, reset } = form
 
 	// The edit page loads the chat asynchronously — sync once it arrives.
 	useEffect(() => {
 		if (chat) reset(defaults(chat))
 	}, [chat, reset])
-
-	const userA = watch('user_a')
-	const userB = watch('user_b')
 
 	const onSubmit = handleSubmit(async (values) => {
 		const dto = { user_ids: [values.user_a, values.user_b] }
@@ -80,12 +72,7 @@ export function useChatForm({ chat, onSuccess }: Params) {
 	})
 
 	return {
-		isEdit,
-		errors,
-		userA,
-		setUserA: (value: string) => setValue('user_a', value),
-		userB,
-		setUserB: (value: string) => setValue('user_b', value),
+		form,
 		agentRefs: agentRefs ?? [],
 		agentsLoading,
 		isPending: createMut.isPending || updateMut.isPending,

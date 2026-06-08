@@ -22,17 +22,11 @@ export function useSessionForm({ onSuccess }: Params) {
 	const { data: agentOptions, isLoading: agentsLoading } =
 		useAgentRefOptions()
 
-	const {
-		handleSubmit,
-		setValue,
-		watch,
-		formState: { errors },
-	} = useForm<SessionFormValues>({
+	const form = useForm<SessionFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: { user_id: '' },
 	})
-
-	const userId = watch('user_id')
+	const { handleSubmit } = form
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
@@ -47,9 +41,7 @@ export function useSessionForm({ onSuccess }: Params) {
 	})
 
 	return {
-		errors,
-		userId,
-		setUserId: (value: string) => setValue('user_id', value),
+		form,
 		agentOptions: agentOptions ?? [],
 		agentsLoading,
 		isPending: createMut.isPending,

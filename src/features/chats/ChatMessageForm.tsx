@@ -1,8 +1,5 @@
-import { Icon } from '@/components/Icon'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Field } from '@/components/Field'
-import { SwitchField } from '@/components/SwitchField'
+import { FormLayout } from '@/components/form/FormLayout'
+import type { FormFieldEntry } from '@/components/form/types'
 import type { ChatMessage } from '@/types/api'
 import { useChatMessageForm } from './useChatMessageForm'
 import { ChatSelect } from './components/ChatSelect'
@@ -24,14 +21,9 @@ export function ChatMessageForm({
 }: Props) {
 	const {
 		isEdit,
-		register,
-		errors,
-		setValue,
+		form,
 		chatId,
 		setChatId,
-		userId,
-		setUserId,
-		isRead,
 		participants,
 		chatRefs,
 		chatsLoading,
@@ -39,69 +31,52 @@ export function ChatMessageForm({
 		onSubmit,
 	} = useChatMessageForm({ message, initialChatId, onSuccess })
 
+	const fields: FormFieldEntry[] = [
+		{
+			type: 'custom',
+			label: 'Chat',
+			name: 'chat_id',
+			render: isEdit ? (
+				<p className="text-sm text-muted-foreground">
+					{message?.chat_id.slice(0, 8)}
+				</p>
+			) : (
+				<ChatSelect
+					value={chatId}
+					options={chatRefs}
+					loading={chatsLoading}
+					onChange={setChatId}
+				/>
+			),
+		},
+		{
+			type: 'custom',
+			label: 'Author',
+			name: 'user_id',
+			render: isEdit ? (
+				<p className="text-sm text-muted-foreground">
+					{message?.user_email}
+				</p>
+			) : (
+				<ParticipantSelect
+					value={form.watch('user_id')}
+					options={participants}
+					disabled={!chatId}
+					onChange={(v) => form.setValue('user_id', v)}
+				/>
+			),
+		},
+		{ type: 'textarea', name: 'text', label: 'Text', rows: 5 },
+		{ type: 'switch', name: 'is_read', label: 'Read' },
+	]
+
 	return (
-		<form onSubmit={onSubmit} className="space-y-6">
-			<Field label="Chat" error={errors.chat_id?.message}>
-				{isEdit ? (
-					<p className="text-sm text-muted-foreground">
-						{message?.chat_id.slice(0, 8)}
-					</p>
-				) : (
-					<ChatSelect
-						value={chatId}
-						options={chatRefs}
-						loading={chatsLoading}
-						onChange={setChatId}
-					/>
-				)}
-			</Field>
-
-			<Field label="Author" error={errors.user_id?.message}>
-				{isEdit ? (
-					<p className="text-sm text-muted-foreground">
-						{message?.user_email}
-					</p>
-				) : (
-					<ParticipantSelect
-						value={userId}
-						options={participants}
-						disabled={!chatId}
-						onChange={setUserId}
-					/>
-				)}
-			</Field>
-
-			<Field label="Text" error={errors.text?.message}>
-				<Textarea rows={5} {...register('text')} />
-			</Field>
-
-			<SwitchField
-				id="is_read"
-				label="Read"
-				checked={isRead}
-				onCheckedChange={(v) => setValue('is_read', v)}
-			/>
-
-			<div className="flex justify-end gap-2 pt-4">
-				<Button
-					type="button"
-					variant="outline"
-					className="flex-auto xs:min-w-32 xs:flex-none"
-					onClick={onCancel}
-				>
-					Cancel
-				</Button>
-				<Button
-					type="submit"
-					disabled={isPending}
-					className="flex-auto xs:min-w-32 xs:flex-none"
-				>
-					{isPending && (
-						<Icon name="loader" className="animate-spin" />
-					)}
-					Save
-				</Button>
-			</div>
-		</form>
+		<FormLayout
+			form={form}
+			fields={fields}
+			onSubmit={onSubmit}
+			onCancel={onCancel}
+			isPending={isPending}
+		/>
 	)
 }
