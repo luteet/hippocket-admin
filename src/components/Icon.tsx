@@ -38,6 +38,7 @@ export type IconName =
 	| 'filter'
 	| 'calendar'
 	| 'message-square'
+	| 'bot'
 	| 'layout-dashboard'
 	| 'settings'
 	| 'coins'

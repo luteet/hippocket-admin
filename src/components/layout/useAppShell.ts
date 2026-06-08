@@ -35,20 +35,20 @@ export const NAV_ITEMS: NavItem[] = [
 			{ to: '/services', label: 'Services', icon: 'wrench' },
 		],
 	},
-	{ to: '/contacts', label: 'Contacts', icon: 'contact' },
 	{
 		to: '/referrals',
 		label: 'Pipeline',
 		icon: 'git-branch',
 		children: [{ to: '/statuses', label: 'Statuses', icon: 'list-checks' }],
 	},
+	{ to: '/contacts', label: 'Contacts', icon: 'contact' },
 	{ to: '/agents', label: 'Agents', icon: 'users' },
 	{ to: '/groups', label: 'Groups', icon: 'boxes' },
 	{ to: '/withdrawals', label: 'Withdrawals', icon: 'wallet' },
 	{
 		to: '/ai-chat',
 		label: 'AI Chat',
-		icon: 'message-square',
+		icon: 'bot',
 		// No page of its own — the parent button jumps to the first child.
 		groupOnly: true,
 		children: [
