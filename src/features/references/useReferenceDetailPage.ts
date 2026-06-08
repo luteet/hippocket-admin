@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 
@@ -20,7 +19,6 @@ export function useReferenceDetailPage(kind: ReferenceKind) {
 		config.queryKey,
 		config.endpoint,
 	)
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const handleDelete = async () => {
 		if (!id) return
@@ -37,8 +35,6 @@ export function useReferenceDetailPage(kind: ReferenceKind) {
 		config,
 		item,
 		isLoading,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate(`/${kind}`),

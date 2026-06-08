@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 
@@ -19,7 +18,6 @@ export function useReferralDetailPage() {
 	const statusMut = useUpdateReferralStatus()
 	const paidMut = useMarkReferralPaid()
 	const deleteMut = useDeleteReferral()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const currentStatus = referral?.status ?? ''
 
@@ -63,8 +61,6 @@ export function useReferralDetailPage() {
 		handleMarkPaid,
 		isUpdatingStatus: statusMut.isPending,
 		isMarkingPaid: paidMut.isPending,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate('/referrals'),

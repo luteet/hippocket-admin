@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 
@@ -10,7 +9,6 @@ export function useAgentDetailPage() {
 	const navigate = useNavigate()
 	const { data: agent, isLoading } = useAgent(id)
 	const deleteMut = useDeleteAgent()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const handleDelete = async () => {
 		if (!id) return
@@ -26,8 +24,6 @@ export function useAgentDetailPage() {
 	return {
 		agent,
 		isLoading,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate('/agents'),

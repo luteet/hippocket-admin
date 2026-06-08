@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 
@@ -11,7 +10,6 @@ export function useStatusDetailPage() {
 	const numericId = id ? Number(id) : undefined
 	const { data: status, isLoading } = useStatus(numericId)
 	const deleteMut = useDeleteStatus()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const handleDelete = async () => {
 		if (numericId === undefined) return
@@ -27,8 +25,6 @@ export function useStatusDetailPage() {
 	return {
 		status,
 		isLoading,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate('/statuses'),

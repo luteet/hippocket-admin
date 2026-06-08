@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 
@@ -10,7 +9,6 @@ export function useMessageDetailPage() {
 	const navigate = useNavigate()
 	const { data: message, isLoading } = useMessage(id)
 	const deleteMut = useDeleteMessage()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const handleDelete = async () => {
 		if (!id) return
@@ -26,8 +24,6 @@ export function useMessageDetailPage() {
 	return {
 		message,
 		isLoading,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate('/ai-chat/messages'),

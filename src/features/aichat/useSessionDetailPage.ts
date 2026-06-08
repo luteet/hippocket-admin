@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 
@@ -10,7 +9,6 @@ export function useSessionDetailPage() {
 	const navigate = useNavigate()
 	const { data: session, isLoading } = useSession(id)
 	const deleteMut = useDeleteSession()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const handleDelete = async () => {
 		if (!id) return
@@ -26,8 +24,6 @@ export function useSessionDetailPage() {
 	return {
 		session,
 		isLoading,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate('/ai-chat/sessions'),

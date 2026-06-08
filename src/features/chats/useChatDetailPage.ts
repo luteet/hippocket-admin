@@ -12,7 +12,6 @@ export function useChatDetailPage() {
 	const navigate = useNavigate()
 	const { data: chat, isLoading } = useChat(id)
 	const deleteMut = useDeleteChat()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 	const [tab, setTab] = useState<ChatDetailTab>('general')
 
 	const handleDelete = async () => {
@@ -32,8 +31,6 @@ export function useChatDetailPage() {
 		isLoading,
 		tab,
 		setTab,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate('/chats'),

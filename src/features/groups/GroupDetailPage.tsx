@@ -1,17 +1,7 @@
-import { AnimatePresence } from 'motion/react'
-
-import { Icon } from '@/components/Icon'
-import { PageTransition } from '@/components/PageTransition'
-import { PageHeader } from '@/components/layout/PageHeader'
-import { Reveal } from '@/components/Reveal'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
-import { ConfirmDialog } from '@/components/ConfirmDialog'
-import { DetailGrid, DetailRow } from '@/components/DetailList'
-import { TabButton } from '@/components/TabButton'
+import { DetailGrid } from '@/components/DetailList'
+import { DetailPage } from '@/components/detail/DetailPage'
+import { DetailBody } from '@/components/detail/DetailBody'
 import { formatDateTime } from '@/lib/format'
 import { useGroupDetailPage } from './useGroupDetailPage'
 import { ColorRow } from './components/ColorRow'
@@ -22,8 +12,6 @@ export function GroupDetailPage() {
 		isLoading,
 		tab,
 		setTab,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting,
 		handleDelete,
 		goBack,
@@ -32,220 +20,126 @@ export function GroupDetailPage() {
 	} = useGroupDetailPage()
 
 	return (
-		<div>
-			<Reveal index={0}>
-				<PageHeader
-					title="Group"
-					actions={
-						<>
-							<Button
-								variant="outline"
-								onClick={goBack}
-								aria-label="Back"
-							>
-								<Icon name="arrow-left" />
-								<span className="sm:inline hidden">Back</span>
-							</Button>
-							{group && (
-								<>
-									<Button
-										variant="secondary"
-										onClick={goToEdit}
-										aria-label="Edit"
-									>
-										<Icon name="pencil" />
-										<span className="sm:inline hidden">
-											Edit
-										</span>
-									</Button>
-									<Button
-										variant="destructive"
-										onClick={() => setConfirmOpen(true)}
-										aria-label="Delete"
-									>
-										<Icon name="trash-2" />
-										<span className="sm:inline hidden">
-											Delete
-										</span>
-									</Button>
-								</>
-							)}
-						</>
-					}
-				/>
-			</Reveal>
-
-			<Reveal index={1}>
-				<div className="mb-6 flex gap-1 border-b border-border">
-					<TabButton
-						active={tab === 'general'}
-						onClick={() => setTab('general')}
-					>
-						General
-					</TabButton>
-					<TabButton
-						active={tab === 'theme'}
-						onClick={() => setTab('theme')}
-					>
-						Theme
-					</TabButton>
-				</div>
-
-				<AnimatePresence mode="wait" initial={false}>
-					<PageTransition key={tab}>
-						<Card className="max-w-2xl">
-							<CardContent className="pt-6">
-								{isLoading || !group ? (
-									<div className="space-y-3">
-										<Skeleton className="h-6 w-1/2" />
-										<Skeleton className="h-5 w-2/3" />
-										<Skeleton className="h-5 w-1/3" />
-									</div>
-								) : tab === 'theme' ? (
-									<DetailGrid>
-										<ColorRow
-											label="Accent"
-											value={group.color_accent}
-										/>
-										<ColorRow
-											label="Primary"
-											value={group.color_primary}
-										/>
-										<ColorRow
-											label="Secondary"
-											value={group.color_secondary}
-										/>
-										<ColorRow
-											label="Secondary (light)"
-											value={group.color_secondary_light}
-										/>
-										<ColorRow
-											label="Text"
-											value={group.color_text}
-										/>
-									</DetailGrid>
+		<DetailPage
+			title="Group"
+			onBack={goBack}
+			ready={Boolean(group)}
+			isLoading={isLoading}
+			onEdit={goToEdit}
+			onDelete={handleDelete}
+			deleteTitle="Delete group?"
+			deleteDescription={`Group "${group?.name ?? ''}" will be soft-deleted — marked as deleted and hidden, but kept in the database and restorable later.`}
+			isDeleting={isDeleting}
+			activeTab={tab}
+			onTabChange={(key) => setTab(key as typeof tab)}
+			tabs={[
+				{
+					key: 'general',
+					label: 'General',
+					content: group ? (
+						<DetailBody
+							heading={{
+								title: group.name,
+								subtitle: group.slug,
+								badge: group.is_deleted ? (
+									<Badge variant="destructive">Deleted</Badge>
 								) : (
-									<div className="space-y-4">
-										<div className="flex items-center justify-between gap-4">
-											<div>
-												<p className="text-xl font-semibold">
-													{group.name}
-												</p>
-												<p className="pt-2 text-sm font-medium text-muted-foreground">
-													{group.slug}
-												</p>
-											</div>
-											{group.is_deleted ? (
-												<Badge variant="destructive">
-													Deleted
-												</Badge>
-											) : (
-												<Badge variant="success">
-													Active
-												</Badge>
-											)}
+									<Badge variant="success">Active</Badge>
+								),
+							}}
+							fields={[
+								{ label: 'Name', value: group.name },
+								{ label: 'Slug', value: group.slug },
+								{
+									label: 'Title logo',
+									value: group.title_logo,
+								},
+								{
+									label: 'Logo',
+									render: group.logo_url ? (
+										<a
+											href={group.logo_url}
+											target="_blank"
+											rel="noreferrer"
+											className="text-primary hover:underline"
+										>
+											{group.logo_url}
+										</a>
+									) : (
+										<span className="text-muted-foreground">
+											—
+										</span>
+									),
+								},
+								{
+									label: 'People',
+									value: group.count_people,
+								},
+								{
+									label: 'Closed referrals',
+									value: group.count_close_refferals,
+								},
+								{
+									label: 'Admins',
+									render: group.admin_ids.length ? (
+										<div className="flex flex-col gap-1">
+											{group.admin_ids.map((adminId) => (
+												<button
+													key={adminId}
+													type="button"
+													onClick={() =>
+														openAgent(adminId)
+													}
+													className="text-left text-primary hover:underline"
+												>
+													{adminId}
+												</button>
+											))}
 										</div>
-
-										<Separator className="mt-8" />
-
-										<DetailGrid className="mt-8">
-											<DetailRow
-												label="Name"
-												value={group.name}
-											/>
-											<DetailRow
-												label="Slug"
-												value={group.slug}
-											/>
-											<DetailRow
-												label="Title logo"
-												value={group.title_logo}
-											/>
-											<DetailRow label="Logo">
-												{group.logo_url ? (
-													<a
-														href={group.logo_url}
-														target="_blank"
-														rel="noreferrer"
-														className="text-primary hover:underline"
-													>
-														{group.logo_url}
-													</a>
-												) : (
-													<span className="text-muted-foreground">
-														—
-													</span>
-												)}
-											</DetailRow>
-											<DetailRow
-												label="People"
-												value={String(
-													group.count_people,
-												)}
-											/>
-											<DetailRow
-												label="Closed referrals"
-												value={String(
-													group.count_close_refferals,
-												)}
-											/>
-											<DetailRow label="Admins">
-												{group.admin_ids.length ? (
-													<div className="flex flex-col gap-1">
-														{group.admin_ids.map(
-															(adminId) => (
-																<button
-																	key={
-																		adminId
-																	}
-																	type="button"
-																	onClick={() =>
-																		openAgent(
-																			adminId,
-																		)
-																	}
-																	className="text-left text-primary hover:underline"
-																>
-																	{adminId}
-																</button>
-															),
-														)}
-													</div>
-												) : (
-													<span className="text-muted-foreground">
-														—
-													</span>
-												)}
-											</DetailRow>
-											<DetailRow
-												label="Deleted"
-												bool={group.is_deleted}
-											/>
-											<DetailRow
-												label="Deleted at"
-												value={formatDateTime(
-													group.deleted_at,
-												)}
-											/>
-										</DetailGrid>
-									</div>
-								)}
-							</CardContent>
-						</Card>
-					</PageTransition>
-				</AnimatePresence>
-			</Reveal>
-
-			<ConfirmDialog
-				open={confirmOpen}
-				onOpenChange={setConfirmOpen}
-				title="Delete group?"
-				description={`Group "${group?.name ?? ''}" will be soft-deleted — marked as deleted and hidden, but kept in the database and restorable later.`}
-				confirmLabel="Delete"
-				destructive
-				loading={isDeleting}
-				onConfirm={handleDelete}
-			/>
-		</div>
+									) : (
+										<span className="text-muted-foreground">
+											—
+										</span>
+									),
+								},
+								{
+									label: 'Deleted',
+									bool: group.is_deleted,
+								},
+								{
+									label: 'Deleted at',
+									value: formatDateTime(group.deleted_at),
+								},
+							]}
+						/>
+					) : null,
+				},
+				{
+					key: 'theme',
+					label: 'Theme',
+					content: group ? (
+						<DetailGrid>
+							<ColorRow
+								label="Accent"
+								value={group.color_accent}
+							/>
+							<ColorRow
+								label="Primary"
+								value={group.color_primary}
+							/>
+							<ColorRow
+								label="Secondary"
+								value={group.color_secondary}
+							/>
+							<ColorRow
+								label="Secondary (light)"
+								value={group.color_secondary_light}
+							/>
+							<ColorRow label="Text" value={group.color_text} />
+						</DetailGrid>
+					) : null,
+				},
+			]}
+		/>
 	)
 }

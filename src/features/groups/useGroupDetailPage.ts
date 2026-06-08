@@ -14,7 +14,6 @@ export function useGroupDetailPage() {
 	const { data: group, isLoading } = useGroup(numericId)
 	const deleteMut = useDeleteGroup()
 	const [tab, setTab] = useState<GroupDetailTab>('general')
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const handleDelete = async () => {
 		if (numericId === undefined) return
@@ -32,8 +31,6 @@ export function useGroupDetailPage() {
 		isLoading,
 		tab,
 		setTab,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate('/groups'),

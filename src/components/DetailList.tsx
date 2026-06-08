@@ -4,6 +4,21 @@ import { cn } from '@/lib/utils'
 import { Icon } from '@/components/Icon'
 
 /**
+ * Declarative config for one {@link DetailRow}, consumed by `<DetailBody>` /
+ * `<DetailPage>` so a page can render its grid from a plain array. Pass `value`
+ * for a string/number (nullish renders an em dash), `bool` for a check/dash,
+ * `render` for fully custom content, `hidden` to skip the row entirely.
+ */
+export interface DetailField {
+	label: string
+	value?: string | number | null
+	bool?: boolean
+	capitalize?: boolean
+	render?: ReactNode
+	hidden?: boolean
+}
+
+/**
  * A `<dl>` of label/value pairs, shared by the detail views (partner, agent,
  * referral). Default layout is the roomy single-/two-column grid used on full
  * pages; pass `dense` for the tighter always-two-column layout used inside

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 
@@ -10,7 +9,6 @@ export function useWithdrawalDetailPage() {
 	const navigate = useNavigate()
 	const { data: withdrawal, isLoading } = useWithdrawal(id)
 	const deleteMut = useDeleteWithdrawal()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const handleDelete = async () => {
 		if (!id) return
@@ -26,8 +24,6 @@ export function useWithdrawalDetailPage() {
 	return {
 		withdrawal,
 		isLoading,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate('/withdrawals'),

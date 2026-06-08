@@ -12,7 +12,6 @@ export function usePartnerDetailPage() {
 	const navigate = useNavigate()
 	const { data: partner, isLoading } = usePartner(id)
 	const deleteMut = useDeletePartner()
-	const [confirmOpen, setConfirmOpen] = useState(false)
 	const [tab, setTab] = useState<PartnerDetailTab>('details')
 
 	const handleDelete = async () => {
@@ -32,8 +31,6 @@ export function usePartnerDetailPage() {
 		isLoading,
 		tab,
 		setTab,
-		confirmOpen,
-		setConfirmOpen,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
 		goBack: () => navigate('/partners'),
