@@ -42,7 +42,23 @@ export const NAV_ITEMS: NavItem[] = [
 		children: [{ to: '/statuses', label: 'Statuses', icon: 'list-checks' }],
 	},
 	{ to: '/contacts', label: 'Contacts', icon: 'contact' },
-	{ to: '/agents', label: 'Agents', icon: 'users' },
+	{
+		to: '/agents',
+		label: 'Agents',
+		icon: 'users',
+		children: [
+			{
+				to: '/saved-filters',
+				label: 'Saved Filters',
+				icon: 'filter',
+			},
+			{
+				to: '/team-leaders',
+				label: 'Team Leaders',
+				icon: 'users',
+			},
+		],
+	},
 	{ to: '/groups', label: 'Groups', icon: 'boxes' },
 	{ to: '/withdrawals', label: 'Withdrawals', icon: 'wallet' },
 	{ to: '/payments', label: 'Payments', icon: 'badge-dollar' },

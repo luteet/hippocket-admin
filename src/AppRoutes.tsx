@@ -81,6 +81,38 @@ const AgentEditPage = lazyNamed(
 	() => import('@/features/agents/AgentEditPage'),
 	'AgentEditPage',
 )
+const SavedFiltersPage = lazyNamed(
+	() => import('@/features/saved-filters/SavedFiltersPage'),
+	'SavedFiltersPage',
+)
+const SavedFilterDetailPage = lazyNamed(
+	() => import('@/features/saved-filters/SavedFilterDetailPage'),
+	'SavedFilterDetailPage',
+)
+const SavedFilterCreatePage = lazyNamed(
+	() => import('@/features/saved-filters/SavedFilterCreatePage'),
+	'SavedFilterCreatePage',
+)
+const SavedFilterEditPage = lazyNamed(
+	() => import('@/features/saved-filters/SavedFilterEditPage'),
+	'SavedFilterEditPage',
+)
+const TeamLeadersPage = lazyNamed(
+	() => import('@/features/team-leaders/TeamLeadersPage'),
+	'TeamLeadersPage',
+)
+const TeamLeaderDetailPage = lazyNamed(
+	() => import('@/features/team-leaders/TeamLeaderDetailPage'),
+	'TeamLeaderDetailPage',
+)
+const TeamLeaderCreatePage = lazyNamed(
+	() => import('@/features/team-leaders/TeamLeaderCreatePage'),
+	'TeamLeaderCreatePage',
+)
+const TeamLeaderEditPage = lazyNamed(
+	() => import('@/features/team-leaders/TeamLeaderEditPage'),
+	'TeamLeaderEditPage',
+)
 const GroupsPage = lazyNamed(
 	() => import('@/features/groups/GroupsPage'),
 	'GroupsPage',
@@ -359,6 +391,26 @@ const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
 			Create: AgentCreatePage,
 			Detail: AgentDetailPage,
 			Edit: AgentEditPage,
+		},
+	},
+	{
+		// Nested under Agents in the nav (a per-agent extra).
+		path: 'saved-filters',
+		pages: {
+			List: SavedFiltersPage,
+			Create: SavedFilterCreatePage,
+			Detail: SavedFilterDetailPage,
+			Edit: SavedFilterEditPage,
+		},
+	},
+	{
+		// Nested under Agents in the nav (group team leaders).
+		path: 'team-leaders',
+		pages: {
+			List: TeamLeadersPage,
+			Create: TeamLeaderCreatePage,
+			Detail: TeamLeaderDetailPage,
+			Edit: TeamLeaderEditPage,
 		},
 	},
 	{
