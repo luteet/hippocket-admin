@@ -43,6 +43,11 @@ export function useVersionCheck() {
 						label: 'Refresh',
 						onClick: () => window.location.reload(),
 					},
+					actionButtonStyle: {
+						background: 'var(--secondary)',
+						color: 'var(--secondary-foreground)',
+						borderRadius: 'var(--pill)',
+					},
 				})
 			} catch {
 				// Network hiccup — ignore and retry on the next tick.
