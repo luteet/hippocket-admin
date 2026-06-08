@@ -139,6 +139,17 @@ export const NAV_ITEMS: NavItem[] = [
 	},
 ]
 
+// Persist the desktop collapse preference across reloads.
+const COLLAPSED_STORAGE_KEY = 'sidebar:collapsed'
+
+function readStoredCollapsed(): boolean {
+	try {
+		return localStorage.getItem(COLLAPSED_STORAGE_KEY) === 'true'
+	} catch {
+		return false
+	}
+}
+
 export function useAppShell() {
 	const location = useLocation()
 	const navigate = useNavigate()
@@ -149,7 +160,7 @@ export function useAppShell() {
 	// during the transition (a live <Outlet /> would render the new route
 	// inside the exiting wrapper and cause a flash).
 	const outlet = useOutlet()
-	const [collapsed, setCollapsed] = useState(false)
+	const [collapsed, setCollapsed] = useState(readStoredCollapsed)
 	const [mobileOpen, setMobileOpen] = useState(false)
 	// Per-group expand overrides. A group with no override falls back to
 	// "open when one of its routes is active" so the current section is always
@@ -207,7 +218,16 @@ export function useAppShell() {
 		outlet,
 		isMobile,
 		collapsed,
-		toggleCollapsed: () => setCollapsed((v) => !v),
+		toggleCollapsed: () =>
+			setCollapsed((v) => {
+				const next = !v
+				try {
+					localStorage.setItem(COLLAPSED_STORAGE_KEY, String(next))
+				} catch {
+					/* ignore storage failures (private mode, quota) */
+				}
+				return next
+			}),
 		mobileOpen,
 		openMobile: () => setMobileOpen(true),
 		closeMobile: () => setMobileOpen(false),
