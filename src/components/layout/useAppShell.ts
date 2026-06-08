@@ -86,6 +86,20 @@ export const NAV_ITEMS: NavItem[] = [
 		],
 	},
 	{
+		to: '/journey',
+		label: 'Journey',
+		icon: 'route',
+		// No page of its own — the parent button jumps to the first child.
+		groupOnly: true,
+		children: [
+			{
+				to: '/shared-partners',
+				label: 'Partners',
+				icon: 'building-2',
+			},
+		],
+	},
+	{
 		// Parent has its own page (/settings — the General singleton); the rest
 		// of System (base) hangs off it. `end` so it highlights only on /settings.
 		to: '/settings',

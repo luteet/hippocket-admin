@@ -27,6 +27,7 @@ export type IconName =
 	| 'users'
 	| 'boxes'
 	| 'git-branch'
+	| 'route'
 	| 'list-checks'
 	| 'wallet'
 	| 'tags'

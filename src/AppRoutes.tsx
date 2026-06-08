@@ -197,6 +197,22 @@ const ChatMediaDetailPage = lazyNamed(
 	() => import('@/features/chats/ChatMediaDetailPage'),
 	'ChatMediaDetailPage',
 )
+const SharedPartnersPage = lazyNamed(
+	() => import('@/features/journey/SharedPartnersPage'),
+	'SharedPartnersPage',
+)
+const SharedPartnerCreatePage = lazyNamed(
+	() => import('@/features/journey/SharedPartnerCreatePage'),
+	'SharedPartnerCreatePage',
+)
+const SharedPartnerDetailPage = lazyNamed(
+	() => import('@/features/journey/SharedPartnerDetailPage'),
+	'SharedPartnerDetailPage',
+)
+const SharedPartnerEditPage = lazyNamed(
+	() => import('@/features/journey/SharedPartnerEditPage'),
+	'SharedPartnerEditPage',
+)
 // One parameterized page serves the three read-only audit-log sections; the
 // `slug` prop selects the labels and which `event` (if any) is pinned.
 const LogsPage = lazyNamed(() => import('@/features/logs/LogsPage'), 'LogsPage')
@@ -406,6 +422,15 @@ const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
 		pages: {
 			List: ChatMediaPage,
 			Detail: ChatMediaDetailPage,
+		},
+	},
+	{
+		path: 'shared-partners',
+		pages: {
+			List: SharedPartnersPage,
+			Create: SharedPartnerCreatePage,
+			Detail: SharedPartnerDetailPage,
+			Edit: SharedPartnerEditPage,
 		},
 	},
 	// System (base) resources — no detail page: a row opens straight into Edit.
