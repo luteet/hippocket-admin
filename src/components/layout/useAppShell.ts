@@ -179,12 +179,15 @@ export function useAppShell() {
 	const outlet = useOutlet()
 	const [collapsed, setCollapsed] = useState(readStoredCollapsed)
 	const [mobileOpen, setMobileOpen] = useState(false)
-	// Per-group expand overrides. A group with no override falls back to
-	// "open when one of its routes is active" so the current section is always
-	// revealed; an override lets the user pin it open/closed manually.
-	const [groupOverrides, setGroupOverrides] = useState<
-		Record<string, boolean>
-	>({})
+	// Accordion-style manual override: at most one group is manually expanded at
+	// a time, stamped with the path it was set on. Any navigation (the stamp no
+	// longer matching `pathname`) drops the override and falls back to "open the
+	// active group", so opened dropdowns never accumulate. `group: ''` means the
+	// user explicitly collapsed everything. No override → active-route fallback.
+	const [manualGroup, setManualGroup] = useState<{
+		path: string
+		group: string
+	} | null>(null)
 
 	const pathname = location.pathname
 
@@ -206,27 +209,34 @@ export function useAppShell() {
 				pathname === entry.to || pathname.startsWith(`${entry.to}/`),
 		)
 
+	// The manual override only applies while we're still on the page where it was
+	// set; once `pathname` changes it's stale, so we fall back to the active group.
+	const activeManualGroup =
+		manualGroup && manualGroup.path === pathname ? manualGroup.group : null
+
 	const isGroupOpen = (item: NavItem) =>
-		item.to in groupOverrides
-			? groupOverrides[item.to]
+		activeManualGroup !== null
+			? item.to === activeManualGroup
 			: groupHasActiveRoute(item)
 
+	// Accordion: opening a group makes it the only expanded one; toggling the
+	// open group shut collapses everything (`group: ''`).
 	const toggleGroup = (item: NavItem) =>
-		setGroupOverrides((prev) => ({
-			...prev,
-			[item.to]: !isGroupOpen(item),
-		}))
+		setManualGroup({
+			path: pathname,
+			group: isGroupOpen(item) ? '' : item.to,
+		})
 
 	// Whether any of a group's routes (parent or child) is the current page —
 	// used to highlight a `groupOnly` parent, which has no NavLink of its own.
 	const isGroupActive = groupHasActiveRoute
 
-	// Click handler for a `groupOnly` parent: pin the group open and navigate to
-	// its first child, since the parent has no page to land on itself.
+	// Click handler for a `groupOnly` parent: navigate to its first child, since
+	// the parent has no page to land on itself. Navigation makes the group the
+	// active one, so the active-route fallback expands it (and collapses others).
 	const selectGroup = (item: NavItem) => {
 		const first = item.children?.[0]
 		if (!first) return
-		setGroupOverrides((prev) => ({ ...prev, [item.to]: true }))
 		navigate(first.to)
 	}
 
