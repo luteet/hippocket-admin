@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/features/auth/AuthContext'
 import { NavItemLink } from './NavItemLink'
-import { NavGroupButton } from './NavGroupButton'
+import { NavGroup } from './NavGroup'
 import { NAV_ITEMS, type NavItem } from './useAppShell'
 
 export function Sidebar({
@@ -65,53 +65,16 @@ export function Sidebar({
 				<nav className="nav">
 					{NAV_ITEMS.map((item) =>
 						item.children ? (
-							<div
+							<NavGroup
 								key={item.to}
-								className="nav-group"
-								data-open={isGroupOpen(item)}
-							>
-								<div className="nav-group__row">
-									{item.groupOnly ? (
-										<NavGroupButton
-											item={item}
-											isActive={isGroupActive(item)}
-											onSelect={() => {
-												selectGroup(item)
-												closeMobile()
-											}}
-										/>
-									) : (
-										<NavItemLink
-											item={item}
-											onNavigate={closeMobile}
-										/>
-									)}
-									<button
-										type="button"
-										className="nav-group__toggle"
-										onClick={() => toggleGroup(item)}
-										aria-label={`Toggle ${item.label}`}
-										aria-expanded={isGroupOpen(item)}
-									>
-										<Icon
-											name="chevron-down"
-											className="nav-group__chevron"
-										/>
-									</button>
-								</div>
-								<div className="nav-group__children">
-									<div className="nav-group__children-inner">
-										{item.children.map((child) => (
-											<NavItemLink
-												key={child.to}
-												item={child}
-												isSub
-												onNavigate={closeMobile}
-											/>
-										))}
-									</div>
-								</div>
-							</div>
+								item={item}
+								collapsed={collapsed}
+								isGroupOpen={isGroupOpen}
+								toggleGroup={toggleGroup}
+								isGroupActive={isGroupActive}
+								selectGroup={selectGroup}
+								closeMobile={closeMobile}
+							/>
 						) : (
 							<NavItemLink
 								key={item.to}

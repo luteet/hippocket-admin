@@ -276,6 +276,31 @@
 		font-weight: 400;
 	}
 
+	// Collapsed-rail hover flyout: the children of a group, popped out beside
+	// the icon. Portaled to <body>, so the sidebar's collapse rules and overflow
+	// clipping don't reach it — colours come from the sidebar tokens passed via
+	// utilities on PopoverContent (bg-sidebar / text-sidebar-foreground).
+	.nav-flyout {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.nav-flyout__label {
+		padding: 0.25rem 0.625rem;
+		font-size: 0.6875rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: color-mix(in srgb, var(--sidebar-foreground) 70%, transparent);
+	}
+
+	.nav-flyout__items {
+		display: flex;
+		flex-direction: column;
+		gap: 0.125rem;
+	}
+
 	.sidebar__footer {
 		padding: 0.75rem; // p-3
 	}
