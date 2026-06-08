@@ -18,8 +18,10 @@ export function SharedPartnerForm({ shared, onSuccess, onCancel }: Props) {
 			type: 'select',
 			name: 'agent_email',
 			label: 'Agent',
+			searchable: true,
 			options: agentOptions,
 			placeholder: agentsLoading ? 'Loading agents…' : 'Select an agent',
+			searchPlaceholder: 'Search agents…',
 		},
 	]
 

@@ -10,6 +10,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { Combobox } from '@/components/ui/combobox'
 import { Field } from '@/components/Field'
 import { SectionTitle } from '@/components/SectionTitle'
 import { SwitchField } from '@/components/SwitchField'
@@ -69,29 +70,40 @@ export function FormFieldRenderer({
 					<Controller
 						control={form.control}
 						name={field.name}
-						render={({ field: f }) => (
-							<Select
-								value={f.value || undefined}
-								onValueChange={f.onChange}
-								disabled={field.disabled}
-							>
-								<SelectTrigger>
-									<SelectValue
-										placeholder={field.placeholder}
-									/>
-								</SelectTrigger>
-								<SelectContent>
-									{field.options.map((o) => (
-										<SelectItem
-											key={o.value}
-											value={o.value}
-										>
-											{o.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						)}
+						render={({ field: f }) =>
+							field.searchable ? (
+								<Combobox
+									value={f.value || undefined}
+									onValueChange={f.onChange}
+									options={field.options}
+									placeholder={field.placeholder}
+									searchPlaceholder={field.searchPlaceholder}
+									disabled={field.disabled}
+								/>
+							) : (
+								<Select
+									value={f.value || undefined}
+									onValueChange={f.onChange}
+									disabled={field.disabled}
+								>
+									<SelectTrigger>
+										<SelectValue
+											placeholder={field.placeholder}
+										/>
+									</SelectTrigger>
+									<SelectContent>
+										{field.options.map((o) => (
+											<SelectItem
+												key={o.value}
+												value={o.value}
+											>
+												{o.label}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							)
+						}
 					/>
 				</Field>
 			)

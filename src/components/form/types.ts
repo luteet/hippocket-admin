@@ -31,7 +31,8 @@ export interface TextareaFormField extends FieldCommon {
 	registerOptions?: RegisterOptions
 }
 
-/** A shadcn `<Select>` driven by a `Controller`. */
+/** A shadcn `<Select>` driven by a `Controller`. Set `searchable` for long
+ *  option lists to render a filterable `<Combobox>` instead. */
 export interface SelectFormField extends FieldCommon {
 	type: 'select'
 	name: string
@@ -39,6 +40,9 @@ export interface SelectFormField extends FieldCommon {
 	options: FormFieldOption[]
 	placeholder?: string
 	disabled?: boolean
+	searchable?: boolean
+	/** Combobox-only: placeholder for the search input. */
+	searchPlaceholder?: string
 }
 
 export interface SwitchFormField extends FieldCommon {
