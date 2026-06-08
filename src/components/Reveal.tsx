@@ -18,7 +18,7 @@ export function Reveal({
 	return (
 		<div
 			className={cn('reveal', className)}
-			style={{ '--reveal-delay': `${index * 0.03}s` } as CSSProperties}
+			style={{ '--reveal-delay': `${index * 0.02}s` } as CSSProperties}
 		>
 			{children}
 		</div>
