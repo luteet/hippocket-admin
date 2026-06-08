@@ -23,6 +23,7 @@ dist-ssr
 *.sw?
 collections.json
 environment.json
+admin_api_frontend_guide.md
 
 # Local dev credentials
 .dev-credentials.json

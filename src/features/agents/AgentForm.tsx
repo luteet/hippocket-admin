@@ -11,6 +11,7 @@ import type { Agent } from '@/types/api'
 import { ROLE_OPTIONS, STATUS_OPTIONS } from './useAgentsPage'
 import { useAgentForm } from './useAgentForm'
 import { GroupMultiSelect } from './components/GroupMultiSelect'
+import { AvatarUpload } from './components/AvatarUpload'
 
 interface Props {
 	agent?: Agent | null
@@ -36,6 +37,19 @@ export function AgentForm({ agent, onSuccess, onCancel }: Props) {
 
 	const fields: FormFieldEntry[] = [
 		{ type: 'section', title: 'Account', first: true },
+		// Avatar upload is a standalone action that needs an existing agent, so
+		// it only appears on edit.
+		isEdit &&
+			agent && {
+				type: 'custom',
+				label: 'Avatar',
+				render: (
+					<AvatarUpload
+						agentId={agent.id}
+						avatarUrl={agent.avatar_url}
+					/>
+				),
+			},
 		{
 			type: 'email',
 			name: 'email',

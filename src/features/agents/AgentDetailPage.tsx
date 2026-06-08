@@ -1,5 +1,6 @@
 import { Badge } from '@/components/ui/badge'
 import { DetailPage } from '@/components/detail/DetailPage'
+import { MediaThumbnail } from '@/components/media/MediaThumbnail'
 import { useAgentDetailPage } from './useAgentDetailPage'
 import { chosenGroupName, formatDateTime, fullName } from './format'
 
@@ -25,6 +26,13 @@ export function AgentDetailPage() {
 								fullName(agent.first_name, agent.last_name) ||
 								agent.email,
 							subtitle: agent.email,
+							avatar: (
+								<MediaThumbnail
+									url={agent.avatar_url}
+									shape="circle"
+									placeholderIcon="user"
+								/>
+							),
 							badge: agent.is_active ? (
 								<Badge variant="success">Active</Badge>
 							) : (

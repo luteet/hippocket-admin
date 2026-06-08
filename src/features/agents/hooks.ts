@@ -8,6 +8,7 @@ import {
 	listAgents,
 	listGroupRefs,
 	updateAgent,
+	uploadAgentAvatar,
 	type AgentFilters,
 } from './api'
 
@@ -50,6 +51,20 @@ export function useDeleteAgent() {
 	return useMutation({
 		mutationFn: (id: string) => deleteAgent(id),
 		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+/**
+ * Upload an agent's avatar. Deliberately does NOT invalidate the agents query:
+ * the edit form re-syncs (`reset`) whenever its cached agent changes, so
+ * refetching here would wipe in-progress form edits. The avatar is an
+ * independent action — the caller updates its own preview from the returned
+ * agent instead.
+ */
+export function useUploadAgentAvatar() {
+	return useMutation({
+		mutationFn: ({ id, file }: { id: string; file: File }) =>
+			uploadAgentAvatar(id, file),
 	})
 }
 

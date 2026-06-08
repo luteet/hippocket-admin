@@ -81,14 +81,30 @@ api.interceptors.response.use(
 	},
 )
 
-/** Extracts a human-readable error message from an API response. */
+/** A single FastAPI request-validation error (422 responses send an array). */
+interface ValidationError {
+	msg?: string
+	loc?: (string | number)[]
+}
+
+/** Extracts a human-readable error message from an API response. `detail` is
+ *  usually a string, but FastAPI validation errors (422) send an array of
+ *  `{ msg, loc, … }` objects — flatten those to a string so the message is
+ *  always safe to render. */
 export function getApiErrorMessage(
 	error: unknown,
 	fallback = 'Something went wrong',
 ): string {
 	if (axios.isAxiosError(error)) {
 		const detail = (error.response?.data as ApiError | undefined)?.detail
-		if (detail) return detail
+		if (typeof detail === 'string' && detail) return detail
+		if (Array.isArray(detail)) {
+			const msg = (detail as ValidationError[])
+				.map((d) => d?.msg)
+				.filter(Boolean)
+				.join('; ')
+			if (msg) return msg
+		}
 		if (error.message) return error.message
 	}
 	return fallback

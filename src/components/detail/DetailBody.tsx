@@ -13,6 +13,8 @@ export interface DetailHeading {
 	title: ReactNode
 	subtitle?: ReactNode
 	badge?: ReactNode
+	/** Optional leading visual (e.g. an avatar/logo thumbnail). */
+	avatar?: ReactNode
 }
 
 export interface DetailBodyProps {
@@ -51,16 +53,19 @@ export function DetailBody({
 			{header ??
 				(heading && (
 					<div className="flex items-center justify-between gap-4">
-						<div>
-							<p className="text-xl font-semibold">
-								{heading.title}
-							</p>
-							{heading.subtitle != null &&
-								heading.subtitle !== '' && (
-									<p className="pt-2 text-sm font-medium text-muted-foreground">
-										{heading.subtitle}
-									</p>
-								)}
+						<div className="flex items-center gap-4">
+							{heading.avatar}
+							<div>
+								<p className="text-xl font-semibold">
+									{heading.title}
+								</p>
+								{heading.subtitle != null &&
+									heading.subtitle !== '' && (
+										<p className="pt-2 text-sm font-medium text-muted-foreground">
+											{heading.subtitle}
+										</p>
+									)}
+							</div>
 						</div>
 						{heading.badge}
 					</div>

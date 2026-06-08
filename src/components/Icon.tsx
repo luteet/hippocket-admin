@@ -46,6 +46,9 @@ export type IconName =
 	| 'link'
 	| 'file-text'
 	| 'badge-dollar'
+	| 'user'
+	| 'upload'
+	| 'image'
 
 const SPRITE_URL = `${import.meta.env.BASE_URL}img/sprites.svg`
 

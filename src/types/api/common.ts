@@ -9,7 +9,9 @@ export interface RefOption {
 }
 
 export interface ApiError {
-	detail: string
+	// Usually a string; FastAPI validation errors (422) send an array of
+	// `{ msg, loc, … }` objects instead.
+	detail: string | unknown[]
 }
 
 export interface PaginationParams {
