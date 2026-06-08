@@ -14,6 +14,8 @@ export interface MediaUploadProps {
 	maxSize?: number
 	/** Preview shape — `circle` for avatars, `square` for logos/icons. */
 	shape?: 'circle' | 'square'
+	/** How the preview image fills its box — `contain` avoids cropping (logos). */
+	fit?: 'cover' | 'contain'
 	/** Icon shown when there's no image yet. */
 	placeholderIcon?: IconName
 	/** Tailwind sizing for the preview box (default `size-16`). */
@@ -41,6 +43,7 @@ export function MediaUpload({
 	accept = 'image/*',
 	maxSize,
 	shape = 'square',
+	fit = 'cover',
 	placeholderIcon = 'image',
 	previewClassName = 'size-16',
 	uploadLabel = 'Upload',
@@ -63,6 +66,7 @@ export function MediaUpload({
 			<MediaThumbnail
 				url={preview}
 				shape={shape}
+				fit={fit}
 				placeholderIcon={placeholderIcon}
 				className={previewClassName}
 			/>

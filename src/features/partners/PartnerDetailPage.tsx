@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { DetailPage } from '@/components/detail/DetailPage'
 import { DetailBody } from '@/components/detail/DetailBody'
+import { MediaThumbnail } from '@/components/media/MediaThumbnail'
 import { PartnerReviewsTab } from './PartnerReviewsTab'
 import { usePartnerDetailPage } from './usePartnerDetailPage'
 import {
@@ -45,6 +46,14 @@ export function PartnerDetailPage() {
 							heading={{
 								title: partner.name,
 								subtitle: partner.subtitle,
+								avatar: (
+									<MediaThumbnail
+										url={partner.logo_url}
+										shape="square"
+										placeholderIcon="image"
+										fit="contain"
+									/>
+								),
 								badge: partner.is_hide ? (
 									<Badge variant="muted">Hidden</Badge>
 								) : (
@@ -59,6 +68,17 @@ export function PartnerDetailPage() {
 								)
 							}
 							fields={[
+								{
+									label: 'Video cover',
+									render: (
+										<MediaThumbnail
+											url={partner.preview_url}
+											shape="square"
+											placeholderIcon="image"
+											className="h-16 w-28"
+										/>
+									),
+								},
 								{ label: 'Email', value: partner.email },
 								{ label: 'Phone', value: partner.phone },
 								{ label: 'Website', value: partner.website },

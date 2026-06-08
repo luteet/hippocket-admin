@@ -3,6 +3,8 @@ import type { FormFieldEntry } from '@/components/form/types'
 import type { Partner } from '@/types/api'
 import { usePartnerForm } from './usePartnerForm'
 import { RefSelect } from './components/RefSelect'
+import { LogoUpload } from './components/LogoUpload'
+import { PreviewUpload } from './components/PreviewUpload'
 
 interface Props {
 	partner?: Partner | null
@@ -49,6 +51,32 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 			],
 		},
 		{ type: 'text', name: 'custom_keywords', label: 'Custom keywords' },
+
+		// Media is uploaded via standalone endpoints that need an existing
+		// partner, so these only appear on edit.
+		isEdit && partner && { type: 'section', title: 'Media' },
+		isEdit &&
+		partner && {
+			type: 'custom',
+			label: 'Logo',
+			render: (
+				<LogoUpload
+					partnerId={partner.id}
+					logoUrl={partner.logo_url}
+				/>
+			),
+		},
+		isEdit &&
+		partner && {
+			type: 'custom',
+			label: 'Video cover',
+			render: (
+				<PreviewUpload
+					partnerId={partner.id}
+					previewUrl={partner.preview_url}
+				/>
+			),
+		},
 
 		{ type: 'section', title: 'Fees & value' },
 		{

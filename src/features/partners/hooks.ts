@@ -17,6 +17,8 @@ import {
 	listPartners,
 	updatePartner,
 	updatePartnerReview,
+	uploadPartnerLogo,
+	uploadPartnerPreview,
 } from './api'
 
 const KEY = 'partners'
@@ -58,6 +60,27 @@ export function useDeletePartner() {
 	return useMutation({
 		mutationFn: (id: string) => deletePartner(id),
 		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+/**
+ * Upload a partner's logo. Like {@link useUploadAgentAvatar}, this deliberately
+ * does NOT invalidate the partners query: the edit form re-syncs (`reset`) when
+ * its cached partner changes, so refetching here would wipe in-progress edits.
+ * The caller updates its own preview from the returned partner instead.
+ */
+export function useUploadPartnerLogo() {
+	return useMutation({
+		mutationFn: ({ id, file }: { id: string; file: File }) =>
+			uploadPartnerLogo(id, file),
+	})
+}
+
+/** Upload a partner's video preview cover. See {@link useUploadPartnerLogo}. */
+export function useUploadPartnerPreview() {
+	return useMutation({
+		mutationFn: ({ id, file }: { id: string; file: File }) =>
+			uploadPartnerPreview(id, file),
 	})
 }
 

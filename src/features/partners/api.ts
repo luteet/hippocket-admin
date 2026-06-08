@@ -45,6 +45,40 @@ export async function deletePartner(id: string): Promise<void> {
 	await api.delete(`/partners/${id}/`)
 }
 
+/**
+ * Upload (replace) a partner's logo. `PUT /partners/{id}/logo/` takes a
+ * `multipart/form-data` body with a single `file` field and returns the updated
+ * partner (new link in `logo_url`). Clear the JSON default Content-Type so axios
+ * detects the FormData and sets `multipart/form-data` with the boundary.
+ */
+export async function uploadPartnerLogo(
+	id: string,
+	file: File,
+): Promise<Partner> {
+	const form = new FormData()
+	form.append('file', file)
+	const { data } = await api.put<Partner>(`/partners/${id}/logo/`, form, {
+		headers: { 'Content-Type': undefined },
+	})
+	return data
+}
+
+/**
+ * Upload (replace) a partner's video preview cover. `PUT /partners/{id}/preview/`
+ * mirrors {@link uploadPartnerLogo}; the new link is returned in `preview_url`.
+ */
+export async function uploadPartnerPreview(
+	id: string,
+	file: File,
+): Promise<Partner> {
+	const form = new FormData()
+	form.append('file', file)
+	const { data } = await api.put<Partner>(`/partners/${id}/preview/`, form, {
+		headers: { 'Content-Type': undefined },
+	})
+	return data
+}
+
 export async function listPartnerReviews(
 	partnerId: string,
 ): Promise<PartnerReview[]> {
