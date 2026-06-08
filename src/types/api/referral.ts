@@ -11,6 +11,7 @@ export interface ReferralListItem {
 	id: string
 	referral_name: string
 	agent_email: string
+	partner_id: string
 	partner_name: string
 	status: string
 	is_paid: boolean
@@ -22,7 +23,6 @@ export interface ReferralDetail extends ReferralListItem {
 	status_id: number
 	agent_id: string
 	agent_phone: string
-	partner_id: string
 	partner_email: string
 	contact_id: string
 	contact_email: string

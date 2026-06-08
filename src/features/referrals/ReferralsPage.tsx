@@ -27,7 +27,6 @@ export function ReferralsPage() {
 		clearFilters,
 		statuses,
 		statusNameByLabel,
-		partnerIdByName,
 		data,
 		isLoading,
 		isFetching,
@@ -50,12 +49,11 @@ export function ReferralsPage() {
 				accessorKey: 'partner_name',
 				header: 'Partner',
 				cell: ({ row }) => {
-					const { partner_name } = row.original
-					const partnerId = partnerIdByName[partner_name]
-					if (!partnerId) return partner_name
+					const { partner_id, partner_name } = row.original
+					if (!partner_id) return partner_name
 					return (
 						<Link
-							to={`/partners/${partnerId}`}
+							to={`/partners/${partner_id}`}
 							className="text-primary underline underline-offset-[5px] transition-[filter] hover:brightness-110 active:brightness-90"
 							onClick={(e) => e.stopPropagation()}
 						>
@@ -98,7 +96,7 @@ export function ReferralsPage() {
 				),
 			},
 		],
-		[statusNameByLabel, partnerIdByName],
+		[statusNameByLabel],
 	)
 
 	return (

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
-import { usePartnerRefs, useReferrals, useStatuses } from './hooks'
+import { useReferrals, useStatuses } from './hooks'
 
 export const ALL = '__all__'
 
@@ -24,16 +24,6 @@ export function useReferralsPage() {
 		})
 		return map
 	}, [statuses])
-
-	const { data: partnerRefs } = usePartnerRefs()
-
-	const partnerIdByName = useMemo(() => {
-		const map: Record<string, string> = {}
-		partnerRefs?.forEach((p) => {
-			map[p.name] = p.id
-		})
-		return map
-	}, [partnerRefs])
 
 	// How many popover filters are set — shown as a badge on the Filters button.
 	const activeFilterCount =
@@ -67,7 +57,6 @@ export function useReferralsPage() {
 		clearFilters,
 		statuses,
 		statusNameByLabel,
-		partnerIdByName,
 		data,
 		isLoading,
 		isFetching,
