@@ -40,7 +40,7 @@ export function SharedPartnerEntriesTab({ sharedId, entries }: Props) {
 				cell: ({ row }) => (
 					<Link
 						to={`/partners/${row.original.partner_id}`}
-						className="text-primary underline underline-offset-[5px] transition-[filter] hover:brightness-110 active:brightness-90"
+						className="link"
 						onClick={stopRowClick}
 					>
 						{row.original.partner_name}

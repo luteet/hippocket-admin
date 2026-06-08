@@ -93,7 +93,7 @@ export function GroupDetailPage() {
 													onClick={() =>
 														openAgent(adminId)
 													}
-													className="text-left text-primary hover:underline"
+													className="text-left link"
 												>
 													{adminId}
 												</button>

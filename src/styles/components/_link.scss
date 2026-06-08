@@ -1,0 +1,19 @@
+@layer components {
+	.link {
+		color: var(--primary);
+		text-decoration: underline;
+		text-underline-offset: .35ch;
+
+		@media (hover: hover) {
+			transition: filter .15s;
+
+			&:hover {
+				filter: brightness(110%);
+			}
+		
+			&:active {
+				filter: brightness(90%);
+			}
+		}
+	}
+}

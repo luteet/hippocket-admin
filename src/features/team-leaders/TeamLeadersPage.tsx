@@ -55,7 +55,7 @@ export function TeamLeadersPage() {
 					return (
 						<Link
 							to={`/groups/${group_id}`}
-							className="text-primary underline underline-offset-[5px] transition-[filter] hover:brightness-110 active:brightness-90"
+							className="link"
 							onClick={(e) => e.stopPropagation()}
 						>
 							{group_name}
