@@ -19,6 +19,7 @@ import {
 	updatePartnerReview,
 	uploadPartnerLogo,
 	uploadPartnerPreview,
+	uploadPartnerReviewAvatar,
 } from './api'
 
 const KEY = 'partners'
@@ -124,6 +125,22 @@ export function useDeletePartnerReview(partnerId: string) {
 	return useMutation({
 		mutationFn: (reviewId: string) =>
 			deletePartnerReview(partnerId, reviewId),
+		onSuccess: () =>
+			qc.invalidateQueries({ queryKey: reviewsKey(partnerId) }),
+	})
+}
+
+/**
+ * Upload a review's avatar. Unlike the agent/partner media hooks, invalidating
+ * is safe here: the review dialog's `reset` keys off a captured `editing`
+ * reference (not the live query value), so refetching won't wipe in-progress
+ * name/text edits — and it keeps the reviews list's avatar fresh.
+ */
+export function useUploadPartnerReviewAvatar(partnerId: string) {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: ({ reviewId, file }: { reviewId: string; file: File }) =>
+			uploadPartnerReviewAvatar(partnerId, reviewId, file),
 		onSuccess: () =>
 			qc.invalidateQueries({ queryKey: reviewsKey(partnerId) }),
 	})

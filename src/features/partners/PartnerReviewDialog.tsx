@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Field } from '@/components/Field'
 import type { PartnerReview } from '@/types/api'
+import { ReviewAvatarUpload } from './components/ReviewAvatarUpload'
 import { usePartnerReviewDialog } from './usePartnerReviewDialog'
 
 interface Props {
@@ -42,6 +43,15 @@ export function PartnerReviewDialog({
 				</DialogHeader>
 
 				<form onSubmit={onSubmit} className="space-y-4">
+					{isEdit && review && (
+						<Field label="Avatar">
+							<ReviewAvatarUpload
+								partnerId={partnerId}
+								reviewId={review.id}
+								avatarUrl={review.avatar_url}
+							/>
+						</Field>
+					)}
 					<Field label="Name" error={errors.name?.message}>
 						<Input {...register('name')} />
 					</Field>

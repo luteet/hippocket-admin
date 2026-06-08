@@ -2,6 +2,7 @@ import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { MediaThumbnail } from '@/components/media/MediaThumbnail'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { PartnerReviewDialog } from './PartnerReviewDialog'
 import { usePartnerReviewsTab } from './usePartnerReviewsTab'
@@ -43,8 +44,14 @@ export function PartnerReviewsTab({ partnerId }: Props) {
 				<div className="space-y-3">
 					{reviews.map((review) => (
 						<Card key={review.id}>
-							<CardContent className="flex items-start justify-between gap-4 p-6">
-								<div className="min-w-0 space-y-1">
+							<CardContent className="flex items-start gap-4 p-6">
+								<MediaThumbnail
+									url={review.avatar_url}
+									shape="circle"
+									placeholderIcon="user"
+									className="size-10"
+								/>
+								<div className="min-w-0 flex-1 space-y-1">
 									<p className="font-medium">{review.name}</p>
 									<p className="pt-2 text-sm wrap-break-word whitespace-pre-line text-muted-foreground">
 										{review.text}

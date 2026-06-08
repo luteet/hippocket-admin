@@ -117,3 +117,24 @@ export async function deletePartnerReview(
 ): Promise<void> {
 	await api.delete(`/partners/${partnerId}/reviews/${reviewId}/`)
 }
+
+/**
+ * Upload (replace) a review's avatar. `PUT /partners/{id}/reviews/{reviewId}/avatar/`
+ * takes a `multipart/form-data` body with a single `file` field and returns the
+ * updated review (new link in `avatar_url`). Clear the JSON default Content-Type
+ * so axios sets `multipart/form-data` with the boundary.
+ */
+export async function uploadPartnerReviewAvatar(
+	partnerId: string,
+	reviewId: string,
+	file: File,
+): Promise<PartnerReview> {
+	const form = new FormData()
+	form.append('file', file)
+	const { data } = await api.put<PartnerReview>(
+		`/partners/${partnerId}/reviews/${reviewId}/avatar/`,
+		form,
+		{ headers: { 'Content-Type': undefined } },
+	)
+	return data
+}
