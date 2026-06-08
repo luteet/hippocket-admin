@@ -136,7 +136,7 @@ export const NAV_ITEMS: NavItem[] = [
 	},
 	{
 		to: '/logs',
-		label: 'Audit Logs',
+		label: 'Logs',
 		icon: 'scroll-text',
 		// No page of its own — the parent button jumps to the first child.
 		groupOnly: true,
