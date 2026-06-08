@@ -114,6 +114,9 @@ Read-only `GET`s against any record are fine.
 - **Routing:** `src/App.tsx` declares all routes. Private routes are wrapped by
   `ProtectedRoute` → `AppShell`. Page transitions use `AnimatePresence` keyed by
   `location.pathname` in `AppShell`.
+- **Sidebar nav order:** the **Audit Logs** group (`/logs`) must always stay
+  the last entry in `NAV_ITEMS` (`useAppShell.ts`). When adding a new top-level
+  nav item, insert it **before** the Audit Logs entry, never after.
 
 ## Project conventions
 
