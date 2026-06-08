@@ -64,6 +64,27 @@ export const NAV_ITEMS: NavItem[] = [
 		],
 	},
 	{
+		to: '/chats',
+		label: 'Chats',
+		icon: 'message-square',
+		// No page of its own — the parent button jumps to the first child.
+		groupOnly: true,
+		children: [
+			{
+				to: '/chats',
+				label: 'All Chats',
+				icon: 'message-square',
+				end: true,
+			},
+			{
+				to: '/chats/messages',
+				label: 'Messages',
+				icon: 'message-square',
+			},
+			{ to: '/chats/media', label: 'Media', icon: 'file-text' },
+		],
+	},
+	{
 		// Parent has its own page (/settings — the General singleton); the rest
 		// of System (base) hangs off it. `end` so it highlights only on /settings.
 		to: '/settings',

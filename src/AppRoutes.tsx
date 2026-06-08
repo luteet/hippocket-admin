@@ -141,6 +141,46 @@ const SessionCreatePage = lazyNamed(
 	() => import('@/features/aichat/SessionCreatePage'),
 	'SessionCreatePage',
 )
+const ChatsPage = lazyNamed(
+	() => import('@/features/chats/ChatsPage'),
+	'ChatsPage',
+)
+const ChatCreatePage = lazyNamed(
+	() => import('@/features/chats/ChatCreatePage'),
+	'ChatCreatePage',
+)
+const ChatDetailPage = lazyNamed(
+	() => import('@/features/chats/ChatDetailPage'),
+	'ChatDetailPage',
+)
+const ChatEditPage = lazyNamed(
+	() => import('@/features/chats/ChatEditPage'),
+	'ChatEditPage',
+)
+const ChatMessagesPage = lazyNamed(
+	() => import('@/features/chats/ChatMessagesPage'),
+	'ChatMessagesPage',
+)
+const ChatMessageDetailPage = lazyNamed(
+	() => import('@/features/chats/ChatMessageDetailPage'),
+	'ChatMessageDetailPage',
+)
+const ChatMessageCreatePage = lazyNamed(
+	() => import('@/features/chats/ChatMessageCreatePage'),
+	'ChatMessageCreatePage',
+)
+const ChatMessageEditPage = lazyNamed(
+	() => import('@/features/chats/ChatMessageEditPage'),
+	'ChatMessageEditPage',
+)
+const ChatMediaPage = lazyNamed(
+	() => import('@/features/chats/ChatMediaPage'),
+	'ChatMediaPage',
+)
+const ChatMediaDetailPage = lazyNamed(
+	() => import('@/features/chats/ChatMediaDetailPage'),
+	'ChatMediaDetailPage',
+)
 // One parameterized page serves the three read-only audit-log sections; the
 // `slug` prop selects the labels and which `event` (if any) is pinned.
 const LogsPage = lazyNamed(() => import('@/features/logs/LogsPage'), 'LogsPage')
@@ -315,6 +355,32 @@ const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
 			List: SessionsPage,
 			Create: SessionCreatePage,
 			Detail: SessionDetailPage,
+		},
+	},
+	{
+		path: 'chats',
+		pages: {
+			List: ChatsPage,
+			Create: ChatCreatePage,
+			Detail: ChatDetailPage,
+			Edit: ChatEditPage,
+		},
+	},
+	{
+		path: 'chats/messages',
+		pages: {
+			List: ChatMessagesPage,
+			Create: ChatMessageCreatePage,
+			Detail: ChatMessageDetailPage,
+			Edit: ChatMessageEditPage,
+		},
+	},
+	{
+		// Media is read-only + delete: no create or edit pages.
+		path: 'chats/media',
+		pages: {
+			List: ChatMediaPage,
+			Detail: ChatMediaDetailPage,
 		},
 	},
 	// System (base) resources — no detail page: a row opens straight into Edit.
