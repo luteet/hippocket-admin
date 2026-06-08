@@ -105,11 +105,14 @@ export function useDeleteSharedPartnerEntry(sharedId: string) {
 
 // ---- Reference pickers ----
 
-export function useAgentRefOptions() {
+export function useAgentRefOptions(search?: string) {
 	return useQuery({
-		queryKey: ['refs', 'agents'],
-		queryFn: listAgentRefs,
+		queryKey: ['refs', 'agents', search ?? ''],
+		queryFn: () => listAgentRefs(search),
 		staleTime: 5 * 60_000,
+		// Keep the previous results on screen while the next search loads, so the
+		// list doesn't flash empty between keystrokes.
+		placeholderData: (prev) => prev,
 	})
 }
 

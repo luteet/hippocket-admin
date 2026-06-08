@@ -10,8 +10,15 @@ interface Props {
 }
 
 export function SharedPartnerForm({ shared, onSuccess, onCancel }: Props) {
-	const { form, agentOptions, agentsLoading, isPending, onSubmit } =
-		useSharedPartnerForm({ shared, onSuccess })
+	const {
+		form,
+		agentOptions,
+		agentsLoading,
+		onAgentSearch,
+		selectedAgentLabel,
+		isPending,
+		onSubmit,
+	} = useSharedPartnerForm({ shared, onSuccess })
 
 	const fields: FormFieldEntry[] = [
 		{
@@ -20,8 +27,11 @@ export function SharedPartnerForm({ shared, onSuccess, onCancel }: Props) {
 			label: 'Agent',
 			searchable: true,
 			options: agentOptions,
-			placeholder: agentsLoading ? 'Loading agents…' : 'Select an agent',
+			placeholder: 'Select an agent',
 			searchPlaceholder: 'Search agents…',
+			onSearch: onAgentSearch,
+			loading: agentsLoading,
+			selectedLabel: selectedAgentLabel,
 		},
 	]
 

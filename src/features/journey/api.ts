@@ -95,10 +95,18 @@ export async function deleteSharedPartnerEntry(
 
 // ---- Reference pickers ----
 
-/** Agent options for the owner (`agent_email`) picker. */
-export async function listAgentRefs(): Promise<AgentRefOption[]> {
+/**
+ * Agent options for the owner (`agent_email`) picker. There are more agents in
+ * the system than `limit` returns, so the picker searches server-side: pass the
+ * user's query as `search` (matches email/first/last/username) to narrow the
+ * list instead of trying to load every agent.
+ */
+export async function listAgentRefs(
+	search?: string,
+): Promise<AgentRefOption[]> {
+	const trimmed = search?.trim()
 	const { data } = await api.get<AgentRefOption[]>('/refs/agents/', {
-		params: { limit: 200 },
+		params: { limit: 200, ...(trimmed ? { search: trimmed } : {}) },
 	})
 	return data
 }

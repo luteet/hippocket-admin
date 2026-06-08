@@ -43,6 +43,14 @@ export interface SelectFormField extends FieldCommon {
 	searchable?: boolean
 	/** Combobox-only: placeholder for the search input. */
 	searchPlaceholder?: string
+	/** Combobox-only: search server-side. Receives the (debounced) query;
+	 *  `options` then hold the already-filtered results. */
+	onSearch?: (query: string) => void
+	/** Combobox-only: server-search results are loading. */
+	loading?: boolean
+	/** Combobox-only: label for the current value when it isn't in `options`
+	 *  (e.g. a saved selection not yet returned by the server search). */
+	selectedLabel?: string
 }
 
 export interface SwitchFormField extends FieldCommon {

@@ -18,7 +18,22 @@ interface ComboboxProps {
 	searchPlaceholder?: string
 	emptyText?: string
 	disabled?: boolean
+	/**
+	 * Server-side search. When provided, the query is sent here (debounced)
+	 * instead of filtering `options` locally — `options` are treated as the
+	 * already-filtered results. Use for lists too large to load in full.
+	 */
+	onSearch?: (query: string) => void
+	/** Show a loading row (server-search results are in flight). */
+	loading?: boolean
+	/**
+	 * Label to display for the current `value` when it isn't present in
+	 * `options` (e.g. the saved selection before a server search returns it).
+	 */
+	selectedLabel?: string
 }
+
+const SEARCH_DEBOUNCE = 250
 
 /**
  * A single-select dropdown with a search field, for option lists too long to
@@ -26,6 +41,9 @@ interface ComboboxProps {
  * `.select-*` classes) but renders its own list so it can be filtered. Driven
  * by a `value`/`onValueChange` pair like Select, so it drops into the form
  * renderer's `Controller`.
+ *
+ * Filters client-side by default; pass `onSearch` to search server-side for
+ * lists too large to load in full.
  */
 export function Combobox({
 	value,
@@ -35,6 +53,9 @@ export function Combobox({
 	searchPlaceholder = 'Search…',
 	emptyText = 'No results',
 	disabled,
+	onSearch,
+	loading,
+	selectedLabel,
 }: ComboboxProps) {
 	const [open, setOpen] = useState(false)
 	const [query, setQuery] = useState('')
@@ -42,12 +63,25 @@ export function Combobox({
 	const listRef = useRef<HTMLDivElement>(null)
 
 	const selected = options.find((o) => o.value === value)
+	// Fall back to the caller-supplied label (then the raw value) so the trigger
+	// still names the current selection even when it isn't in `options`.
+	const displayLabel =
+		selected?.label ?? (value ? (selectedLabel ?? value) : '')
 
 	const filtered = useMemo(() => {
+		// Server-side mode: trust the caller's already-filtered options.
+		if (onSearch) return options
 		const q = query.trim().toLowerCase()
 		if (!q) return options
 		return options.filter((o) => o.label.toLowerCase().includes(q))
-	}, [options, query])
+	}, [options, query, onSearch])
+
+	// Server-side mode: push the (debounced) query to the caller while open.
+	useEffect(() => {
+		if (!onSearch || !open) return
+		const t = setTimeout(() => onSearch(query), SEARCH_DEBOUNCE)
+		return () => clearTimeout(t)
+	}, [query, open, onSearch])
 
 	// Scroll the highlighted row into view while arrow-keying through a long
 	// list. (The filter resets the highlight in the input's change handler.)
@@ -91,9 +125,9 @@ export function Combobox({
 					type="button"
 					disabled={disabled}
 					className="select-trigger"
-					data-placeholder={selected ? undefined : ''}
+					data-placeholder={displayLabel ? undefined : ''}
 				>
-					<span>{selected ? selected.label : placeholder}</span>
+					<span>{displayLabel || placeholder}</span>
 					<Icon name="chevron-down" className="select-trigger-icon" />
 				</button>
 			</PopoverTrigger>
@@ -114,7 +148,15 @@ export function Combobox({
 					/>
 				</div>
 				<div ref={listRef} className="max-h-60 overflow-y-auto p-1">
-					{filtered.length === 0 ? (
+					{loading && filtered.length === 0 ? (
+						<div className="flex items-center gap-2 px-2 py-1.5 text-sm text-muted-foreground">
+							<Icon
+								name="loader"
+								className="size-4 animate-spin"
+							/>
+							Searching…
+						</div>
+					) : filtered.length === 0 ? (
 						<div className="px-2 py-1.5 text-sm text-muted-foreground">
 							{emptyText}
 						</div>

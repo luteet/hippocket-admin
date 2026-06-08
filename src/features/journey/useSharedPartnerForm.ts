@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -31,21 +31,25 @@ export function useSharedPartnerForm({ shared, onSuccess }: Params) {
 	const isEdit = !!shared
 	const createMut = useCreateSharedPartner()
 	const updateMut = useUpdateSharedPartner()
-	const { data: agentRefs, isLoading: agentsLoading } = useAgentRefOptions()
+
+	// Agents are searched server-side (there are more than the endpoint returns
+	// in one page); `agentSearch` is the current query driving the option list.
+	const [agentSearch, setAgentSearch] = useState('')
+	const { data: agentRefs, isFetching: agentsLoading } =
+		useAgentRefOptions(agentSearch)
 
 	const form = useForm<SharedPartnerFormValues>({
 		resolver: zodResolver(schema),
-		defaultValues: { agent_email: '' },
+		defaultValues: defaults(shared),
 	})
 	const { handleSubmit, reset } = form
 
-	// Apply the saved agent only once the option list has loaded. Radix Select
-	// resolves the selected value to its label by reading the matching item's
-	// text on mount; setting the value before the items exist leaves the
-	// trigger blank, so we wait for both the record and the options.
+	// The edit page loads the record asynchronously — sync once it arrives. The
+	// Combobox shows the saved agent's email via `selectedLabel` until a search
+	// pulls its full option in, so this no longer waits on the option list.
 	useEffect(() => {
-		if (shared && agentRefs) reset(defaults(shared))
-	}, [shared, agentRefs, reset])
+		if (shared) reset(defaults(shared))
+	}, [shared, reset])
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
@@ -73,6 +77,9 @@ export function useSharedPartnerForm({ shared, onSuccess }: Params) {
 			label: a.name ? `${a.name} (${a.email})` : a.email,
 		})),
 		agentsLoading,
+		onAgentSearch: setAgentSearch,
+		// On edit, name the saved agent in the trigger before any search runs.
+		selectedAgentLabel: shared?.agent_email,
 		isPending: createMut.isPending || updateMut.isPending,
 		onSubmit,
 	}

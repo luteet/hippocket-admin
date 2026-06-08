@@ -79,6 +79,9 @@ export function FormFieldRenderer({
 									placeholder={field.placeholder}
 									searchPlaceholder={field.searchPlaceholder}
 									disabled={field.disabled}
+									onSearch={field.onSearch}
+									loading={field.loading}
+									selectedLabel={field.selectedLabel}
 								/>
 							) : (
 								<Select
