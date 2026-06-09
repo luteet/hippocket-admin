@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
@@ -60,15 +61,24 @@ export function AgentsPage() {
 				id: 'groups',
 				header: 'Groups',
 				cell: ({ row }) => {
-					const groups = row.original.group_names
-					if (!groups?.length)
+					const { group_ids, group_names } = row.original
+					if (!group_ids?.length)
 						return <span className="text-muted-foreground">—</span>
 					return (
 						<div className="flex flex-wrap gap-1">
-							{groups.map((g) => (
-								<Badge key={g} variant="outline">
-									{g}
-								</Badge>
+							{group_ids.map((id, i) => (
+								<Link
+									key={id}
+									to={`/groups/${id}`}
+									onClick={(e) => e.stopPropagation()}
+								>
+									<Badge
+										variant="outline"
+										className="hover:border-primary"
+									>
+										{group_names[i] ?? id}
+									</Badge>
+								</Link>
 							))}
 						</div>
 					)
