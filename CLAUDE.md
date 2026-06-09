@@ -9,11 +9,16 @@ documented by the Postman files at the repo root
 (`collections.json`, `environment.json`) —
 treat them as the source of truth for endpoints, payloads, and response shapes.
 
-Status: MVP skeleton. Auth, layout, and the **Partners** and **Referrals**
-sections are fully implemented, plus the read-only reference sections
-(**Categories / Segments / Locations / Services**) backed by the `/refs/*`
-endpoints. **Agents / Groups / Statuses / Withdrawals** are `ComingSoon`
-placeholders to be built following the same pattern.
+Status: past MVP — auth, layout, a global search / command palette (⌘/Ctrl+K),
+and every feature section are implemented on a shared list/detail/form pattern.
+There are no remaining `ComingSoon` placeholders. Sections under `src/features/`:
+**partners** (with inline table editing), **referrals**, **agents**, **groups**,
+**statuses**, **withdrawals**, **properties** / **property-images**, **chats**,
+**aichat**, **payments**, **contacts**, **journey** (shared partners),
+**saved-filters**, **team-leaders**, **cash-offers-emails**, **logs** (audit),
+**settings**, and the read-only **references** pages (**Categories / Segments /
+Locations / Services**) backed by the `/refs/*` endpoints. Build new sections by
+copying the closest existing one (Partners/Referrals are the richest templates).
 
 ## Commands
 
@@ -72,7 +77,24 @@ Read-only `GET`s against any record are fine.
 - **Feature structure:** `src/features/<name>/` holds `api.ts`, `hooks.ts`, the
   page, and dialogs. Shared UI lives in `src/components/` (`DataTable`,
   `ConfirmDialog`, `PageTransition`, `Field`, `SwitchField`, `SectionTitle`,
-  `TabButton`, `layout/`), shadcn primitives in `src/components/ui/`.
+  `TabButton`, `DetailList`, `Icon`, `SortableHeader`/`SortableRow`, `layout/`),
+  shadcn primitives in `src/components/ui/`.
+- **Shared list/form shells (use these, don't hand-roll):**
+    - `src/components/list/` — `ListPage` is the standard list shell (header +
+      toolbar with `SearchInput`, an optional `FiltersPopover`
+      (`FilterSelect`/`FilterDate`) and `PageSizeSelect`, + a paginated
+      `DataTable`). A list page hook wires `usePagination` + `useSorting` +
+      `useDebouncedValue` and feeds a `{ items, total }` result; the page file
+      keeps only the `columns` config. See
+      [src/features/partners/usePartnersPage.ts](src/features/partners/usePartnersPage.ts).
+    - `src/components/form/` — `FormLayout` + `FormFieldRenderer` render a
+      create/edit form from a declarative field array (text/select/combobox/
+      switch/custom, single-panel or tabbed) with the standard Cancel/Save/Delete
+      footer. Schema, mutations, and `onSubmit` stay in the `use<Name>Form` hook
+      (template: [usePartnerForm.ts](src/features/partners/usePartnerForm.ts)).
+    - Global search / command palette lives in `src/features/search/`
+      (`CommandPalette`, `useCommandPalette`, `useGlobalSearch`), opened with
+      ⌘/Ctrl+K; it searches nav items and can dive into per-entity live search.
 - **Local presentational sub-components live in their own file, not inline.** A
   page/form/dialog must NOT define helper components (`function ColorField(…)`,
   `function RefSelect(…)`, a custom table cell, …) in the same file as its main

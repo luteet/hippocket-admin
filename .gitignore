@@ -28,3 +28,6 @@ admin_sorting.md
 
 # Local dev credentials
 .dev-credentials.json
+
+# Local-only planning notes
+docs/plans/
