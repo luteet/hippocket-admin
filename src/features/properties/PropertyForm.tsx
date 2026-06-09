@@ -3,6 +3,7 @@ import type { FormFieldEntry } from '@/components/form/types'
 import type { Property } from '@/types/api'
 import { AvailableSelect } from './components/AvailableSelect'
 import { MainImageUpload } from './components/MainImageUpload'
+import { PriceInput } from './components/PriceInput'
 import { AVAILABLE_OPTIONS, usePropertyForm } from './usePropertyForm'
 
 interface Props {
@@ -134,10 +135,16 @@ export function PropertyForm({ property, onSuccess, onCancel }: Props) {
 			type: 'grid',
 			fields: [
 				{
-					type: 'text',
+					type: 'custom',
 					name: 'asking_price',
 					label: 'Asking price',
-					placeholder: 'e.g. $350,000',
+					render: (
+						<PriceInput
+							control={form.control}
+							name="asking_price"
+							placeholder="e.g. $350,000"
+						/>
+					),
 				},
 				{
 					type: 'number',
