@@ -41,8 +41,6 @@ export const NAV_ITEMS: NavItem[] = [
 		icon: 'git-branch',
 		children: [{ to: '/statuses', label: 'Statuses', icon: 'list-checks' }],
 	},
-	{ to: '/contacts', label: 'Contacts', icon: 'contact' },
-	{ to: '/properties', label: 'Properties', icon: 'house' },
 	{
 		to: '/agents',
 		label: 'Agents',
@@ -61,27 +59,7 @@ export const NAV_ITEMS: NavItem[] = [
 		],
 	},
 	{ to: '/groups', label: 'Groups', icon: 'boxes' },
-	{ to: '/withdrawals', label: 'Withdrawals', icon: 'wallet' },
-	{ to: '/payments', label: 'Payments', icon: 'badge-dollar' },
-	{
-		to: '/ai-chat',
-		label: 'AI Chat',
-		icon: 'bot',
-		// No page of its own — the parent button jumps to the first child.
-		groupOnly: true,
-		children: [
-			{
-				to: '/ai-chat/messages',
-				label: 'Messages',
-				icon: 'message-square',
-			},
-			{
-				to: '/ai-chat/sessions',
-				label: 'Sessions',
-				icon: 'users',
-			},
-		],
-	},
+	{ to: '/contacts', label: 'Contacts', icon: 'contact' },
 	{
 		to: '/chats',
 		label: 'Chats',
@@ -104,6 +82,26 @@ export const NAV_ITEMS: NavItem[] = [
 		],
 	},
 	{
+		to: '/ai-chat',
+		label: 'AI Chat',
+		icon: 'bot',
+		// No page of its own — the parent button jumps to the first child.
+		groupOnly: true,
+		children: [
+			{
+				to: '/ai-chat/messages',
+				label: 'Messages',
+				icon: 'message-square',
+			},
+			{
+				to: '/ai-chat/sessions',
+				label: 'Sessions',
+				icon: 'users',
+			},
+		],
+	},
+	{ to: '/properties', label: 'Properties', icon: 'house' },
+	{
 		to: '/journey',
 		label: 'Journey',
 		icon: 'route',
@@ -117,6 +115,8 @@ export const NAV_ITEMS: NavItem[] = [
 			},
 		],
 	},
+	{ to: '/withdrawals', label: 'Withdrawals', icon: 'wallet' },
+	{ to: '/payments', label: 'Payments', icon: 'badge-dollar' },
 	{
 		// Parent has its own page (/settings — the General singleton); the rest
 		// of System (base) hangs off it. `end` so it highlights only on /settings.
