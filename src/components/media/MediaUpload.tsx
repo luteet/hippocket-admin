@@ -69,6 +69,7 @@ export function MediaUpload({
 				fit={fit}
 				placeholderIcon={placeholderIcon}
 				className={previewClassName}
+				canvas
 			/>
 
 			<input
