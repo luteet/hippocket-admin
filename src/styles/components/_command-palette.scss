@@ -23,11 +23,11 @@
 
 		cursor: pointer;
 		transition:
-			color .16s,
-			border-color .16s,
-			box-shadow .16s,
-			transform .12s,
-			filter .15s;
+			color 0.16s,
+			border-color 0.16s,
+			box-shadow 0.16s,
+			transform 0.12s,
+			filter 0.15s;
 
 		@media (hover: hover) {
 			&:hover {
@@ -71,11 +71,11 @@
 		white-space: nowrap;
 
 		transition:
-			max-width 200ms ease,
-			opacity 180ms ease,
-			margin-left 200ms ease,
-			padding 200ms ease,
-			border-color 200ms ease;
+			max-width 0.2s,
+			opacity 0.18s,
+			margin-left 0.2s,
+			padding 0.2s,
+			border-color 0.2s;
 	}
 
 	.search-trigger:hover .search-trigger__kbd,
@@ -159,7 +159,7 @@
 		font-size: 0.8125rem;
 		font-weight: 500;
 		cursor: pointer;
-		transition: background-color 150ms ease;
+		transition: background-color 0.15s;
 
 		&:hover {
 			background-color: color-mix(
@@ -171,7 +171,7 @@
 
 		.command-scope__x {
 			opacity: 0.6;
-			transition: opacity 150ms ease;
+			transition: opacity 0.15s;
 		}
 
 		&:hover .command-scope__x {
@@ -210,7 +210,7 @@
 		text-align: left;
 		cursor: pointer;
 		color: var(--foreground);
-		transition: background-color 130ms ease;
+		transition: background-color 0.13s;
 
 		&[data-active='true'] {
 			background-color: color-mix(
@@ -232,8 +232,8 @@
 		background-color: var(--background);
 		color: var(--secondary);
 		transition:
-			background-color 130ms ease,
-			color 130ms ease;
+			background-color 0.13s,
+			color 0.13s;
 	}
 
 	.command-row[data-active='true'] .command-row__icon {

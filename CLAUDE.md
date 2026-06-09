@@ -158,6 +158,14 @@ Read-only `GET`s against any record are fine.
           `color-mix(in srgb, var(--sidebar-foreground) 90%, transparent)` for a
           `/90` opacity, `var(--pill)` for `rounded-pill`, etc. Tailwind spacing
           maps as `n × 0.25rem`; breakpoints are `md = 768px`, `lg = 1024px`.
+        - **Durations in seconds, no default timing function:** write times as
+          `s` not `ms` — `0.2s`, not `200ms`. In `transition`/`animation`
+          shorthands omit `ease` (it's the CSS default); only spell out a timing
+          function when it's non-default (e.g. `ease-out`, `linear`,
+          `cubic-bezier(…)`). NB: a leading-zero-free form (`.2s`) is **not**
+          attainable — Prettier hardcodes leading zeros on every CSS/SCSS and JS
+          number (`.2s` → `0.2s`, `.18` → `0.18`) and offers no option to turn
+          it off, so don't bother stripping the `0`; it comes back on format.
         - **Variant primitives → base class + `.is-*` modifiers.** For a
           component with variants (was `cva`), drop the `cva` map and give it a
           base class plus modifier classes in the `components` layer; the
