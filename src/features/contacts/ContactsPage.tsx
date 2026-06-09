@@ -55,7 +55,14 @@ export function ContactsPage() {
 				header: 'Phone',
 				meta: { sortKey: 'phone', className: 'w-40' },
 				cell: ({ row }) =>
-					row.original.phone || (
+					row.original.phone ? (
+						<span
+							className="block truncate"
+							title={row.original.phone}
+						>
+							{row.original.phone}
+						</span>
+					) : (
 						<span className="text-muted-foreground">—</span>
 					),
 			},
@@ -79,7 +86,8 @@ export function ContactsPage() {
 					return (
 						<Link
 							to={to}
-							className="link"
+							className="link block truncate"
+							title={owner}
 							onClick={(e) => e.stopPropagation()}
 						>
 							{owner}
