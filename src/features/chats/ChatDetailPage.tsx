@@ -1,3 +1,5 @@
+import { Link } from 'react-router'
+
 import { DetailPage } from '@/components/detail/DetailPage'
 import { DetailBody } from '@/components/detail/DetailBody'
 import { useChatDetailPage } from './useChatDetailPage'
@@ -39,12 +41,22 @@ export function ChatDetailPage() {
 							fields={[
 								{
 									label: 'Participants',
-									value: chat.user_list,
+									render: (
+										<div className="flex flex-col gap-1">
+											{chat.user_ids.map((uid, i) => (
+												<Link
+													key={uid}
+													to={`/agents/${uid}`}
+													className="link"
+												>
+													{chat.user_list.split(
+														', ',
+													)[i] ?? uid}
+												</Link>
+											))}
+										</div>
+									),
 								},
-								...chat.user_ids.map((uid, i) => ({
-									label: `Participant ${i + 1} ID`,
-									value: uid,
-								})),
 								{
 									label: 'Messages',
 									value: chat.messages_count,
