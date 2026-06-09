@@ -272,6 +272,10 @@
 	.command-row__trailing {
 		flex-shrink: 0;
 		color: var(--muted-foreground);
+
+		@media (max-width: 767.98px) {
+			display: none;
+		}
 	}
 
 	.command-empty {
