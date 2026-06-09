@@ -250,26 +250,30 @@ export function PartnersPage() {
 							transition={{ duration: 0.2, ease: 'easeOut' }}
 							className="fixed bottom-6 left-1/2 z-50"
 						>
-							<div className="flex items-center gap-4 rounded-full border border-border bg-card px-5 py-3 shadow-lg">
+							<div className="flex flex-col items-center gap-4 min-w-70 rounded-2xl border border-border bg-card px-5 py-3 shadow-lg sm:flex-row">
 								<span className="text-sm text-muted-foreground">
 									{dirtyCount} partner
 									{dirtyCount > 1 ? 's' : ''} changed
 								</span>
-								<Button
-									variant="outline"
-									size="sm"
-									onClick={discard}
-									disabled={isSaving}
-								>
-									Discard
-								</Button>
-								<Button
-									size="sm"
-									onClick={handleSaveAll}
-									disabled={isSaving}
-								>
-									{isSaving ? 'Saving…' : 'Save All'}
-								</Button>
+								<div className="flex gap-4 w-full sm:w-auto">
+									<Button
+										variant="outline"
+										size="sm"
+										className="flex-auto text-sm"
+										onClick={discard}
+										disabled={isSaving}
+									>
+										Discard
+									</Button>
+									<Button
+										size="sm"
+										className="flex-auto text-sm"
+										onClick={handleSaveAll}
+										disabled={isSaving}
+									>
+										{isSaving ? 'Saving…' : 'Save All'}
+									</Button>
+								</div>
 							</div>
 						</motion.div>
 					)}
