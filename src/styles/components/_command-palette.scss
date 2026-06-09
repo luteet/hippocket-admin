@@ -290,6 +290,11 @@
 		border-top: 1px solid var(--border);
 		font-size: 0.75rem;
 		color: var(--muted-foreground);
+
+		// Physical-keyboard hints are meaningless on touch — hide on mobile.
+		@media (max-width: 767.98px) {
+			display: none;
+		}
 	}
 
 	.command-footer__hint {
