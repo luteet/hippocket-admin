@@ -1,3 +1,5 @@
+import { Link } from 'react-router'
+
 import { Badge } from '@/components/ui/badge'
 import { DetailPage } from '@/components/detail/DetailPage'
 import { DetailBody } from '@/components/detail/DetailBody'
@@ -81,7 +83,27 @@ export function PartnerDetailPage() {
 								},
 								{ label: 'Email', value: partner.email },
 								{ label: 'Phone', value: partner.phone },
-								{ label: 'Website', value: partner.website },
+								{
+									label: 'Website',
+									render: partner.website ? (
+										<a
+											href={
+												/^https?:\/\//i.test(
+													partner.website,
+												)
+													? partner.website
+													: `https://${partner.website}`
+											}
+											target="_blank"
+											rel="noreferrer"
+											className="link"
+										>
+											{partner.website}
+										</a>
+									) : (
+										'—'
+									),
+								},
 								{ label: 'Address', value: partner.address },
 								{
 									label: 'Category',
@@ -97,7 +119,16 @@ export function PartnerDetailPage() {
 								},
 								{
 									label: 'Group',
-									value: partner.chosen_group_name,
+									render: partner.chosen_group_id ? (
+										<Link
+											to={`/groups/${partner.chosen_group_id}`}
+											className="link"
+										>
+											{partner.chosen_group_name}
+										</Link>
+									) : (
+										'—'
+									),
 								},
 								{
 									label: 'Referral fee',

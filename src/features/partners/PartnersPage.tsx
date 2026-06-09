@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AnimatePresence, motion } from 'motion/react'
 
@@ -176,11 +177,26 @@ export function PartnersPage() {
 			{
 				accessorKey: 'chosen_group_name',
 				header: 'Group',
-				cell: ({ row }) => (
-					<Badge variant="outline">
-						{row.original.chosen_group_name}
-					</Badge>
-				),
+				cell: ({ row }) => {
+					const { chosen_group_id, chosen_group_name } = row.original
+					if (!chosen_group_id)
+						return (
+							<span className="text-muted-foreground">—</span>
+						)
+					return (
+						<Link
+							to={`/groups/${chosen_group_id}`}
+							onClick={stopRowClick}
+						>
+							<Badge
+								variant="outline"
+								className="hover:border-primary"
+							>
+								{chosen_group_name}
+							</Badge>
+						</Link>
+					)
+				},
 			},
 		],
 		// The hook returns referentially-stable callbacks, so the columns (and
