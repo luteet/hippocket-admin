@@ -56,7 +56,7 @@ export function RefSelect({
 			</div>
 			<Button
 				type="button"
-				variant="outline"
+				variant="outline-2"
 				size="icon"
 				className="h-10 sm2:h-14"
 				aria-label="Create new option"

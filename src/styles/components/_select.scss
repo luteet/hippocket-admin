@@ -20,9 +20,24 @@
 		text-align: start;
 		color: var(--foreground);
 		outline: none;
+		transition: border-color .15s;
+
+		&[aria-expanded="true"] {
+			border-color: var(--primary);
+		}
 
 		@media (min-width: 36rem) {
 			height: 3.5rem; // h-14
+		}
+
+		@media (hover: hover) {
+			&:focus {
+				border-color: var(--secondary);
+			}
+			
+			&:hover {
+				border-color: var(--primary);
+			}
 		}
 
 		&:focus,

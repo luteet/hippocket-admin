@@ -16,9 +16,10 @@
 		font-weight: 500;
 		outline: none;
 		transition:
-			color 150ms,
-			background-color 150ms,
-			border-color 150ms;
+			color .15s,
+			background-color .15s,
+			border-color .15s,
+			filter .15s;
 
 		// Default variant (primary).
 		background-color: var(--primary);
@@ -33,12 +34,18 @@
 			padding: 0.5rem 1.5rem; // py-2 px-6
 		}
 
-		&:hover {
-			background-color: color-mix(
-				in srgb,
-				var(--primary) 90%,
-				transparent
-			);
+		@media (hover: hover) {
+			&:hover {
+				background-color: color-mix(
+					in srgb,
+					var(--primary) 90%,
+					transparent
+				);
+			}
+
+			&:active {
+				filter: brightness(97.5%);
+			}
 		}
 
 		&:focus-visible {
@@ -62,12 +69,14 @@
 			background-color: var(--secondary);
 			color: var(--secondary-foreground);
 
-			&:hover {
-				background-color: color-mix(
-					in srgb,
-					var(--secondary) 90%,
-					transparent
-				);
+			@media (hover: hover) {
+				&:hover {
+					background-color: color-mix(
+						in srgb,
+						var(--secondary) 90%,
+						transparent
+					);
+				}
 			}
 		}
 
@@ -75,12 +84,14 @@
 			background-color: var(--destructive);
 			color: var(--destructive-foreground);
 
-			&:hover {
-				background-color: color-mix(
-					in srgb,
-					var(--destructive) 90%,
-					transparent
-				);
+			@media (hover: hover) {
+				&:hover {
+					background-color: color-mix(
+						in srgb,
+						var(--destructive) 90%,
+						transparent
+					);
+				}
 			}
 		}
 
@@ -90,15 +101,25 @@
 			background-color: var(--card);
 			color: inherit;
 			border: 1px solid var(--primary);
+		}
 
-			&:hover {
-				background-color: var(--muted);
-				color: var(--foreground);
+		&.is-outline {
+			@media (hover: hover) {
+				&:hover {
+					background-color: var(--muted);
+					color: var(--foreground);
+				}
 			}
 		}
 
 		&.is-outline-2 {
 			border-color: var(--input);
+
+			@media (hover: hover) {
+				&:hover {
+					border-color: var(--primary);
+				}
+			}
 		}
 
 		&.is-ghost {
