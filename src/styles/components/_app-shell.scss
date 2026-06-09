@@ -169,12 +169,18 @@
 		font-weight: 600;
 	}
 
+	.sidebar[data-collapsed="true"] .nav > * + * {
+		margin-top: 1rem; // space-y-4
+	}
+
 	.nav {
 		flex: 1 1 0%;
 		padding-inline: 0.75rem; // px-3
 
 		> * + * {
-			margin-top: 0.25rem; // space-y-1
+			margin-top: .25rem; // space-y-1
+
+			transition: margin-top .3s;
 		}
 	}
 
