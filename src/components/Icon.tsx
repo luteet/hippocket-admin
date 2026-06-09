@@ -24,6 +24,7 @@ export type IconName =
 	| 'construction'
 	| 'building-2'
 	| 'house'
+	| 'mail'
 	| 'contact'
 	| 'users'
 	| 'boxes'

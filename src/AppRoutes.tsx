@@ -53,6 +53,34 @@ const PropertyEditPage = lazyNamed(
 	() => import('@/features/properties/PropertyEditPage'),
 	'PropertyEditPage',
 )
+const PropertyImagesPage = lazyNamed(
+	() => import('@/features/property-images/PropertyImagesPage'),
+	'PropertyImagesPage',
+)
+const PropertyImageDetailPage = lazyNamed(
+	() => import('@/features/property-images/PropertyImageDetailPage'),
+	'PropertyImageDetailPage',
+)
+const PropertyImageEditPage = lazyNamed(
+	() => import('@/features/property-images/PropertyImageEditPage'),
+	'PropertyImageEditPage',
+)
+const CashOffersEmailsPage = lazyNamed(
+	() => import('@/features/cash-offers-emails/CashOffersEmailsPage'),
+	'CashOffersEmailsPage',
+)
+const CashOffersEmailCreatePage = lazyNamed(
+	() => import('@/features/cash-offers-emails/CashOffersEmailCreatePage'),
+	'CashOffersEmailCreatePage',
+)
+const CashOffersEmailDetailPage = lazyNamed(
+	() => import('@/features/cash-offers-emails/CashOffersEmailDetailPage'),
+	'CashOffersEmailDetailPage',
+)
+const CashOffersEmailEditPage = lazyNamed(
+	() => import('@/features/cash-offers-emails/CashOffersEmailEditPage'),
+	'CashOffersEmailEditPage',
+)
 const ContactsPage = lazyNamed(
 	() => import('@/features/contacts/ContactsPage'),
 	'ContactsPage',
@@ -390,6 +418,26 @@ const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
 			Create: PropertyCreatePage,
 			Detail: PropertyDetailPage,
 			Edit: PropertyEditPage,
+		},
+	},
+	{
+		// Nested under Properties in the nav.
+		path: 'property-images',
+		pages: {
+			// No create page: uploads happen in the app, not the admin.
+			List: PropertyImagesPage,
+			Detail: PropertyImageDetailPage,
+			Edit: PropertyImageEditPage,
+		},
+	},
+	{
+		// Nested under Properties in the nav.
+		path: 'cash-offers-emails',
+		pages: {
+			List: CashOffersEmailsPage,
+			Create: CashOffersEmailCreatePage,
+			Detail: CashOffersEmailDetailPage,
+			Edit: CashOffersEmailEditPage,
 		},
 	},
 	{

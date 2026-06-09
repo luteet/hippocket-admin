@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { getApiErrorMessage } from '@/lib/api/client'
 import { useProperty, useDeleteProperty } from './hooks'
 
-export type PropertyDetailTab = 'details' | 'images' | 'emails'
+export type PropertyDetailTab = 'details' | 'images'
 
 export function usePropertyDetailPage() {
 	const { id } = useParams()
@@ -27,7 +27,6 @@ export function usePropertyDetailPage() {
 
 	return {
 		property,
-		propertyId: id,
 		isLoading,
 		tab,
 		setTab,
@@ -35,5 +34,6 @@ export function usePropertyDetailPage() {
 		handleDelete,
 		goBack: () => navigate('/properties'),
 		goToEdit: () => navigate(`/properties/${id}/edit`),
+		openImage: (imageId: string) => navigate(`/property-images/${imageId}`),
 	}
 }

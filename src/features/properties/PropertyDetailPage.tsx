@@ -3,14 +3,12 @@ import { DetailPage } from '@/components/detail/DetailPage'
 import { DetailBody } from '@/components/detail/DetailBody'
 import { MediaThumbnail } from '@/components/media/MediaThumbnail'
 import { PropertyImagesTab } from './PropertyImagesTab'
-import { CashOffersEmailsTab } from './CashOffersEmailsTab'
 import { usePropertyDetailPage } from './usePropertyDetailPage'
 import { formatDateTime, formatLocation, formatOurOffer } from './format'
 
 export function PropertyDetailPage() {
 	const {
 		property,
-		propertyId,
 		isLoading,
 		tab,
 		setTab,
@@ -18,6 +16,7 @@ export function PropertyDetailPage() {
 		handleDelete,
 		goBack,
 		goToEdit,
+		openImage,
 	} = usePropertyDetailPage()
 
 	return (
@@ -136,20 +135,14 @@ export function PropertyDetailPage() {
 				},
 				{
 					key: 'images',
-					label: 'Images',
-					bare: true,
-					content: propertyId ? (
-						<PropertyImagesTab propertyId={propertyId} />
-					) : null,
-				},
-				{
-					key: 'emails',
-					label: 'Cash Offers Emails',
+					label: property
+						? `Images (${property.images.length})`
+						: 'Images',
 					bare: true,
 					content: property ? (
-						<CashOffersEmailsTab
-							groupId={property.group_id}
-							groupName={property.group_name}
+						<PropertyImagesTab
+							images={property.images}
+							onOpen={openImage}
 						/>
 					) : null,
 				},

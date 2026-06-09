@@ -100,7 +100,23 @@ export const NAV_ITEMS: NavItem[] = [
 			},
 		],
 	},
-	{ to: '/properties', label: 'Properties', icon: 'house' },
+	{
+		to: '/properties',
+		label: 'Properties',
+		icon: 'house',
+		children: [
+			{
+				to: '/property-images',
+				label: 'Images',
+				icon: 'image',
+			},
+			{
+				to: '/cash-offers-emails',
+				label: 'Cash Offers Emails',
+				icon: 'mail',
+			},
+		],
+	},
 	{
 		to: '/journey',
 		label: 'Journey',

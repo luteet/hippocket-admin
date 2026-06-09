@@ -30,7 +30,7 @@ export function AvailableSelect({
 				<Button
 					type="button"
 					variant="outline-2"
-					className="w-full justify-between text-base font-normal"
+					className="w-full justify-between text-sm font-normal"
 				>
 					<span
 						className={

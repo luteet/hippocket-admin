@@ -1,0 +1,119 @@
+import { useMemo } from 'react'
+import type { ColumnDef } from '@tanstack/react-table'
+
+import { Icon } from '@/components/Icon'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { ListPage } from '@/components/list/ListPage'
+import { FiltersPopover } from '@/components/list/FiltersPopover'
+import { FilterSelect } from '@/components/list/FilterSelect'
+import type { CashOffersEmail } from '@/types/api'
+import {
+	useCashOffersEmailsPage,
+	ALL,
+	ACTIVE_OPTIONS,
+} from './useCashOffersEmailsPage'
+
+export function CashOffersEmailsPage() {
+	const {
+		search,
+		setSearch,
+		group,
+		setGroup,
+		isActive,
+		setIsActive,
+		groupOptions,
+		activeFilterCount,
+		clearFilters,
+		data,
+		isLoading,
+		isFetching,
+		pagination,
+		goToCreate,
+		openEmail,
+	} = useCashOffersEmailsPage()
+
+	const columns = useMemo<ColumnDef<CashOffersEmail, unknown>[]>(
+		() => [
+			{ accessorKey: 'name', header: 'Name' },
+			{ accessorKey: 'email', header: 'Email' },
+			{
+				accessorKey: 'group_name',
+				header: 'Group',
+				cell: ({ row }) =>
+					row.original.group_name || (
+						<span className="text-muted-foreground">
+							All properties
+						</span>
+					),
+			},
+			{
+				accessorKey: 'is_active',
+				header: 'Status',
+				cell: ({ row }) =>
+					row.original.is_active ? (
+						<Badge variant="success">Active</Badge>
+					) : (
+						<Badge variant="muted">Inactive</Badge>
+					),
+			},
+			{
+				accessorKey: 'created_at',
+				header: 'Created At',
+				cell: ({ row }) => (
+					<span className="text-muted-foreground">
+						{row.original.created_at.slice(0, 16)}
+					</span>
+				),
+			},
+		],
+		[],
+	)
+
+	return (
+		<ListPage
+			title="Cash Offers Emails"
+			description="Recipients of cash-offer emails"
+			actions={
+				<Button onClick={goToCreate}>
+					<Icon name="plus" />
+					Add
+				</Button>
+			}
+			search={search}
+			onSearchChange={setSearch}
+			searchPlaceholder="Search emails…"
+			filters={
+				<FiltersPopover
+					activeCount={activeFilterCount}
+					onClear={clearFilters}
+				>
+					<FilterSelect
+						label="Group"
+						value={group}
+						onChange={setGroup}
+						options={groupOptions.map((g) => ({
+							value: String(g.id),
+							label: g.name,
+						}))}
+						allOption={{ value: ALL, label: 'All groups' }}
+					/>
+					<FilterSelect
+						label="Status"
+						value={isActive}
+						onChange={setIsActive}
+						options={ACTIVE_OPTIONS}
+					/>
+				</FiltersPopover>
+			}
+			pagination={pagination}
+			data={data}
+			isLoading={isLoading}
+			isFetching={isFetching}
+			columns={columns}
+			emptyMessage="No emails found"
+			minWidth="900px"
+			onRowClick={(e) => openEmail(e.id)}
+		/>
+	)
+}
