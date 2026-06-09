@@ -1,6 +1,8 @@
 import { DetailPage } from '@/components/detail/DetailPage'
 import { resolveMediaUrl } from '@/lib/media'
 import { Icon } from '@/components/Icon'
+import { SectionTitle } from '@/components/SectionTitle'
+import { ImageFileUpload } from './components/ImageFileUpload'
 import { usePropertyImageDetailPage } from './usePropertyImageDetailPage'
 
 export function PropertyImageDetailPage() {
@@ -50,6 +52,16 @@ export function PropertyImageDetailPage() {
 						]
 					: undefined
 			}
-		/>
+		>
+			{image && (
+				<>
+					<SectionTitle>Photo</SectionTitle>
+					<ImageFileUpload
+						imageId={image.id}
+						imageUrl={image.image_medium || image.image}
+					/>
+				</>
+			)}
+		</DetailPage>
 	)
 }

@@ -58,3 +58,24 @@ export async function deleteCatalogItem(
 ): Promise<void> {
 	await api.delete(`${endpoint}${id}/`)
 }
+
+/**
+ * Upload (replace) a category's icon. `PUT /catalogs/categories/{id}/icon/` takes
+ * a `multipart/form-data` body with a single `file` field and returns the updated
+ * category (new link in `icon`). Only the categories catalog has an icon. Clear
+ * the JSON default Content-Type so axios sets `multipart/form-data` with the
+ * boundary.
+ */
+export async function uploadCategoryIcon(
+	id: string,
+	file: File,
+): Promise<CatalogRecord> {
+	const form = new FormData()
+	form.append('file', file)
+	const { data } = await api.put<CatalogRecord>(
+		`/catalogs/categories/${id}/icon/`,
+		form,
+		{ headers: { 'Content-Type': undefined } },
+	)
+	return data
+}

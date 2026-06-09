@@ -47,6 +47,46 @@ export async function deletePropertyImage(id: string): Promise<void> {
 	await api.delete(`/property-images/${id}/`)
 }
 
+/**
+ * Add a new gallery photo to a property. `POST /properties/{id}/images/` takes a
+ * `multipart/form-data` body with a single `file` field, creates a
+ * `PropertyImage`, and returns it (the backend generates the thumbnail/medium/
+ * large versions). Clear the JSON default Content-Type so axios sets
+ * `multipart/form-data` with the boundary.
+ */
+export async function addPropertyImage(
+	propertyId: string,
+	file: File,
+): Promise<PropertyImage> {
+	const form = new FormData()
+	form.append('file', file)
+	const { data } = await api.post<PropertyImage>(
+		`/properties/${propertyId}/images/`,
+		form,
+		{ headers: { 'Content-Type': undefined } },
+	)
+	return data
+}
+
+/**
+ * Replace the file of an existing gallery photo. `PUT /property-images/{id}/image/`
+ * mirrors {@link addPropertyImage} (regenerates the resized versions) and returns
+ * the updated `PropertyImage`.
+ */
+export async function replacePropertyImageFile(
+	id: string,
+	file: File,
+): Promise<PropertyImage> {
+	const form = new FormData()
+	form.append('file', file)
+	const { data } = await api.put<PropertyImage>(
+		`/property-images/${id}/image/`,
+		form,
+		{ headers: { 'Content-Type': undefined } },
+	)
+	return data
+}
+
 /** Page size for the property picker's infinite scroll. */
 export const PROPERTIES_PAGE_SIZE = 30
 

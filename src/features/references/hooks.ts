@@ -7,6 +7,7 @@ import {
 	listCatalog,
 	listReferenceOptions,
 	updateCatalogItem,
+	uploadCategoryIcon,
 } from './api'
 
 // Reference lists change rarely, so keep them fresh for a few minutes. The key
@@ -94,6 +95,20 @@ export function useDeleteCatalogItem(
 	const invalidate = useInvalidateCatalog(queryKey, refsKey)
 	return useMutation({
 		mutationFn: (id: string) => deleteCatalogItem(endpoint, id),
+		onSuccess: invalidate,
+	})
+}
+
+/**
+ * Upload a category's icon (categories catalog only). Invalidates the catalog
+ * query and the matching `/refs/*` select so the detail card and any selects
+ * refresh from the new icon.
+ */
+export function useUploadCategoryIcon(queryKey: string, refsKey: string) {
+	const invalidate = useInvalidateCatalog(queryKey, refsKey)
+	return useMutation({
+		mutationFn: ({ id, file }: { id: string; file: File }) =>
+			uploadCategoryIcon(id, file),
 		onSuccess: invalidate,
 	})
 }

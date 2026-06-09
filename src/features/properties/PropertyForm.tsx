@@ -2,6 +2,7 @@ import { FormLayout } from '@/components/form/FormLayout'
 import type { FormFieldEntry } from '@/components/form/types'
 import type { Property } from '@/types/api'
 import { AvailableSelect } from './components/AvailableSelect'
+import { MainImageUpload } from './components/MainImageUpload'
 import { AVAILABLE_OPTIONS, usePropertyForm } from './usePropertyForm'
 
 interface Props {
@@ -16,7 +17,7 @@ const nullableNumber = {
 }
 
 export function PropertyForm({ property, onSuccess, onCancel }: Props) {
-	const { form, available, toggleAvailable, isPending, onSubmit } =
+	const { isEdit, form, available, toggleAvailable, isPending, onSubmit } =
 		usePropertyForm({ property, onSuccess })
 
 	const fields: FormFieldEntry[] = [
@@ -41,6 +42,21 @@ export function PropertyForm({ property, onSuccess, onCancel }: Props) {
 				},
 			],
 		},
+
+		// The main photo is uploaded via a standalone endpoint that needs an
+		// existing property, so it only appears on edit.
+		isEdit && property && { type: 'section', title: 'Photo' },
+		isEdit &&
+			property && {
+				type: 'custom',
+				label: 'Main photo',
+				render: (
+					<MainImageUpload
+						propertyId={property.id}
+						imageUrl={property.image}
+					/>
+				),
+			},
 
 		{ type: 'section', title: 'Details' },
 		{

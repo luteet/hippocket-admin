@@ -13,6 +13,8 @@ export interface CatalogRecord {
 	sort: number
 	description?: string
 	keywords?: string
+	/** Category icon (relative media path); only the categories catalog has one. */
+	icon?: string | null
 	created_at?: string
 }
 

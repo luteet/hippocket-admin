@@ -11,6 +11,7 @@ import {
 	getProperty,
 	listProperties,
 	updateProperty,
+	uploadPropertyImage,
 } from './api'
 
 const KEY = 'properties'
@@ -52,5 +53,18 @@ export function useDeleteProperty() {
 	return useMutation({
 		mutationFn: (id: string) => deleteProperty(id),
 		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+/**
+ * Upload a property's main photo. Like the agent-avatar upload, this does NOT
+ * invalidate the properties query: the edit form re-syncs (`reset`) whenever its
+ * cached property changes, so refetching here would wipe in-progress form edits.
+ * The uploader updates its own preview from the returned property instead.
+ */
+export function useUploadPropertyImage() {
+	return useMutation({
+		mutationFn: ({ id, file }: { id: string; file: File }) =>
+			uploadPropertyImage(id, file),
 	})
 }

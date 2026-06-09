@@ -43,3 +43,21 @@ export async function updateProperty(
 export async function deleteProperty(id: string): Promise<void> {
 	await api.delete(`/properties/${id}/`)
 }
+
+/**
+ * Upload (replace) a property's main photo. `PUT /properties/{id}/image/` takes a
+ * `multipart/form-data` body with a single `file` field and returns the updated
+ * property (new link in `image`). Clear the JSON default Content-Type so axios
+ * detects the FormData and sets `multipart/form-data` with the boundary.
+ */
+export async function uploadPropertyImage(
+	id: string,
+	file: File,
+): Promise<Property> {
+	const form = new FormData()
+	form.append('file', file)
+	const { data } = await api.put<Property>(`/properties/${id}/image/`, form, {
+		headers: { 'Content-Type': undefined },
+	})
+	return data
+}

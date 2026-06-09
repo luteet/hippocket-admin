@@ -1,4 +1,6 @@
 import { DetailPage } from '@/components/detail/DetailPage'
+import { SectionTitle } from '@/components/SectionTitle'
+import { CategoryIconUpload } from './components/CategoryIconUpload'
 import { useReferenceDetailPage } from './useReferenceDetailPage'
 import type { ReferenceKind } from './useReferenceListPage'
 
@@ -48,6 +50,17 @@ export function ReferenceDetailPage({ kind }: { kind: ReferenceKind }) {
 						]
 					: undefined
 			}
-		/>
+		>
+			{item && config.hasIcon && (
+				<>
+					<SectionTitle>Icon</SectionTitle>
+					<CategoryIconUpload
+						categoryId={item.id}
+						iconUrl={item.icon ?? null}
+						queryKey={config.queryKey}
+					/>
+				</>
+			)}
+		</DetailPage>
 	)
 }

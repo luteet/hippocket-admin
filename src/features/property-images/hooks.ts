@@ -7,9 +7,11 @@ import {
 
 import type { UpdatePropertyImageDto } from '@/types/api'
 import {
+	addPropertyImage,
 	deletePropertyImage,
 	getPropertyImage,
 	listPropertyImages,
+	replacePropertyImageFile,
 	searchProperties,
 	updatePropertyImage,
 	type PropertyImageFilters,
@@ -50,6 +52,39 @@ export function useDeletePropertyImage() {
 	const qc = useQueryClient()
 	return useMutation({
 		mutationFn: (id: string) => deletePropertyImage(id),
+		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
+	})
+}
+
+/**
+ * Add a gallery photo to a property. Invalidates both the property-images list
+ * and the `properties` query so the property detail page's inline `images`
+ * gallery picks up the new photo.
+ */
+export function useAddPropertyImage() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: ({
+			propertyId,
+			file,
+		}: {
+			propertyId: string
+			file: File
+		}) => addPropertyImage(propertyId, file),
+		onSuccess: () => {
+			qc.invalidateQueries({ queryKey: [KEY] })
+			qc.invalidateQueries({ queryKey: ['properties'] })
+		},
+	})
+}
+
+/** Replace an existing gallery photo's file. Invalidates the property-images
+ *  query so the detail header and list thumbnails refresh from the new versions. */
+export function useReplacePropertyImageFile() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: ({ id, file }: { id: string; file: File }) =>
+			replacePropertyImageFile(id, file),
 		onSuccess: () => qc.invalidateQueries({ queryKey: [KEY] }),
 	})
 }

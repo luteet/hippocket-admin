@@ -33,6 +33,8 @@ interface ReferenceConfig {
 	queryKey: string
 	/** Categories alone carry editable description + keywords content. */
 	hasContent: boolean
+	/** Categories alone carry an uploadable icon (`PUT /catalogs/categories/{id}/icon/`). */
+	hasIcon: boolean
 	searchPlaceholder: string
 	emptyMessage: string
 }
@@ -45,6 +47,7 @@ export const REFERENCE_CONFIG: Record<ReferenceKind, ReferenceConfig> = {
 		endpoint: '/catalogs/categories/',
 		queryKey: 'categories',
 		hasContent: true,
+		hasIcon: true,
 		searchPlaceholder: 'Search categories…',
 		emptyMessage: 'No categories found',
 	},
@@ -55,6 +58,7 @@ export const REFERENCE_CONFIG: Record<ReferenceKind, ReferenceConfig> = {
 		endpoint: '/catalogs/partner-categories/',
 		queryKey: 'partner-categories',
 		hasContent: false,
+		hasIcon: false,
 		searchPlaceholder: 'Search segments…',
 		emptyMessage: 'No segments found',
 	},
@@ -65,6 +69,7 @@ export const REFERENCE_CONFIG: Record<ReferenceKind, ReferenceConfig> = {
 		endpoint: '/catalogs/partner-locations/',
 		queryKey: 'partner-locations',
 		hasContent: false,
+		hasIcon: false,
 		searchPlaceholder: 'Search locations…',
 		emptyMessage: 'No locations found',
 	},
@@ -75,6 +80,7 @@ export const REFERENCE_CONFIG: Record<ReferenceKind, ReferenceConfig> = {
 		endpoint: '/catalogs/partner-services/',
 		queryKey: 'partner-services',
 		hasContent: false,
+		hasIcon: false,
 		searchPlaceholder: 'Search services…',
 		emptyMessage: 'No services found',
 	},

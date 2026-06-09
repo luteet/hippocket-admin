@@ -143,6 +143,7 @@ export function PropertyDetailPage() {
 					bare: true,
 					content: property ? (
 						<PropertyImagesTab
+							propertyId={property.id}
 							images={property.images}
 							onOpen={openImage}
 						/>
