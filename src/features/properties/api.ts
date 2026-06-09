@@ -4,6 +4,7 @@ import type {
 	PaginationParams,
 	Property,
 	PropertiesData,
+	PropertyImage,
 	UpdatePropertyDto,
 } from '@/types/api'
 
@@ -61,5 +62,23 @@ export async function uploadPropertyImage(
 	const { data } = await api.put<Property>(`/properties/${id}/image/`, form, {
 		headers: { 'Content-Type': undefined },
 	})
+	return data
+}
+
+/**
+ * Persist a drag-and-drop order for a property's gallery.
+ * `PUT /properties/{propertyId}/images/reorder/` takes the full list of image
+ * ids in the desired order and atomically renumbers their `sort` field to
+ * `1..N`, returning the reordered images. Ids omitted from the body are appended
+ * at the end keeping their relative order, so always send every image.
+ */
+export async function reorderPropertyImages(
+	propertyId: string,
+	ids: string[],
+): Promise<PropertyImage[]> {
+	const { data } = await api.put<PropertyImage[]>(
+		`/properties/${propertyId}/images/reorder/`,
+		{ ids },
+	)
 	return data
 }

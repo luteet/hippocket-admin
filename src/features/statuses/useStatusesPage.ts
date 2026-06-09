@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router'
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
-import { useStatuses } from './hooks'
+import type { Status } from '@/types/api'
+import { useReorderStatuses, useStatuses } from './hooks'
 
 export function useStatusesPage() {
 	const navigate = useNavigate()
@@ -30,6 +31,8 @@ export function useStatusesPage() {
 		order: sorting.order,
 	})
 
+	const reorderMut = useReorderStatuses()
+
 	return {
 		search,
 		setSearch,
@@ -38,6 +41,19 @@ export function useStatusesPage() {
 		isFetching,
 		pagination,
 		sorting,
+		// Drag-and-drop only makes sense in the natural `priority` order with no
+		// search, and only when the whole set is on one page — a partial reorder
+		// would renumber just the visible rows and push the rest behind them.
+		reorder: {
+			getRowId: (row: Status) => row.id,
+			onReorder: (ids: (string | number)[]) =>
+				reorderMut.mutate(ids as number[]),
+			enabled:
+				!debouncedSearch.trim() &&
+				sorting.sortBy === 'priority' &&
+				sorting.order === 'asc' &&
+				pagination.pageCount(data?.total ?? 0) <= 1,
+		},
 		goToCreate: () => navigate('/statuses/new'),
 		openStatus: (id: number) => navigate(`/statuses/${id}`),
 	}

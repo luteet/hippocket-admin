@@ -52,6 +52,7 @@ export type IconName =
 	| 'user'
 	| 'upload'
 	| 'image'
+	| 'grip-vertical'
 
 const SPRITE_URL = `${import.meta.env.BASE_URL}img/sprites.svg`
 

@@ -16,6 +16,7 @@ export function StatusesPage() {
 		isFetching,
 		pagination,
 		sorting,
+		reorder,
 		goToCreate,
 		openStatus,
 	} = useStatusesPage()
@@ -64,6 +65,7 @@ export function StatusesPage() {
 				order: sorting.order,
 				onToggle: sorting.toggle,
 			}}
+			reorder={reorder}
 			emptyMessage="No statuses found"
 			minWidth="320px"
 			onRowClick={(s) => openStatus(s.id)}

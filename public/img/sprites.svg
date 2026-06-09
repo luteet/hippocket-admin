@@ -68,6 +68,14 @@
 		<path d="M4 12h16" />
 		<path d="M4 19h16" />
 	</symbol>
+	<symbol id="grip-vertical" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		<circle cx="9" cy="12" r="1" />
+		<circle cx="9" cy="5" r="1" />
+		<circle cx="9" cy="19" r="1" />
+		<circle cx="15" cy="12" r="1" />
+		<circle cx="15" cy="5" r="1" />
+		<circle cx="15" cy="19" r="1" />
+	</symbol>
 	<symbol id="log-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 		<path d="m16 17 5-5-5-5" />
 		<path d="M21 12H9" />

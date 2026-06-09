@@ -60,6 +60,22 @@ export async function deleteCatalogItem(
 }
 
 /**
+ * Persist a manual drag-and-drop order. `PUT /catalogs/{catalog}/reorder/` takes
+ * the full list of ids in the desired order and atomically renumbers the `sort`
+ * field to `1..N`, returning the reordered list. Ids omitted from the body are
+ * appended at the end keeping their relative order, so always send every row.
+ */
+export async function reorderCatalog(
+	endpoint: string,
+	ids: string[],
+): Promise<CatalogRecord[]> {
+	const { data } = await api.put<CatalogRecord[]>(`${endpoint}reorder/`, {
+		ids,
+	})
+	return data
+}
+
+/**
  * Upload (replace) a category's icon. `PUT /catalogs/categories/{id}/icon/` takes
  * a `multipart/form-data` body with a single `file` field and returns the updated
  * category (new link in `icon`). Only the categories catalog has an icon. Clear

@@ -1,13 +1,34 @@
-import { useRef } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import {
 	flexRender,
 	getCoreRowModel,
 	useReactTable,
 	type ColumnDef,
+	type Row,
 	type RowData,
 } from '@tanstack/react-table'
+import {
+	DndContext,
+	KeyboardSensor,
+	PointerSensor,
+	closestCenter,
+	useSensor,
+	useSensors,
+	type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+	restrictToParentElement,
+	restrictToVerticalAxis,
+} from '@dnd-kit/modifiers'
+import {
+	SortableContext,
+	arrayMove,
+	sortableKeyboardCoordinates,
+	verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
 import { Icon } from '@/components/Icon'
 import { SortableHeader } from '@/components/SortableHeader'
+import { SortableRow } from '@/components/SortableRow'
 import {
 	Table,
 	TableBody,
@@ -38,6 +59,21 @@ export interface DataTableSorting {
 	sortBy?: string
 	order?: SortOrder
 	onToggle: (key: string) => void
+}
+
+/**
+ * Drag-and-drop row reordering wiring. When set, each row gets a leading drag
+ * handle. Dragging is only allowed while {@link enabled} is true (i.e. the list
+ * is in its natural order with no search/filter narrowing it), so the full,
+ * correctly-ordered id set can be sent to the backend's `reorder/` endpoint.
+ */
+export interface DataTableReorder<TData> {
+	/** A stable id for a row — the record's UUID (string) or int id. */
+	getRowId: (row: TData) => string | number
+	/** Receives the full id list in the new order after a successful drop. */
+	onReorder: (ids: (string | number)[]) => void
+	/** Whether dragging is currently permitted (handle stays visible but inert when false). */
+	enabled: boolean
 }
 
 interface PaginationProps {
@@ -85,6 +121,11 @@ interface DataTableProps<TData> {
 	 */
 	sorting?: DataTableSorting
 	/**
+	 * Drag-and-drop row reordering. When set, rows gain a leading drag handle
+	 * and (while `reorder.enabled`) can be dragged to reorder.
+	 */
+	reorder?: DataTableReorder<TData>
+	/**
 	 * Minimum table width (any CSS length). Below this the table scrolls
 	 * horizontally instead of squeezing columns until text wraps.
 	 */
@@ -104,14 +145,61 @@ export function DataTable<TData>({
 	onRowClick,
 	pagination,
 	sorting,
+	reorder,
 	minWidth,
 	skeletonRows = 5,
 }: DataTableProps<TData>) {
+	// A local mirror of the rows so a drop reorders them synchronously. dnd-kit
+	// resets the dragged row's transform on drop; if the order hasn't changed
+	// yet, the row snaps back to its origin for a frame before the (async) cache
+	// update moves it. Updating this state inside `onDragEnd` flips the order in
+	// the same frame, so the row settles straight into its new slot. Resetting
+	// it during render (the React-blessed "derive state from props" pattern)
+	// keeps it in sync with later data changes (refetch, search, sort).
+	const [orderedData, setOrderedData] = useState(data)
+	const [prevData, setPrevData] = useState(data)
+	if (data !== prevData) {
+		setPrevData(data)
+		setOrderedData(data)
+	}
+	const tableData = reorder ? orderedData : data
+
 	const table = useReactTable({
-		data,
+		data: tableData,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
+		// Key rows by their record id (not the row index) when reordering, so
+		// React moves the actual DOM nodes on a reorder instead of reusing them
+		// by position. dnd-kit tracks drag transforms by the same id, so without
+		// this the dropped row snaps back to its origin (node stays put, only its
+		// content swaps) before the data catches up.
+		getRowId: reorder ? (row) => String(reorder.getRowId(row)) : undefined,
 	})
+
+	// Drag-and-drop reordering plumbing (no-op unless `reorder` is supplied).
+	const sensors = useSensors(
+		// A small activation distance so a click on the handle still reads as a
+		// click, not a drag.
+		useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
+		useSensor(KeyboardSensor, {
+			coordinateGetter: sortableKeyboardCoordinates,
+		}),
+	)
+	const reorderIds = useMemo(
+		() => (reorder ? tableData.map(reorder.getRowId) : []),
+		[reorder, tableData],
+	)
+	const handleDragEnd = (event: DragEndEvent) => {
+		if (!reorder) return
+		const { active, over } = event
+		if (!over || active.id === over.id) return
+		const oldIndex = reorderIds.findIndex((id) => id === active.id)
+		const newIndex = reorderIds.findIndex((id) => id === over.id)
+		if (oldIndex === -1 || newIndex === -1) return
+		const next = arrayMove(orderedData, oldIndex, newIndex)
+		setOrderedData(next)
+		reorder.onReorder(next.map(reorder.getRowId))
+	}
 
 	// Where the press started — used to tell a real click apart from a drag
 	// (e.g. selecting text in an inline input). A drag releasing on the row
@@ -136,126 +224,166 @@ export function DataTable<TData>({
 			}
 		: undefined
 
-	return (
-		<div className="space-y-4">
-			<div className="overflow-hidden rounded-xl border border-border bg-card">
-				{/* Fixed layout once sorting is on: column widths come from the
+	const rowMouseDown = onRowClick
+		? (e: React.MouseEvent<HTMLTableRowElement>) => {
+				downPos.current = { x: e.clientX, y: e.clientY }
+			}
+		: undefined
+
+	const renderCells = (row: Row<TData>) =>
+		row.getVisibleCells().map((cell) => (
+			<TableCell
+				key={cell.id}
+				className={cell.column.columnDef.meta?.className}
+			>
+				{flexRender(cell.column.columnDef.cell, cell.getContext())}
+			</TableCell>
+		))
+
+	const dataRows = table.getRowModel().rows.map((row) =>
+		reorder ? (
+			<SortableRow
+				key={row.id}
+				id={reorder.getRowId(row.original)}
+				disabled={!reorder.enabled}
+				clickable={!!onRowClick}
+				onMouseDown={rowMouseDown}
+				onClick={handleRowClick?.(row.original)}
+			>
+				{renderCells(row)}
+			</SortableRow>
+		) : (
+			<TableRow
+				key={row.id}
+				onMouseDown={rowMouseDown}
+				onClick={handleRowClick?.(row.original)}
+				className={onRowClick ? 'cursor-pointer' : undefined}
+			>
+				{renderCells(row)}
+			</TableRow>
+		),
+	)
+
+	const tableEl = (
+		<>
+			{/* Fixed layout once sorting is on: column widths come from the
 				    header cells (set via each column's `meta.className`) instead
 				    of the body content, so they don't jump when a sort reorders
 				    the rows and the sort buttons stay put under the cursor. */}
-				<Table
-					className={sorting ? 'table-fixed' : undefined}
-					style={minWidth ? { minWidth } : undefined}
-				>
-					<TableHeader>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<TableRow
-								key={headerGroup.id}
-								className="hover:bg-transparent"
-							>
-								{headerGroup.headers.map((header) => {
-									const sortKey =
-										header.column.columnDef.meta?.sortKey
-									const label = header.isPlaceholder
-										? null
-										: flexRender(
-												header.column.columnDef.header,
-												header.getContext(),
-											)
-									return (
-										<TableHead
-											key={header.id}
-											className={
-												header.column.columnDef.meta
-													?.className
-											}
-										>
-											{sorting && sortKey ? (
-												<SortableHeader
-													label={label}
-													sortKey={sortKey}
-													sortBy={sorting.sortBy}
-													order={sorting.order}
-													onToggle={sorting.onToggle}
-												/>
-											) : (
-												label
-											)}
-										</TableHead>
-									)
-								})}
-							</TableRow>
-						))}
-					</TableHeader>
-					{/* Re-key so the tbody remounts on each skeleton⇄data swap,
+			<Table
+				className={sorting ? 'table-fixed' : undefined}
+				style={minWidth ? { minWidth } : undefined}
+			>
+				<TableHeader>
+					{table.getHeaderGroups().map((headerGroup) => (
+						<TableRow
+							key={headerGroup.id}
+							className="hover:bg-transparent"
+						>
+							{reorder && (
+								<TableHead className="w-10" aria-hidden />
+							)}
+							{headerGroup.headers.map((header) => {
+								const sortKey =
+									header.column.columnDef.meta?.sortKey
+								const label = header.isPlaceholder
+									? null
+									: flexRender(
+											header.column.columnDef.header,
+											header.getContext(),
+										)
+								return (
+									<TableHead
+										key={header.id}
+										className={
+											header.column.columnDef.meta
+												?.className
+										}
+									>
+										{sorting && sortKey ? (
+											<SortableHeader
+												label={label}
+												sortKey={sortKey}
+												sortBy={sorting.sortBy}
+												order={sorting.order}
+												onToggle={sorting.onToggle}
+											/>
+										) : (
+											label
+										)}
+									</TableHead>
+								)
+							})}
+						</TableRow>
+					))}
+				</TableHeader>
+				{/* Re-key so the tbody remounts on each skeleton⇄data swap,
 					    replaying the `.table-fade` opacity transition instead of
 					    snapping between the two states. */}
-					<TableBody
-						key={isLoading ? 'loading' : 'loaded'}
-						className="table-fade"
-					>
-						{isLoading ? (
-							Array.from({ length: skeletonRows }).map((_, i) => (
-								<TableRow
-									key={i}
-									className="hover:bg-transparent"
-								>
-									{columns.map((_col, j) => (
-										<TableCell key={j}>
-											<Skeleton className="h-8 w-full" />
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : table.getRowModel().rows.length ? (
-							table.getRowModel().rows.map((row) => (
-								<TableRow
-									key={row.id}
-									onMouseDown={
-										onRowClick
-											? (e) => {
-													downPos.current = {
-														x: e.clientX,
-														y: e.clientY,
-													}
-												}
-											: undefined
-									}
-									onClick={handleRowClick?.(row.original)}
-									className={
-										onRowClick
-											? 'cursor-pointer'
-											: undefined
-									}
-								>
-									{row.getVisibleCells().map((cell) => (
-										<TableCell
-											key={cell.id}
-											className={
-												cell.column.columnDef.meta
-													?.className
-											}
-										>
-											{flexRender(
-												cell.column.columnDef.cell,
-												cell.getContext(),
-											)}
-										</TableCell>
-									))}
-								</TableRow>
-							))
-						) : (
-							<TableRow className="hover:bg-transparent">
-								<TableCell
-									colSpan={columns.length}
-									className="h-24 text-center text-muted-foreground"
-								>
-									{emptyMessage}
-								</TableCell>
+				<TableBody
+					key={isLoading ? 'loading' : 'loaded'}
+					className="table-fade"
+				>
+					{isLoading ? (
+						Array.from({ length: skeletonRows }).map((_, i) => (
+							<TableRow key={i} className="hover:bg-transparent">
+								{reorder && <TableCell className="w-10" />}
+								{columns.map((_col, j) => (
+									<TableCell key={j}>
+										<Skeleton className="h-8 w-full" />
+									</TableCell>
+								))}
 							</TableRow>
-						)}
-					</TableBody>
-				</Table>
+						))
+					) : dataRows.length ? (
+						reorder ? (
+							<SortableContext
+								items={reorderIds}
+								strategy={verticalListSortingStrategy}
+							>
+								{dataRows}
+							</SortableContext>
+						) : (
+							dataRows
+						)
+					) : (
+						<TableRow className="hover:bg-transparent">
+							<TableCell
+								colSpan={columns.length + (reorder ? 1 : 0)}
+								className="h-24 text-center text-muted-foreground"
+							>
+								{emptyMessage}
+							</TableCell>
+						</TableRow>
+					)}
+				</TableBody>
+			</Table>
+		</>
+	)
+
+	return (
+		<div className="space-y-4">
+			<div className="overflow-hidden rounded-xl border border-border bg-card">
+				{reorder ? (
+					<DndContext
+						sensors={sensors}
+						collisionDetection={closestCenter}
+						// Vertical-only, and clamped to the tbody so a row dragged
+						// past the last one can't push its transform beyond the
+						// content and grow the table's scroll area. autoScroll off
+						// for the same reason — no edge-scrolling the container.
+						modifiers={[
+							restrictToVerticalAxis,
+							restrictToParentElement,
+						]}
+						autoScroll={false}
+						onDragEnd={handleDragEnd}
+					>
+						{tableEl}
+					</DndContext>
+				) : (
+					tableEl
+				)}
 			</div>
 
 			{pagination && pagination.pageCount > 1 && (

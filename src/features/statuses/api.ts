@@ -51,3 +51,14 @@ export async function updateStatus(
 export async function deleteStatus(id: number): Promise<void> {
 	await api.delete(`/statuses/${id}/`)
 }
+
+/**
+ * Persist a manual drag-and-drop order. `PUT /statuses/reorder/` takes the full
+ * list of ids in the desired order and atomically renumbers the `priority`
+ * field to `1..N`, returning the reordered list. Ids omitted from the body are
+ * appended at the end keeping their relative order, so always send every row.
+ */
+export async function reorderStatuses(ids: number[]): Promise<Status[]> {
+	const { data } = await api.put<Status[]>('/statuses/reorder/', { ids })
+	return data
+}

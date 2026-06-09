@@ -25,6 +25,7 @@ export function ReferenceListPage({ kind }: { kind: ReferenceKind }) {
 		goToCreate,
 		openItem,
 		sorting,
+		reorder,
 	} = useReferenceListPage(kind)
 
 	const columns = useMemo<ColumnDef<CatalogRecord, unknown>[]>(
@@ -93,6 +94,7 @@ export function ReferenceListPage({ kind }: { kind: ReferenceKind }) {
 						order: sorting.order,
 						onToggle: sorting.toggle,
 					}}
+					reorder={reorder}
 					onRowClick={(r) => openItem(r.id)}
 				/>
 			</Reveal>

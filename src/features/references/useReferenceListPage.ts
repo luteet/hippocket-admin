@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useSorting } from '@/hooks/useSorting'
 import type { CatalogRecord } from '@/types/api'
-import { useCatalog } from './hooks'
+import { useCatalog, useReorderCatalog } from './hooks'
 
 // The partner-taxonomy sections (nested under Partners in the sidebar) are
 // near-identical editable lists backed by a `/catalogs/*` (partner reference
@@ -105,6 +105,12 @@ export function useReferenceListPage(kind: ReferenceKind) {
 		{ offset: 0, count: 1000 },
 	)
 
+	const reorderMut = useReorderCatalog(
+		config.queryKey,
+		config.queryKey,
+		config.endpoint,
+	)
+
 	const rows = useMemo(() => {
 		const items = data?.items ?? []
 		const query = debouncedSearch.trim().toLowerCase()
@@ -145,6 +151,16 @@ export function useReferenceListPage(kind: ReferenceKind) {
 		sorting,
 		isLoading,
 		isFetching,
+		// Drag-and-drop is only meaningful in the natural `sort` order with no
+		// search filtering the set — otherwise the visible rows aren't the full,
+		// correctly-ordered list the reorder endpoint expects.
+		reorder: {
+			getRowId: (row: CatalogRecord) => row.id,
+			onReorder: (ids: (string | number)[]) =>
+				reorderMut.mutate(ids as string[]),
+			enabled:
+				!debouncedSearch.trim() && sortBy === 'sort' && order === 'asc',
+		},
 		goToCreate: () => navigate(`/${kind}/new`),
 		openItem: (id: string) => navigate(`/${kind}/${id}`),
 	}

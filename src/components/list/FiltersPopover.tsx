@@ -70,7 +70,7 @@ export function FiltersPopover({
 				<Button
 					ref={setTriggerEl}
 					variant="outline-2"
-					className="gap-2"
+					className="gap-2 font-normal"
 				>
 					<Icon name="filter" className="size-4" />
 					Filters
