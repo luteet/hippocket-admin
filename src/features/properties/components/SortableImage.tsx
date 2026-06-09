@@ -32,7 +32,10 @@ export function SortableImage({ id, src, onOpen }: SortableImageProps) {
 		<div
 			ref={setNodeRef}
 			style={{
-				transform: CSS.Transform.toString(transform),
+				// Translate only (not Transform) so the tile is moved without the
+				// scaleX/scaleY dnd-kit adds to morph it into the hovered tile's
+				// size — that scaling visibly stretches the dragged image.
+				transform: CSS.Translate.toString(transform),
 				transition,
 				zIndex: isDragging ? 1 : undefined,
 				opacity: isDragging ? 0.7 : undefined,

@@ -45,7 +45,10 @@ export function SortableRow({
 		<TableRow
 			ref={setNodeRef}
 			style={{
-				transform: CSS.Transform.toString(transform),
+				// Translate only (not Transform) so the row is moved without the
+				// scaleX/scaleY dnd-kit adds to morph it into the hovered row's
+				// size — that scaling visibly stretches the dragged row.
+				transform: CSS.Translate.toString(transform),
 				transition,
 				// Lift the dragged row above its siblings while it moves.
 				position: isDragging ? 'relative' : undefined,
@@ -67,7 +70,7 @@ export function SortableRow({
 					// detection (see DataTable's downPos logic).
 					onClick={(e) => e.stopPropagation()}
 					onMouseDown={(e) => e.stopPropagation()}
-					className="flex touch-none items-center justify-center text-muted-foreground/50 transition-colors hover:text-foreground disabled:cursor-default disabled:opacity-30 disabled:hover:text-muted-foreground/50 [&:not(:disabled)]:cursor-grab [&:not(:disabled)]:active:cursor-grabbing"
+					className="flex touch-none items-center justify-center text-muted-foreground/50 transition-colors hover:text-foreground disabled:cursor-default disabled:opacity-30 disabled:hover:text-muted-foreground/50 not-disabled:cursor-grab not-disabled:active:cursor-grabbing"
 				>
 					<Icon name="grip-vertical" className="size-4" />
 				</button>
