@@ -20,50 +20,118 @@ export type NavItem = {
 	// child whose path is a prefix of its siblings' (e.g. `/logs` vs
 	// `/logs/referrals-sent`), so it doesn't stay highlighted on the sub-pages.
 	end?: boolean
+	// One-line description, shown under the label in the command palette search.
+	description?: string
+	// Extra search terms (synonyms) so the command palette can match an item by
+	// words other than its label, e.g. matching "Segments" on "grouping".
+	keywords?: string[]
 }
 
 export const NAV_ITEMS: NavItem[] = [
-	{ to: '/', label: 'Dashboard', icon: 'layout-dashboard', end: true },
+	{
+		to: '/',
+		label: 'Dashboard',
+		icon: 'layout-dashboard',
+		end: true,
+		description: 'Overview and key metrics',
+		keywords: ['home', 'overview', 'metrics', 'stats', 'start'],
+	},
 	{
 		to: '/partners',
 		label: 'Partners',
 		icon: 'building-2',
+		description: 'Manage partner businesses',
+		keywords: ['partner', 'business', 'vendor', 'company', 'merchant'],
 		children: [
-			{ to: '/categories', label: 'Categories', icon: 'tags' },
-			{ to: '/segments', label: 'Segments', icon: 'layers' },
-			{ to: '/locations', label: 'Locations', icon: 'map-pin' },
-			{ to: '/services', label: 'Services', icon: 'wrench' },
+			{
+				to: '/categories',
+				label: 'Categories',
+				icon: 'tags',
+				description: 'Granular service categories',
+				keywords: ['category', 'taxonomy', 'tag'],
+			},
+			{
+				to: '/segments',
+				label: 'Segments',
+				icon: 'layers',
+				description: 'Broad partner groupings',
+				keywords: ['segment', 'grouping', 'partner category'],
+			},
+			{
+				to: '/locations',
+				label: 'Locations',
+				icon: 'map-pin',
+				description: 'Partner locations',
+				keywords: ['location', 'place', 'city', 'region'],
+			},
+			{
+				to: '/services',
+				label: 'Services',
+				icon: 'wrench',
+				description: 'Partner services',
+				keywords: ['service', 'offering'],
+			},
 		],
 	},
 	{
 		to: '/referrals',
 		label: 'Pipeline',
 		icon: 'git-branch',
-		children: [{ to: '/statuses', label: 'Statuses', icon: 'list-checks' }],
+		description: 'Referral pipeline and deals',
+		keywords: ['referral', 'pipeline', 'deal', 'lead'],
+		children: [
+			{
+				to: '/statuses',
+				label: 'Statuses',
+				icon: 'list-checks',
+				description: 'Referral pipeline statuses',
+				keywords: ['status', 'stage', 'state'],
+			},
+		],
 	},
 	{
 		to: '/agents',
 		label: 'Agents',
 		icon: 'users',
+		description: 'Manage agent accounts',
+		keywords: ['agent', 'user', 'account', 'people', 'staff'],
 		children: [
 			{
 				to: '/saved-filters',
 				label: 'Saved Filters',
 				icon: 'filter',
+				description: 'Saved agent filters',
+				keywords: ['filter', 'saved', 'preset'],
 			},
 			{
 				to: '/team-leaders',
 				label: 'Team Leaders',
 				icon: 'users',
+				description: 'Group team leaders',
+				keywords: ['team', 'leader', 'lead', 'manager'],
 			},
 		],
 	},
-	{ to: '/groups', label: 'Groups', icon: 'boxes' },
-	{ to: '/contacts', label: 'Contacts', icon: 'contact' },
+	{
+		to: '/groups',
+		label: 'Groups',
+		icon: 'boxes',
+		description: 'Agent groups',
+		keywords: ['group', 'team', 'collection'],
+	},
+	{
+		to: '/contacts',
+		label: 'Contacts',
+		icon: 'contact',
+		description: 'Contact form submissions',
+		keywords: ['contact', 'lead', 'inquiry', 'message'],
+	},
 	{
 		to: '/chats',
 		label: 'Chats',
 		icon: 'message-square',
+		description: 'Customer chat threads',
+		keywords: ['chat', 'message', 'conversation', 'support'],
 		// No page of its own — the parent button jumps to the first child.
 		groupOnly: true,
 		children: [
@@ -72,19 +140,31 @@ export const NAV_ITEMS: NavItem[] = [
 				label: 'All Chats',
 				icon: 'message-square',
 				end: true,
+				description: 'All chat threads',
+				keywords: ['chat', 'thread'],
 			},
 			{
 				to: '/chats/messages',
 				label: 'Messages',
 				icon: 'message-square',
+				description: 'Chat messages',
+				keywords: ['message'],
 			},
-			{ to: '/chats/media', label: 'Media', icon: 'file-text' },
+			{
+				to: '/chats/media',
+				label: 'Media',
+				icon: 'file-text',
+				description: 'Chat media files',
+				keywords: ['media', 'file', 'attachment', 'image'],
+			},
 		],
 	},
 	{
 		to: '/ai-chat',
 		label: 'AI Chat',
 		icon: 'bot',
+		description: 'AI assistant conversations',
+		keywords: ['ai', 'assistant', 'bot', 'gpt', 'chatbot'],
 		// No page of its own — the parent button jumps to the first child.
 		groupOnly: true,
 		children: [
@@ -92,11 +172,15 @@ export const NAV_ITEMS: NavItem[] = [
 				to: '/ai-chat/messages',
 				label: 'Messages',
 				icon: 'message-square',
+				description: 'AI chat messages',
+				keywords: ['message', 'ai'],
 			},
 			{
 				to: '/ai-chat/sessions',
 				label: 'Sessions',
 				icon: 'users',
+				description: 'AI chat sessions',
+				keywords: ['session', 'ai', 'conversation'],
 			},
 		],
 	},
@@ -104,16 +188,22 @@ export const NAV_ITEMS: NavItem[] = [
 		to: '/properties',
 		label: 'Properties',
 		icon: 'house',
+		description: 'Real-estate properties',
+		keywords: ['property', 'listing', 'house', 'real estate', 'home'],
 		children: [
 			{
 				to: '/property-images',
 				label: 'Images',
 				icon: 'image',
+				description: 'Property images',
+				keywords: ['image', 'photo', 'picture'],
 			},
 			{
 				to: '/cash-offers-emails',
 				label: 'Cash Offers Emails',
 				icon: 'mail',
+				description: 'Cash-offer emails',
+				keywords: ['cash', 'offer', 'email'],
 			},
 		],
 	},
@@ -121,6 +211,8 @@ export const NAV_ITEMS: NavItem[] = [
 		to: '/journey',
 		label: 'Journey',
 		icon: 'route',
+		description: 'Partner journey',
+		keywords: ['journey', 'flow'],
 		// No page of its own — the parent button jumps to the first child.
 		groupOnly: true,
 		children: [
@@ -128,11 +220,25 @@ export const NAV_ITEMS: NavItem[] = [
 				to: '/shared-partners',
 				label: 'Partners',
 				icon: 'building-2',
+				description: 'Shared partners',
+				keywords: ['shared', 'partner'],
 			},
 		],
 	},
-	{ to: '/withdrawals', label: 'Withdrawals', icon: 'wallet' },
-	{ to: '/payments', label: 'Payments', icon: 'badge-dollar' },
+	{
+		to: '/withdrawals',
+		label: 'Withdrawals',
+		icon: 'wallet',
+		description: 'Agent withdrawal requests',
+		keywords: ['withdrawal', 'payout', 'cashout', 'money'],
+	},
+	{
+		to: '/payments',
+		label: 'Payments',
+		icon: 'badge-dollar',
+		description: 'Payment records',
+		keywords: ['payment', 'transaction', 'money', 'billing'],
+	},
 	{
 		// Parent has its own page (/settings — the General singleton); the rest
 		// of System (base) hangs off it. `end` so it highlights only on /settings.
@@ -140,14 +246,36 @@ export const NAV_ITEMS: NavItem[] = [
 		label: 'Settings',
 		icon: 'settings',
 		end: true,
+		description: 'System settings',
+		keywords: ['setting', 'config', 'preferences', 'system'],
 		children: [
-			{ to: '/token-courses', label: 'Token Courses', icon: 'coins' },
-			{ to: '/link-names', label: 'Links', icon: 'link' },
-			{ to: '/form-configs', label: 'Forms', icon: 'file-text' },
+			{
+				to: '/token-courses',
+				label: 'Token Courses',
+				icon: 'coins',
+				description: 'Token course rates',
+				keywords: ['token', 'course', 'rate', 'exchange'],
+			},
+			{
+				to: '/link-names',
+				label: 'Links',
+				icon: 'link',
+				description: 'Link names',
+				keywords: ['link', 'url'],
+			},
+			{
+				to: '/form-configs',
+				label: 'Forms',
+				icon: 'file-text',
+				description: 'Form configurations',
+				keywords: ['form', 'config'],
+			},
 			{
 				to: '/group-form-prices',
 				label: 'Form Prices',
 				icon: 'badge-dollar',
+				description: 'Group form prices',
+				keywords: ['price', 'form', 'cost'],
 			},
 		],
 	},
@@ -155,19 +283,32 @@ export const NAV_ITEMS: NavItem[] = [
 		to: '/logs',
 		label: 'Logs',
 		icon: 'scroll-text',
+		description: 'Audit logs and history',
+		keywords: ['log', 'audit', 'history', 'activity'],
 		// No page of its own — the parent button jumps to the first child.
 		groupOnly: true,
 		children: [
-			{ to: '/logs', label: 'All Logs', icon: 'scroll-text', end: true },
+			{
+				to: '/logs',
+				label: 'All Logs',
+				icon: 'scroll-text',
+				end: true,
+				description: 'All audit logs',
+				keywords: ['log', 'audit'],
+			},
 			{
 				to: '/logs/referrals-sent',
 				label: 'Referrals Sent',
 				icon: 'git-branch',
+				description: 'Referrals-sent logs',
+				keywords: ['referral', 'sent', 'log'],
 			},
 			{
 				to: '/logs/referrals-closed',
 				label: 'Referrals Closed',
 				icon: 'git-branch',
+				description: 'Referrals-closed logs',
+				keywords: ['referral', 'closed', 'log'],
 			},
 		],
 	},
