@@ -50,6 +50,40 @@ export async function updateSettings(
 	return data
 }
 
+/**
+ * Upload (replace) the partner email HTML template. `PUT /settings/email-template/`
+ * takes a `multipart/form-data` body with a single `file` field (an `.html` file)
+ * and returns the full settings object (new link in `email_template`). Clear the
+ * JSON default Content-Type so axios sets `multipart/form-data` with the boundary.
+ */
+export async function uploadEmailTemplate(file: File): Promise<AdminSettings> {
+	const form = new FormData()
+	form.append('file', file)
+	const { data } = await api.put<AdminSettings>(
+		'/settings/email-template/',
+		form,
+		{ headers: { 'Content-Type': undefined } },
+	)
+	return data
+}
+
+/**
+ * Upload (replace) the withdrawal email HTML template. Mirrors
+ * {@link uploadEmailTemplate}; the new link is returned in `email_withdraw_template`.
+ */
+export async function uploadEmailWithdrawTemplate(
+	file: File,
+): Promise<AdminSettings> {
+	const form = new FormData()
+	form.append('file', file)
+	const { data } = await api.put<AdminSettings>(
+		'/settings/email-withdraw-template/',
+		form,
+		{ headers: { 'Content-Type': undefined } },
+	)
+	return data
+}
+
 // --- Statistics (read-only) -----------------------------------------------
 export async function getStatistics(): Promise<Statistics> {
 	const { data } = await api.get<Statistics>('/statistics/')

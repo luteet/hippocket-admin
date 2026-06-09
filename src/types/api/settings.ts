@@ -8,6 +8,11 @@ export interface AdminSettings {
 	id: string
 	admin_email: string
 	ai_system_prompt: string
+	// HTML email templates. Uploaded as `.html` files via dedicated multipart
+	// endpoints (not part of the JSON update DTO); each field holds the URL of
+	// the stored file, or null when none has been uploaded yet.
+	email_template: string | null
+	email_withdraw_template: string | null
 }
 
 export interface UpdateSettingsDto {

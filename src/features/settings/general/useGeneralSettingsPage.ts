@@ -53,6 +53,7 @@ export function useGeneralSettingsPage() {
 	})
 
 	return {
+		settings,
 		isLoading,
 		register,
 		errors,

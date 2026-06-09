@@ -7,10 +7,11 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Field } from '@/components/Field'
+import { EmailTemplateUpload } from './components/EmailTemplateUpload'
 import { useGeneralSettingsPage } from './useGeneralSettingsPage'
 
 export function GeneralSettingsPage() {
-	const { isLoading, register, errors, isPending, onSubmit } =
+	const { settings, isLoading, register, errors, isPending, onSubmit } =
 		useGeneralSettingsPage()
 
 	return (
@@ -42,6 +43,29 @@ export function GeneralSettingsPage() {
 									<p className="text-xs text-muted-foreground">
 										Notification recipients, separated by
 										semicolons.
+									</p>
+								</Field>
+								<Field label="Partner email template">
+									<EmailTemplateUpload
+										url={settings?.email_template ?? null}
+										kind="partner"
+									/>
+									<p className="text-xs text-muted-foreground">
+										HTML file sent to partners. Uploads
+										immediately on selection.
+									</p>
+								</Field>
+								<Field label="Withdraw email template">
+									<EmailTemplateUpload
+										url={
+											settings?.email_withdraw_template ??
+											null
+										}
+										kind="withdraw"
+									/>
+									<p className="text-xs text-muted-foreground">
+										HTML file sent for withdrawal requests.
+										Uploads immediately on selection.
 									</p>
 								</Field>
 								<Field

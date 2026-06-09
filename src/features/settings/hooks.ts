@@ -30,6 +30,8 @@ import {
 	updateLinkName,
 	updateSettings,
 	updateTokenCourse,
+	uploadEmailTemplate,
+	uploadEmailWithdrawTemplate,
 	type ListParams,
 } from './api'
 
@@ -49,6 +51,24 @@ export function useUpdateSettings() {
 	const qc = useQueryClient()
 	return useMutation({
 		mutationFn: (dto: UpdateSettingsDto) => updateSettings(dto),
+		onSuccess: () => qc.invalidateQueries({ queryKey: [SETTINGS_KEY] }),
+	})
+}
+
+// The two HTML email templates upload as standalone `.html` files (separate
+// multipart endpoints), each returning the refreshed settings singleton.
+export function useUploadEmailTemplate() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: (file: File) => uploadEmailTemplate(file),
+		onSuccess: () => qc.invalidateQueries({ queryKey: [SETTINGS_KEY] }),
+	})
+}
+
+export function useUploadEmailWithdrawTemplate() {
+	const qc = useQueryClient()
+	return useMutation({
+		mutationFn: (file: File) => uploadEmailWithdrawTemplate(file),
 		onSuccess: () => qc.invalidateQueries({ queryKey: [SETTINGS_KEY] }),
 	})
 }
