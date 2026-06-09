@@ -88,6 +88,9 @@ export function DetailBody({
 							}
 							bool={f.bool}
 							capitalize={f.capitalize}
+							className={
+								f.fullWidth ? 'sm:col-span-2' : undefined
+							}
 						>
 							{f.render}
 						</DetailRow>

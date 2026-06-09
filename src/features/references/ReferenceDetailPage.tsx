@@ -41,11 +41,13 @@ export function ReferenceDetailPage({ kind }: { kind: ReferenceKind }) {
 								label: 'Description',
 								value: item.description,
 								hidden: !config.hasContent,
+								fullWidth: true,
 							},
 							{
 								label: 'Keywords',
 								value: item.keywords,
 								hidden: !config.hasContent,
+								fullWidth: true,
 							},
 						]
 					: undefined

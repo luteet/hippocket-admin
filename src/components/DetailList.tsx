@@ -16,6 +16,8 @@ export interface DetailField {
 	capitalize?: boolean
 	render?: ReactNode
 	hidden?: boolean
+	/** Span both columns of the grid (for long text like descriptions). */
+	fullWidth?: boolean
 }
 
 /**
@@ -58,16 +60,18 @@ export function DetailRow({
 	value,
 	bool,
 	capitalize,
+	className,
 	children,
 }: {
 	label: string
 	value?: string | null
 	bool?: boolean
 	capitalize?: boolean
+	className?: string
 	children?: ReactNode
 }) {
 	return (
-		<div>
+		<div className={className}>
 			<dt className="text-xs text-muted-foreground">{label}</dt>
 			<dd
 				className={cn(

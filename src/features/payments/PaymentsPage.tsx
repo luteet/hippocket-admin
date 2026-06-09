@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Badge } from '@/components/ui/badge'
@@ -47,10 +48,20 @@ export function PaymentsPage() {
 			{
 				accessorKey: 'user_email',
 				header: 'User',
-				cell: ({ row }) =>
-					row.original.user_email || (
-						<span className="text-muted-foreground">—</span>
-					),
+				cell: ({ row }) => {
+					const { user_id, user_email } = row.original
+					if (!user_email)
+						return <span className="text-muted-foreground">—</span>
+					return (
+						<Link
+							to={`/agents/${user_id}`}
+							className="link"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{user_email}
+						</Link>
+					)
+				},
 			},
 			{ accessorKey: 'referral_name', header: 'Referral' },
 			{
