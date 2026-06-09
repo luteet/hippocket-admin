@@ -23,28 +23,27 @@
 
 		cursor: pointer;
 		transition:
-			color 160ms ease,
-			border-color 160ms ease,
-			box-shadow 160ms ease,
-			transform 120ms ease;
+			color .16s,
+			border-color .16s,
+			box-shadow .16s,
+			transform .12s,
+			filter .15s;
 
-		&:hover {
-			color: var(--foreground);
-			border-color: color-mix(
-				in srgb,
-				var(--secondary) 50%,
-				var(--border)
-			);
+		@media (hover: hover) {
+			&:hover {
+				color: var(--foreground);
+				border-color: var(--primary);
+			}
+
+			&:active {
+				filter: brightness(97.5%);
+			}
 		}
 
 		&:focus-visible {
 			outline: none;
 			box-shadow: 0 0 0 2px
 				color-mix(in srgb, var(--ring) 45%, transparent);
-		}
-
-		&:active {
-			transform: scale(0.94);
 		}
 
 		// Hidden on mobile — the topbar provides an icon button instead.
