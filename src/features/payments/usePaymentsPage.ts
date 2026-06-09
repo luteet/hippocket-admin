@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { usePayments, usePaymentsMeta } from './hooks'
 
@@ -18,6 +19,10 @@ export function usePaymentsPage() {
 	const [createdFrom, setCreatedFrom] = useState('')
 	const [createdTo, setCreatedTo] = useState('')
 	const pagination = usePagination({ count: 20, storageKey: 'payments' })
+	const sorting = useSorting({
+		defaultSortBy: 'created_at',
+		defaultOrder: 'desc',
+	})
 
 	const { data: meta } = usePaymentsMeta()
 
@@ -38,7 +43,15 @@ export function usePaymentsPage() {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, paymentType, formName, createdFrom, createdTo])
+	}, [
+		debouncedSearch,
+		paymentType,
+		formName,
+		createdFrom,
+		createdTo,
+		sorting.sortBy,
+		sorting.order,
+	])
 
 	const { data, isLoading, isFetching } = usePayments({
 		offset: pagination.offset,
@@ -48,6 +61,8 @@ export function usePaymentsPage() {
 		form_name: formName === ALL ? undefined : formName,
 		created_from: createdFrom || undefined,
 		created_to: createdTo || undefined,
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -69,6 +84,7 @@ export function usePaymentsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToDetail: (id: string) => navigate(`/payments/${id}`),
 	}
 }

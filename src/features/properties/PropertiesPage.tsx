@@ -18,6 +18,7 @@ export function PropertiesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openProperty,
 	} = usePropertiesPage()
@@ -39,10 +40,15 @@ export function PropertiesPage() {
 				),
 				meta: { className: 'w-14' },
 			},
-			{ accessorKey: 'address', header: 'Address' },
+			{
+				accessorKey: 'address',
+				header: 'Address',
+				meta: { sortKey: 'address', className: 'w-64' },
+			},
 			{
 				id: 'location',
 				header: 'Location',
+				meta: { className: 'w-48' },
 				cell: ({ row }) =>
 					formatLocation(row.original) || (
 						<span className="text-muted-foreground">—</span>
@@ -51,6 +57,7 @@ export function PropertiesPage() {
 			{
 				accessorKey: 'property_type',
 				header: 'Type',
+				meta: { sortKey: 'property_type', className: 'w-32' },
 				cell: ({ row }) =>
 					row.original.property_type || (
 						<span className="text-muted-foreground">—</span>
@@ -59,6 +66,7 @@ export function PropertiesPage() {
 			{
 				accessorKey: 'asking_price',
 				header: 'Asking Price',
+				meta: { sortKey: 'asking_price', className: 'w-32' },
 				cell: ({ row }) =>
 					row.original.asking_price || (
 						<span className="text-muted-foreground">—</span>
@@ -67,6 +75,7 @@ export function PropertiesPage() {
 			{
 				accessorKey: 'status',
 				header: 'Status',
+				meta: { sortKey: 'status', className: 'w-32' },
 				cell: ({ row }) =>
 					row.original.status ? (
 						<Badge variant="outline">{row.original.status}</Badge>
@@ -77,6 +86,7 @@ export function PropertiesPage() {
 			{
 				accessorKey: 'group_name',
 				header: 'Group',
+				meta: { sortKey: 'group_name', className: 'w-44' },
 				cell: ({ row }) =>
 					row.original.group_name || (
 						<span className="text-muted-foreground">—</span>
@@ -85,6 +95,7 @@ export function PropertiesPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created At',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.created_at.slice(0, 16)}
@@ -113,6 +124,11 @@ export function PropertiesPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No properties found"
 			minWidth="1000px"
 			onRowClick={(p) => openProperty(p.id)}

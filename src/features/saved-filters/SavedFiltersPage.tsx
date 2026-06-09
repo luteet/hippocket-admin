@@ -17,6 +17,7 @@ export function SavedFiltersPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		openSavedFilter,
 		goToCreate,
 	} = useSavedFiltersPage()
@@ -26,6 +27,7 @@ export function SavedFiltersPage() {
 			{
 				accessorKey: 'title',
 				header: 'Title',
+				meta: { sortKey: 'title', className: 'w-56' },
 				cell: ({ row }) => (
 					<span className="font-medium">
 						{savedFilterTitle(row.original.title)}
@@ -35,6 +37,7 @@ export function SavedFiltersPage() {
 			{
 				accessorKey: 'user_email',
 				header: 'Agent',
+				meta: { sortKey: 'user_email', className: 'w-64' },
 				cell: ({ row }) => {
 					const { user_id, user_email } = row.original
 					return (
@@ -51,6 +54,7 @@ export function SavedFiltersPage() {
 			{
 				accessorKey: 'value',
 				header: 'Value',
+				meta: { className: 'w-72' },
 				cell: ({ row }) => (
 					<span className="block max-w-md truncate font-mono text-xs text-muted-foreground">
 						{row.original.value}
@@ -60,6 +64,7 @@ export function SavedFiltersPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created At',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="whitespace-nowrap text-muted-foreground">
 						{formatDateTime(row.original.created_at)}
@@ -88,6 +93,11 @@ export function SavedFiltersPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No saved filters found"
 			minWidth="900px"
 			onRowClick={(f) => openSavedFilter(f.id)}

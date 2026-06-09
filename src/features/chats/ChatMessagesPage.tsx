@@ -29,13 +29,18 @@ export function ChatMessagesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openMessage,
 	} = useChatMessagesPage()
 
 	const columns = useMemo<ColumnDef<ChatMessage, unknown>[]>(
 		() => [
-			{ accessorKey: 'user_email', header: 'Author' },
+			{
+				accessorKey: 'user_email',
+				header: 'Author',
+				meta: { sortKey: 'user_email', className: 'w-56' },
+			},
 			{
 				accessorKey: 'text',
 				header: 'Text',
@@ -44,11 +49,12 @@ export function ChatMessagesPage() {
 						{previewText(row.original.text) || '—'}
 					</span>
 				),
-				meta: { className: 'max-w-md' },
+				meta: { sortKey: 'text', className: 'w-72 max-w-md' },
 			},
 			{
 				id: 'files',
 				header: 'Files',
+				meta: { className: 'w-20' },
 				cell: ({ row }) =>
 					row.original.files.length ? (
 						<Badge variant="outline">
@@ -61,11 +67,13 @@ export function ChatMessagesPage() {
 			{
 				accessorKey: 'is_read',
 				header: 'Status',
+				meta: { sortKey: 'is_read', className: 'w-32' },
 				cell: ({ row }) => <ReadBadge isRead={row.original.is_read} />,
 			},
 			{
 				accessorKey: 'created_at',
 				header: 'Created',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{formatDateTime(row.original.created_at)}
@@ -114,6 +122,11 @@ export function ChatMessagesPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No messages found"
 			minWidth="900px"
 			onRowClick={(m) => openMessage(m.id)}

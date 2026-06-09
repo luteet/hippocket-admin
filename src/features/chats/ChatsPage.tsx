@@ -17,16 +17,22 @@ export function ChatsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openChat,
 	} = useChatsPage()
 
 	const columns = useMemo<ColumnDef<Chat, unknown>[]>(
 		() => [
-			{ accessorKey: 'user_list', header: 'Participants' },
+			{
+				accessorKey: 'user_list',
+				header: 'Participants',
+				meta: { className: 'w-56' },
+			},
 			{
 				accessorKey: 'messages_count',
 				header: 'Messages',
+				meta: { sortKey: 'messages_count', className: 'w-32' },
 				cell: ({ row }) => (
 					<Badge variant="outline">
 						{row.original.messages_count}
@@ -36,6 +42,7 @@ export function ChatsPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{formatDateTime(row.original.created_at)}
@@ -64,6 +71,11 @@ export function ChatsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No chats found"
 			minWidth="600px"
 			onRowClick={(c) => openChat(c.id)}

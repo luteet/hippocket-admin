@@ -14,7 +14,16 @@ export interface ApiError {
 	detail: string | unknown[]
 }
 
-export interface PaginationParams {
+// Server-side sorting (see admin_sorting.md): list endpoints accept `sort_by`
+// (a whitelisted column key) and `order`. Sorting is applied before pagination.
+export type SortOrder = 'asc' | 'desc'
+
+export interface SortParams {
+	sort_by?: string
+	order?: SortOrder
+}
+
+export interface PaginationParams extends SortParams {
 	offset: number
 	count: number
 	search?: string

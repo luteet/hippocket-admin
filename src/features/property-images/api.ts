@@ -3,10 +3,11 @@ import type {
 	PropertiesData,
 	PropertyImage,
 	PropertyImagesData,
+	SortParams,
 	UpdatePropertyImageDto,
 } from '@/types/api'
 
-export interface PropertyImageFilters {
+export interface PropertyImageFilters extends SortParams {
 	offset: number
 	count: number
 	property_id?: string
@@ -20,6 +21,8 @@ export async function listPropertyImages(
 		count: filters.count,
 	}
 	if (filters.property_id) params.property_id = filters.property_id
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<PropertyImagesData>('/property-images/', {
 		params,

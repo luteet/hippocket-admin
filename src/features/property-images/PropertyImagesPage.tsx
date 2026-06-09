@@ -11,7 +11,7 @@ import type { PropertyImage } from '@/types/api'
 import { usePropertyImagesPage } from './usePropertyImagesPage'
 
 export function PropertyImagesPage() {
-	const { data, isLoading, isFetching, pagination, openImage } =
+	const { data, isLoading, isFetching, pagination, sorting, openImage } =
 		usePropertyImagesPage()
 
 	const columns = useMemo<ColumnDef<PropertyImage, unknown>[]>(
@@ -42,6 +42,7 @@ export function PropertyImagesPage() {
 			{
 				accessorKey: 'property_address',
 				header: 'Property',
+				meta: { sortKey: 'property_address', className: 'w-72' },
 				cell: ({ row }) =>
 					row.original.property_address || (
 						<span className="text-muted-foreground">Unlinked</span>
@@ -50,6 +51,7 @@ export function PropertyImagesPage() {
 			{
 				accessorKey: 'sort',
 				header: 'Sort',
+				meta: { sortKey: 'sort', className: 'w-28' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.sort}
@@ -85,6 +87,11 @@ export function PropertyImagesPage() {
 					minWidth="700px"
 					skeletonRows={pagination.count}
 					onRowClick={(img) => openImage(img.id)}
+					sorting={{
+						sortBy: sorting.sortBy,
+						order: sorting.order,
+						onToggle: sorting.toggle,
+					}}
 					pagination={{
 						page: pagination.page,
 						pageCount: pagination.pageCount(data?.total ?? 0),

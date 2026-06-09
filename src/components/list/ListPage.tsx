@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { PageHeader } from '@/components/layout/PageHeader'
-import { DataTable } from '@/components/DataTable'
+import { DataTable, type DataTableSorting } from '@/components/DataTable'
 import { Reveal } from '@/components/Reveal'
 import type { Pagination } from '@/hooks/usePagination'
 import { SearchInput } from './SearchInput'
@@ -33,6 +33,8 @@ interface ListPageProps<TData> {
 	emptyMessage?: string
 	minWidth?: string
 	onRowClick?: (row: TData) => void
+	/** Server-side sorting wiring (from useSorting); enables sortable headers. */
+	sorting?: DataTableSorting
 
 	/** Extra content after the table (e.g. Partners' sticky save bar). */
 	footer?: ReactNode
@@ -60,6 +62,7 @@ export function ListPage<TData>({
 	emptyMessage = 'No data',
 	minWidth,
 	onRowClick,
+	sorting,
 	footer,
 	className,
 }: ListPageProps<TData>) {
@@ -99,6 +102,7 @@ export function ListPage<TData>({
 					minWidth={minWidth}
 					skeletonRows={pagination.count}
 					onRowClick={onRowClick}
+					sorting={sorting}
 					pagination={{
 						page: pagination.page,
 						pageCount: pagination.pageCount(data?.total ?? 0),

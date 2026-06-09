@@ -16,10 +16,10 @@
 		font-weight: 500;
 		outline: none;
 		transition:
-			color .15s,
-			background-color .15s,
-			border-color .15s,
-			filter .15s;
+			color 0.15s,
+			background-color 0.15s,
+			border-color 0.15s,
+			filter 0.15s;
 
 		// Default variant (primary).
 		background-color: var(--primary);

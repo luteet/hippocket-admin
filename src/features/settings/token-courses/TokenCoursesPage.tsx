@@ -15,6 +15,7 @@ export function TokenCoursesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openItem,
 	} = useTokenCoursesPage()
@@ -24,11 +25,13 @@ export function TokenCoursesPage() {
 			{
 				accessorKey: 'coin_to_money',
 				header: 'Token → money',
+				meta: { sortKey: 'coin_to_money', className: 'w-40' },
 				cell: ({ row }) => row.original.coin_to_money,
 			},
 			{
 				accessorKey: 'created_at',
 				header: 'Created at',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.created_at.slice(0, 16)}
@@ -57,6 +60,11 @@ export function TokenCoursesPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No token courses found"
 			minWidth="480px"
 			onRowClick={(r) => openItem(r.id)}

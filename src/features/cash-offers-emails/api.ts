@@ -4,10 +4,11 @@ import type {
 	CashOffersEmailsData,
 	CreateCashOffersEmailDto,
 	GroupOption,
+	SortParams,
 	UpdateCashOffersEmailDto,
 } from '@/types/api'
 
-export interface CashOffersEmailFilters {
+export interface CashOffersEmailFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -26,6 +27,8 @@ export async function listCashOffersEmails(
 	if (filters.group_id != null) params.group_id = filters.group_id
 	if (filters.is_active !== undefined)
 		params.is_active = String(filters.is_active)
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<CashOffersEmailsData>(
 		'/cash-offers-emails/',

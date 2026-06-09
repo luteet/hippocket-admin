@@ -41,35 +41,35 @@ export function ChatMessageDetailPage() {
 			fields={
 				message
 					? [
-						{
-							label: 'Author',
-							render: (
-								<Link
-									to={`/agents/${message.user_id}`}
-									className="link"
-								>
-									{message.user_email}
-								</Link>
-							),
-						},
-						{
-							label: 'Chat',
-							render: (
-								<button
-									type="button"
-									onClick={goToChat}
-									className="link"
-								>
-									Open chat
-								</button>
-							),
-						},
-						{
-							label: 'Created',
-							value: formatDateTime(message.created_at),
-						},
-						{ label: 'Message ID', value: message.id },
-					]
+							{
+								label: 'Author',
+								render: (
+									<Link
+										to={`/agents/${message.user_id}`}
+										className="link"
+									>
+										{message.user_email}
+									</Link>
+								),
+							},
+							{
+								label: 'Chat',
+								render: (
+									<button
+										type="button"
+										onClick={goToChat}
+										className="link"
+									>
+										Open chat
+									</button>
+								),
+							},
+							{
+								label: 'Created',
+								value: formatDateTime(message.created_at),
+							},
+							{ label: 'Message ID', value: message.id },
+						]
 					: undefined
 			}
 		>

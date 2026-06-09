@@ -4,11 +4,12 @@ import type {
 	RefOption,
 	ReferralDetail,
 	ReferralListData,
+	SortParams,
 	StatusData,
 	UpdateReferralDto,
 } from '@/types/api'
 
-export interface ReferralFilters {
+export interface ReferralFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -30,6 +31,8 @@ export async function listReferrals(
 	if (filters.partner_id) params.partner_id = filters.partner_id
 	if (filters.agent_id) params.agent_id = filters.agent_id
 	if (filters.is_paid !== undefined) params.is_paid = String(filters.is_paid)
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<ReferralListData>('/referrals/', {
 		params,

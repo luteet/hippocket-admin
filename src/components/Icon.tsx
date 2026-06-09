@@ -13,6 +13,7 @@ export type IconName =
 	| 'circle-check'
 	| 'chevron-down'
 	| 'chevron-up'
+	| 'chevrons-up-down'
 	| 'chevron-left'
 	| 'chevron-right'
 	| 'x'

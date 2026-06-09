@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useGroups } from './hooks'
 
@@ -19,6 +20,7 @@ export function useGroupsPage() {
 	const debouncedSearch = useDebouncedValue(search)
 	const [deleted, setDeleted] = useState(ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'groups' })
+	const sorting = useSorting({ defaultSortBy: 'name', defaultOrder: 'asc' })
 
 	// How many popover filters are set — shown as a badge on the Filters button.
 	const activeFilterCount = deleted !== ALL ? 1 : 0
@@ -28,13 +30,15 @@ export function useGroupsPage() {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, deleted])
+	}, [debouncedSearch, deleted, sorting.sortBy, sorting.order])
 
 	const { data, isLoading, isFetching } = useGroups({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
 		is_deleted: deleted === ALL ? undefined : deleted === 'true',
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -48,6 +52,7 @@ export function useGroupsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate: () => navigate('/groups/new'),
 		openGroup: (id: number) => navigate(`/groups/${id}`),
 	}

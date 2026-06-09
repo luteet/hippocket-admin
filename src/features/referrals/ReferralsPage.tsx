@@ -31,6 +31,7 @@ export function ReferralsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToDetail,
 	} = useReferralsPage()
 
@@ -43,11 +44,20 @@ export function ReferralsPage() {
 
 	const columns = useMemo<ColumnDef<ReferralListItem, unknown>[]>(
 		() => [
-			{ accessorKey: 'referral_name', header: 'Referral' },
-			{ accessorKey: 'agent_email', header: 'Agent' },
+			{
+				accessorKey: 'referral_name',
+				header: 'Referral',
+				meta: { sortKey: 'referral_name', className: 'w-48' },
+			},
+			{
+				accessorKey: 'agent_email',
+				header: 'Agent',
+				meta: { sortKey: 'agent_email', className: 'w-60' },
+			},
 			{
 				accessorKey: 'partner_name',
 				header: 'Partner',
+				meta: { sortKey: 'partner_name', className: 'w-47' },
 				cell: ({ row }) => {
 					const { partner_id, partner_name } = row.original
 					if (!partner_id) return partner_name
@@ -65,6 +75,7 @@ export function ReferralsPage() {
 			{
 				accessorKey: 'status',
 				header: 'Status',
+				meta: { sortKey: 'status', className: 'w-45' },
 				cell: ({ row }) => (
 					<Badge variant="outline">
 						{statusNameByLabel[row.original.status] ??
@@ -75,10 +86,12 @@ export function ReferralsPage() {
 			{
 				accessorKey: 'potential_value',
 				header: 'Potential',
+				meta: { className: 'w-32' },
 			},
 			{
 				id: 'is_paid',
 				header: 'Payment',
+				meta: { sortKey: 'is_paid', className: 'w-32' },
 				cell: ({ row }) =>
 					row.original.is_paid ? (
 						<Badge variant="success">Paid</Badge>
@@ -89,6 +102,7 @@ export function ReferralsPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.created_at.slice(0, 16)}
@@ -131,6 +145,11 @@ export function ReferralsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No pipeline logs found"
 			minWidth="1200px"
 			onRowClick={(r) => goToDetail(r.id)}

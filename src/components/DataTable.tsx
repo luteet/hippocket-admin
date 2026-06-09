@@ -7,6 +7,7 @@ import {
 	type RowData,
 } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
+import { SortableHeader } from '@/components/SortableHeader'
 import {
 	Table,
 	TableBody,
@@ -17,14 +18,26 @@ import {
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import type { SortOrder } from '@/types/api'
 
-// Opt-in per-column styling: set `meta: { className }` on a column def to apply
-// a class (e.g. a `min-w-[…]` width) to both its header and body cells.
+// Opt-in per-column features via `meta` on a column def:
+// - `className`: a class (e.g. a `min-w-[…]` width) applied to both the column's
+//   header and body cells.
+// - `sortKey`: the whitelisted `sort_by` key for server-side sorting; when set
+//   (and the table gets a `sorting` prop) the header becomes a sort toggle.
 declare module '@tanstack/react-table' {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	interface ColumnMeta<TData extends RowData, TValue> {
 		className?: string
+		sortKey?: string
 	}
+}
+
+/** Server-side sorting wiring passed down from the page (see useSorting). */
+export interface DataTableSorting {
+	sortBy?: string
+	order?: SortOrder
+	onToggle: (key: string) => void
 }
 
 interface PaginationProps {
@@ -67,6 +80,11 @@ interface DataTableProps<TData> {
 	onRowClick?: (row: TData) => void
 	pagination?: PaginationProps
 	/**
+	 * Server-side sorting state + toggle. When set, columns with a `meta.sortKey`
+	 * render their header as a clickable sort toggle.
+	 */
+	sorting?: DataTableSorting
+	/**
 	 * Minimum table width (any CSS length). Below this the table scrolls
 	 * horizontally instead of squeezing columns until text wraps.
 	 */
@@ -85,6 +103,7 @@ export function DataTable<TData>({
 	emptyMessage = 'No data',
 	onRowClick,
 	pagination,
+	sorting,
 	minWidth,
 	skeletonRows = 5,
 }: DataTableProps<TData>) {
@@ -120,30 +139,51 @@ export function DataTable<TData>({
 	return (
 		<div className="space-y-4">
 			<div className="overflow-hidden rounded-xl border border-border bg-card">
-				<Table style={minWidth ? { minWidth } : undefined}>
+				{/* Fixed layout once sorting is on: column widths come from the
+				    header cells (set via each column's `meta.className`) instead
+				    of the body content, so they don't jump when a sort reorders
+				    the rows and the sort buttons stay put under the cursor. */}
+				<Table
+					className={sorting ? 'table-fixed' : undefined}
+					style={minWidth ? { minWidth } : undefined}
+				>
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow
 								key={headerGroup.id}
 								className="hover:bg-transparent"
 							>
-								{headerGroup.headers.map((header) => (
-									<TableHead
-										key={header.id}
-										className={
-											header.column.columnDef.meta
-												?.className
-										}
-									>
-										{header.isPlaceholder
-											? null
-											: flexRender(
-													header.column.columnDef
-														.header,
-													header.getContext(),
-												)}
-									</TableHead>
-								))}
+								{headerGroup.headers.map((header) => {
+									const sortKey =
+										header.column.columnDef.meta?.sortKey
+									const label = header.isPlaceholder
+										? null
+										: flexRender(
+												header.column.columnDef.header,
+												header.getContext(),
+											)
+									return (
+										<TableHead
+											key={header.id}
+											className={
+												header.column.columnDef.meta
+													?.className
+											}
+										>
+											{sorting && sortKey ? (
+												<SortableHeader
+													label={label}
+													sortKey={sortKey}
+													sortBy={sorting.sortBy}
+													order={sorting.order}
+													onToggle={sorting.onToggle}
+												/>
+											) : (
+												label
+											)}
+										</TableHead>
+									)
+								})}
 							</TableRow>
 						))}
 					</TableHeader>

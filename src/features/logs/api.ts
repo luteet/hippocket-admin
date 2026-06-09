@@ -1,7 +1,7 @@
 import { api } from '@/lib/api/client'
-import type { LogListData, LogsMeta } from '@/types/api'
+import type { LogListData, LogsMeta, SortParams } from '@/types/api'
 
-export interface LogFilters {
+export interface LogFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -21,6 +21,8 @@ export async function listLogs(filters: LogFilters): Promise<LogListData> {
 	if (filters.send_status) params.send_status = filters.send_status
 	if (filters.created_from) params.created_from = filters.created_from
 	if (filters.created_to) params.created_to = filters.created_to
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<LogListData>('/logs/', { params })
 	return data

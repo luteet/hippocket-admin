@@ -36,6 +36,7 @@ export function WithdrawalsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		openWithdrawal,
 		goToCreate,
 	} = useWithdrawalsPage()
@@ -45,6 +46,7 @@ export function WithdrawalsPage() {
 			{
 				accessorKey: 'user_full_name',
 				header: 'Agent',
+				meta: { sortKey: 'user_full_name', className: 'w-56' },
 				cell: ({ row }) => {
 					const { user_id, user_full_name, user_email } = row.original
 					return (
@@ -61,16 +63,19 @@ export function WithdrawalsPage() {
 			{
 				accessorKey: 'amount',
 				header: 'Amount',
+				meta: { sortKey: 'amount', className: 'w-32' },
 				cell: ({ row }) => formatAmount(row.original.amount),
 			},
 			{
 				accessorKey: 'method',
 				header: 'Method',
+				meta: { sortKey: 'method', className: 'w-32' },
 				cell: ({ row }) => methodLabel(row.original.method),
 			},
 			{
 				accessorKey: 'status',
 				header: 'Status',
+				meta: { sortKey: 'status', className: 'w-32' },
 				cell: ({ row }) => (
 					<Badge
 						variant={STATUS_BADGE[row.original.status]}
@@ -83,6 +88,7 @@ export function WithdrawalsPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created At',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{formatDateTime(row.original.created_at)}
@@ -132,6 +138,11 @@ export function WithdrawalsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No withdrawals found"
 			minWidth="800px"
 			onRowClick={(w) => openWithdrawal(w.id)}

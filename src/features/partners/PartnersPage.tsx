@@ -26,6 +26,7 @@ export function PartnersPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openPartner,
 		getCell,
@@ -44,6 +45,7 @@ export function PartnersPage() {
 		() => [
 			{
 				id: 'rowSave',
+				meta: { className: 'w-14' },
 				header: () => <div className="w-7" />,
 				cell: ({ row }) => (
 					<div className="w-7">
@@ -83,6 +85,7 @@ export function PartnersPage() {
 			{
 				accessorKey: 'name',
 				header: 'Name',
+				meta: { sortKey: 'name', className: 'w-52' },
 				cell: ({ row }) => (
 					<div className="w-45 wrap-break-word whitespace-normal">
 						{row.original.name}
@@ -92,6 +95,7 @@ export function PartnersPage() {
 			{
 				accessorKey: 'subtitle',
 				header: 'Subtitle',
+				meta: { sortKey: 'subtitle', className: 'w-56' },
 				cell: ({ row }) => (
 					<div className="w-50 wrap-break-word whitespace-normal">
 						{row.original.subtitle || (
@@ -103,6 +107,7 @@ export function PartnersPage() {
 			{
 				accessorKey: 'potential_value',
 				header: 'Potential value',
+				meta: { sortKey: 'potential_value', className: 'w-40' },
 				cell: ({ row }) => (
 					<NumberCell
 						partner={row.original}
@@ -115,6 +120,7 @@ export function PartnersPage() {
 			{
 				accessorKey: 'value_type',
 				header: 'Value type',
+				meta: { sortKey: 'value_type', className: 'w-40' },
 				// The dropdown is portalled to <body>, but React events bubble
 				// through the component tree, so an option click would reach the
 				// row's onClick (→ openPartner). Stop it on a wrapper that sits
@@ -141,6 +147,7 @@ export function PartnersPage() {
 			{
 				accessorKey: 'agent_fee',
 				header: 'Agent Fee ($)',
+				meta: { sortKey: 'agent_fee', className: 'w-44' },
 				cell: ({ row }) => (
 					<NumberCell
 						partner={row.original}
@@ -153,6 +160,7 @@ export function PartnersPage() {
 			{
 				accessorKey: 'group_owner_fee',
 				header: 'Group Owner Fee ($)',
+				meta: { sortKey: 'group_owner_fee', className: 'w-48' },
 				cell: ({ row }) => (
 					<NumberCell
 						partner={row.original}
@@ -165,6 +173,7 @@ export function PartnersPage() {
 			{
 				accessorKey: 'hippocket_fee',
 				header: 'Hippocket Fee ($)',
+				meta: { sortKey: 'hippocket_fee', className: 'w-48' },
 				cell: ({ row }) => (
 					<NumberCell
 						partner={row.original}
@@ -177,12 +186,11 @@ export function PartnersPage() {
 			{
 				accessorKey: 'chosen_group_name',
 				header: 'Group',
+				meta: { sortKey: 'chosen_group_name', className: 'w-44' },
 				cell: ({ row }) => {
 					const { chosen_group_id, chosen_group_name } = row.original
 					if (!chosen_group_id)
-						return (
-							<span className="text-muted-foreground">—</span>
-						)
+						return <span className="text-muted-foreground">—</span>
 					return (
 						<Link
 							to={`/groups/${chosen_group_id}`}
@@ -223,6 +231,11 @@ export function PartnersPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No partners found"
 			minWidth="1800px"
 			onRowClick={(p) => openPartner(p.id)}

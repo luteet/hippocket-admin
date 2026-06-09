@@ -9,13 +9,14 @@ import type {
 	ChatsData,
 	CreateChatDto,
 	CreateChatMessageDto,
+	SortParams,
 	UpdateChatDto,
 	UpdateChatMessageDto,
 } from '@/types/api'
 
 // ---- Chats ----
 
-export interface ChatFilters {
+export interface ChatFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -27,6 +28,8 @@ export async function listChats(filters: ChatFilters): Promise<ChatsData> {
 		count: filters.count,
 	}
 	if (filters.search) params.search = filters.search
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<ChatsData>('/chats/', { params })
 	return data
@@ -64,7 +67,7 @@ export async function listChatRefs(): Promise<Chat[]> {
 
 // ---- Messages ----
 
-export interface ChatMessageFilters {
+export interface ChatMessageFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -84,6 +87,8 @@ export async function listChatMessages(
 	if (filters.chat_id) params.chat_id = filters.chat_id
 	if (filters.user_id) params.user_id = filters.user_id
 	if (filters.is_read !== undefined) params.is_read = filters.is_read
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<ChatMessagesData>('/chats/messages/', {
 		params,
@@ -117,7 +122,7 @@ export async function deleteChatMessage(id: string): Promise<void> {
 
 // ---- Media ----
 
-export interface ChatMediaFilters {
+export interface ChatMediaFilters extends SortParams {
 	offset: number
 	count: number
 	message_id?: string
@@ -133,6 +138,8 @@ export async function listChatMedia(
 	}
 	if (filters.message_id) params.message_id = filters.message_id
 	if (filters.user_id) params.user_id = filters.user_id
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<ChatMediaData>('/chats/media/', { params })
 	return data

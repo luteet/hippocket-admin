@@ -23,16 +23,22 @@ export function GroupsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openGroup,
 	} = useGroupsPage()
 
 	const columns = useMemo<ColumnDef<Group, unknown>[]>(
 		() => [
-			{ accessorKey: 'name', header: 'Name' },
+			{
+				accessorKey: 'name',
+				header: 'Name',
+				meta: { sortKey: 'name', className: 'w-56' },
+			},
 			{
 				accessorKey: 'slug',
 				header: 'Slug',
+				meta: { sortKey: 'slug', className: 'w-48' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.slug}
@@ -42,6 +48,7 @@ export function GroupsPage() {
 			{
 				accessorKey: 'count_people',
 				header: 'People',
+				meta: { sortKey: 'count_people', className: 'w-28' },
 				cell: ({ row }) => (
 					<span className="tabular-nums">
 						{row.original.count_people}
@@ -51,6 +58,7 @@ export function GroupsPage() {
 			{
 				accessorKey: 'is_deleted',
 				header: 'Status',
+				meta: { sortKey: 'is_deleted', className: 'w-32' },
 				cell: ({ row }) =>
 					row.original.is_deleted ? (
 						<Badge variant="destructive">Deleted</Badge>
@@ -61,6 +69,7 @@ export function GroupsPage() {
 			{
 				accessorKey: 'deleted_at',
 				header: 'Deleted At',
+				meta: { sortKey: 'deleted_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{formatDateTime(row.original.deleted_at)}
@@ -102,6 +111,11 @@ export function GroupsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No groups found"
 			minWidth="600px"
 			onRowClick={(g) => openGroup(g.id)}

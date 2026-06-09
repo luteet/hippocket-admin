@@ -86,18 +86,20 @@ export function GroupDetailPage() {
 									label: 'Admins',
 									render: group.admin_ids.length ? (
 										<div className="flex flex-col gap-1">
-											{group.admin_ids.map((adminId, index) => (
-												<button
-													key={adminId}
-													type="button"
-													onClick={() =>
-														openAgent(adminId)
-													}
-													className="text-left link"
-												>
-													Admin #{index + 1}
-												</button>
-											))}
+											{group.admin_ids.map(
+												(adminId, index) => (
+													<button
+														key={adminId}
+														type="button"
+														onClick={() =>
+															openAgent(adminId)
+														}
+														className="text-left link"
+													>
+														Admin #{index + 1}
+													</button>
+												),
+											)}
 										</div>
 									) : (
 										<span className="text-muted-foreground">

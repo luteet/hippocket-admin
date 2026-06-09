@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useCashOffersEmails, useGroupOptions } from './hooks'
 
@@ -23,6 +24,10 @@ export function useCashOffersEmailsPage() {
 		count: 20,
 		storageKey: 'cash-offers-emails',
 	})
+	const sorting = useSorting({
+		defaultSortBy: 'created_at',
+		defaultOrder: 'desc',
+	})
 
 	const { data: groupOptions } = useGroupOptions()
 
@@ -37,7 +42,7 @@ export function useCashOffersEmailsPage() {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, group, isActive])
+	}, [debouncedSearch, group, isActive, sorting.sortBy, sorting.order])
 
 	const { data, isLoading, isFetching } = useCashOffersEmails({
 		offset: pagination.offset,
@@ -45,6 +50,8 @@ export function useCashOffersEmailsPage() {
 		search: debouncedSearch || undefined,
 		group_id: group === ALL ? undefined : Number(group),
 		is_active: isActive === ALL ? undefined : isActive === 'true',
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -61,6 +68,7 @@ export function useCashOffersEmailsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate: () => navigate('/cash-offers-emails/new'),
 		openEmail: (id: string) => navigate(`/cash-offers-emails/${id}`),
 	}

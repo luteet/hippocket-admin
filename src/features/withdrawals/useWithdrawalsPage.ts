@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { WithdrawalMethod, WithdrawalStatus } from '@/types/api'
 import { useWithdrawals } from './hooks'
@@ -28,6 +29,10 @@ export function useWithdrawalsPage() {
 	const [status, setStatus] = useState(ALL)
 	const [method, setMethod] = useState(ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'withdrawals' })
+	const sorting = useSorting({
+		defaultSortBy: 'created_at',
+		defaultOrder: 'desc',
+	})
 
 	// How many popover filters are set — shown as a badge on the Filters button.
 	const activeFilterCount =
@@ -41,7 +46,7 @@ export function useWithdrawalsPage() {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, status, method])
+	}, [debouncedSearch, status, method, sorting.sortBy, sorting.order])
 
 	const { data, isLoading, isFetching } = useWithdrawals({
 		offset: pagination.offset,
@@ -49,6 +54,8 @@ export function useWithdrawalsPage() {
 		search: debouncedSearch || undefined,
 		status: status === ALL ? undefined : (status as WithdrawalStatus),
 		method: method === ALL ? undefined : (method as WithdrawalMethod),
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -64,6 +71,7 @@ export function useWithdrawalsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		openWithdrawal: (id: string) => navigate(`/withdrawals/${id}`),
 		goToCreate: () => navigate('/withdrawals/new'),
 	}

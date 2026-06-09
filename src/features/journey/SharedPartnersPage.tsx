@@ -17,16 +17,22 @@ export function SharedPartnersPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openSharedPartner,
 	} = useSharedPartnersPage()
 
 	const columns = useMemo<ColumnDef<SharedPartner, unknown>[]>(
 		() => [
-			{ accessorKey: 'agent_email', header: 'Agent' },
+			{
+				accessorKey: 'agent_email',
+				header: 'Agent',
+				meta: { sortKey: 'agent_email', className: 'w-64' },
+			},
 			{
 				id: 'entries',
 				header: 'Partners',
+				meta: { className: 'w-28' },
 				cell: ({ row }) => (
 					<Badge variant="outline">
 						{row.original.entries.length}
@@ -36,6 +42,7 @@ export function SharedPartnersPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{formatDateTime(row.original.created_at)}
@@ -64,6 +71,11 @@ export function SharedPartnersPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No shared partners found"
 			minWidth="600px"
 			onRowClick={(s) => openSharedPartner(s.id)}

@@ -11,21 +11,26 @@ import { formatDateTime } from './format'
 import { MediaFileLink } from './components/MediaFileLink'
 
 export function ChatMediaPage() {
-	const { data, isLoading, isFetching, pagination, openMedia } =
+	const { data, isLoading, isFetching, pagination, sorting, openMedia } =
 		useChatMediaPage()
 
 	const columns = useMemo<ColumnDef<ChatMedia, unknown>[]>(
 		() => [
-			{ accessorKey: 'user_email', header: 'Uploaded by' },
+			{
+				accessorKey: 'user_email',
+				header: 'Uploaded by',
+				meta: { sortKey: 'user_email', className: 'w-56' },
+			},
 			{
 				id: 'file',
 				header: 'File',
 				cell: ({ row }) => <MediaFileLink file={row.original.file} />,
-				meta: { className: 'max-w-md' },
+				meta: { className: 'w-72 max-w-md' },
 			},
 			{
 				accessorKey: 'created_at',
 				header: 'Created',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{formatDateTime(row.original.created_at)}
@@ -60,6 +65,11 @@ export function ChatMediaPage() {
 					emptyMessage="No media found"
 					minWidth="700px"
 					skeletonRows={pagination.count}
+					sorting={{
+						sortBy: sorting.sortBy,
+						order: sorting.order,
+						onToggle: sorting.toggle,
+					}}
 					onRowClick={(m) => openMedia(m.id)}
 					pagination={{
 						page: pagination.page,

@@ -6,10 +6,11 @@ import type {
 	AgentsData,
 	CreateAgentDto,
 	GroupOption,
+	SortParams,
 	UpdateAgentDto,
 } from '@/types/api'
 
-export interface AgentFilters {
+export interface AgentFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -28,6 +29,8 @@ export async function listAgents(filters: AgentFilters): Promise<AgentsData> {
 	if (filters.status) params.status = filters.status
 	if (filters.is_active !== undefined)
 		params.is_active = String(filters.is_active)
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<AgentsData>('/agents/', { params })
 	return data

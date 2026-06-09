@@ -2,6 +2,7 @@ import { api } from '@/lib/api/client'
 import type {
 	AgentRefOption,
 	CreateWithdrawalDto,
+	SortParams,
 	UpdateWithdrawalDto,
 	Withdrawal,
 	WithdrawalData,
@@ -9,7 +10,7 @@ import type {
 	WithdrawalStatus,
 } from '@/types/api'
 
-export interface WithdrawalFilters {
+export interface WithdrawalFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -27,6 +28,8 @@ export async function listWithdrawals(
 	if (filters.search) params.search = filters.search
 	if (filters.status) params.status = filters.status
 	if (filters.method) params.method = filters.method
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<WithdrawalData>('/withdrawals/', { params })
 	return data

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useContacts } from './hooks'
 
@@ -19,6 +20,7 @@ export function useContactsPage() {
 	const debouncedSearch = useDebouncedValue(search)
 	const [deleted, setDeleted] = useState(ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'contacts' })
+	const sorting = useSorting({ defaultSortBy: 'date', defaultOrder: 'desc' })
 
 	// How many popover filters are set — shown as a badge on the Filters button.
 	const activeFilterCount = deleted !== ALL ? 1 : 0
@@ -28,13 +30,15 @@ export function useContactsPage() {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, deleted])
+	}, [debouncedSearch, deleted, sorting.sortBy, sorting.order])
 
 	const { data, isLoading, isFetching } = useContacts({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
 		is_deleted: deleted === ALL ? undefined : deleted === 'true',
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -48,6 +52,7 @@ export function useContactsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate: () => navigate('/contacts/new'),
 		openContact: (id: string) => navigate(`/contacts/${id}`),
 	}

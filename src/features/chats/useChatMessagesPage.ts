@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useChatMessages, useChatRefs } from './hooks'
 
@@ -21,6 +22,10 @@ export function useChatMessagesPage() {
 	const [readState, setReadState] = useState(ALL)
 	const [chatId, setChatId] = useState(() => searchParams.get('chat') ?? ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'chat-messages' })
+	const sorting = useSorting({
+		defaultSortBy: 'created_at',
+		defaultOrder: 'desc',
+	})
 
 	const { data: chatRefs, isLoading: chatsLoading } = useChatRefs()
 
@@ -36,7 +41,7 @@ export function useChatMessagesPage() {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, readState, chatId])
+	}, [debouncedSearch, readState, chatId, sorting.sortBy, sorting.order])
 
 	const { data, isLoading, isFetching } = useChatMessages({
 		offset: pagination.offset,
@@ -44,6 +49,8 @@ export function useChatMessagesPage() {
 		search: debouncedSearch || undefined,
 		chat_id: chatId === ALL ? undefined : chatId,
 		is_read: readState === ALL ? undefined : readState === 'read',
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -61,6 +68,7 @@ export function useChatMessagesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate: () => navigate('/chats/messages/new'),
 		openMessage: (id: string) => navigate(`/chats/messages/${id}`),
 	}

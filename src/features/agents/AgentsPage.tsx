@@ -33,16 +33,22 @@ export function AgentsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openAgent,
 	} = useAgentsPage()
 
 	const columns = useMemo<ColumnDef<Agent, unknown>[]>(
 		() => [
-			{ accessorKey: 'email', header: 'Email' },
+			{
+				accessorKey: 'email',
+				header: 'Email',
+				meta: { sortKey: 'email', className: 'w-64' },
+			},
 			{
 				accessorKey: 'username',
 				header: 'Username',
+				meta: { sortKey: 'username', className: 'w-48' },
 				cell: ({ row }) =>
 					row.original.username || (
 						<span className="text-muted-foreground">—</span>
@@ -51,6 +57,7 @@ export function AgentsPage() {
 			{
 				accessorKey: 'role',
 				header: 'Role',
+				meta: { sortKey: 'role', className: 'w-32' },
 				cell: ({ row }) => (
 					<Badge variant="outline" className="capitalize">
 						{row.original.role}
@@ -60,6 +67,7 @@ export function AgentsPage() {
 			{
 				id: 'groups',
 				header: 'Groups',
+				meta: { className: 'w-56' },
 				cell: ({ row }) => {
 					const { group_ids, group_names } = row.original
 					if (!group_ids?.length)
@@ -87,6 +95,7 @@ export function AgentsPage() {
 			{
 				accessorKey: 'is_new_user',
 				header: 'New User',
+				meta: { sortKey: 'is_new_user', className: 'w-28' },
 				cell: ({ row }) =>
 					row.original.is_new_user ? (
 						<Icon
@@ -100,6 +109,7 @@ export function AgentsPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created At',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.created_at.slice(0, 16)}
@@ -155,6 +165,11 @@ export function AgentsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No agents found"
 			minWidth="1000px"
 			onRowClick={(a) => openAgent(a.id)}

@@ -29,17 +29,27 @@ export function CashOffersEmailsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openEmail,
 	} = useCashOffersEmailsPage()
 
 	const columns = useMemo<ColumnDef<CashOffersEmail, unknown>[]>(
 		() => [
-			{ accessorKey: 'name', header: 'Name' },
-			{ accessorKey: 'email', header: 'Email' },
+			{
+				accessorKey: 'name',
+				header: 'Name',
+				meta: { sortKey: 'name', className: 'w-48' },
+			},
+			{
+				accessorKey: 'email',
+				header: 'Email',
+				meta: { sortKey: 'email', className: 'w-64' },
+			},
 			{
 				accessorKey: 'group_name',
 				header: 'Group',
+				meta: { sortKey: 'group_name', className: 'w-44' },
 				cell: ({ row }) =>
 					row.original.group_name || (
 						<span className="text-muted-foreground">
@@ -50,6 +60,7 @@ export function CashOffersEmailsPage() {
 			{
 				accessorKey: 'is_active',
 				header: 'Status',
+				meta: { sortKey: 'is_active', className: 'w-32' },
 				cell: ({ row }) =>
 					row.original.is_active ? (
 						<Badge variant="success">Active</Badge>
@@ -60,6 +71,7 @@ export function CashOffersEmailsPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created At',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.created_at.slice(0, 16)}
@@ -111,6 +123,11 @@ export function CashOffersEmailsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No emails found"
 			minWidth="900px"
 			onRowClick={(e) => openEmail(e.id)}

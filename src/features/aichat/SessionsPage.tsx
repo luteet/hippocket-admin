@@ -17,16 +17,22 @@ export function SessionsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openSession,
 	} = useSessionsPage()
 
 	const columns = useMemo<ColumnDef<AiSession, unknown>[]>(
 		() => [
-			{ accessorKey: 'user_email', header: 'User' },
+			{
+				accessorKey: 'user_email',
+				header: 'User',
+				meta: { sortKey: 'user_email', className: 'w-64' },
+			},
 			{
 				accessorKey: 'messages_count',
 				header: 'Messages',
+				meta: { sortKey: 'messages_count', className: 'w-32' },
 				cell: ({ row }) => (
 					<Badge variant="outline">
 						{row.original.messages_count}
@@ -36,6 +42,7 @@ export function SessionsPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{formatDateTime(row.original.created_at)}
@@ -45,6 +52,7 @@ export function SessionsPage() {
 			{
 				accessorKey: 'updated_at',
 				header: 'Updated',
+				meta: { sortKey: 'updated_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{formatDateTime(row.original.updated_at)}
@@ -73,6 +81,11 @@ export function SessionsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No sessions found"
 			minWidth="700px"
 			onRowClick={(s) => openSession(s.id)}

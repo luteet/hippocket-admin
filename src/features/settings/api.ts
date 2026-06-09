@@ -18,11 +18,13 @@ import type {
 	UpdateGroupFormPriceDto,
 	UpdateSettingsDto,
 } from '@/types/api'
+import type { SortParams } from '@/types/api'
 
 // All System (base) endpoints. The four list resources share the
 // `{ items, total, offset, count }` envelope and support `?search=` +
-// offset/count pagination (confirmed against the dev API).
-export interface ListParams {
+// offset/count pagination plus server-side sorting (confirmed against the
+// dev API).
+export interface ListParams extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -34,6 +36,8 @@ function listParams(params: ListParams): Record<string, string | number> {
 		count: params.count,
 	}
 	if (params.search) query.search = params.search
+	if (params.sort_by) query.sort_by = params.sort_by
+	if (params.order) query.order = params.order
 	return query
 }
 

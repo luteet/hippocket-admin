@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { AgentRole, AgentStatus } from '@/types/api'
 import { useAgents } from './hooks'
@@ -36,6 +37,10 @@ export function useAgentsPage() {
 	const [status, setStatus] = useState(ALL)
 	const [isActive, setIsActive] = useState(ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'agents' })
+	const sorting = useSorting({
+		defaultSortBy: 'created_at',
+		defaultOrder: 'desc',
+	})
 
 	// How many popover filters are set — shown as a badge on the Filters button.
 	const activeFilterCount =
@@ -52,7 +57,7 @@ export function useAgentsPage() {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, role, status, isActive])
+	}, [debouncedSearch, role, status, isActive, sorting.sortBy, sorting.order])
 
 	const { data, isLoading, isFetching } = useAgents({
 		offset: pagination.offset,
@@ -61,6 +66,8 @@ export function useAgentsPage() {
 		role: role === ALL ? undefined : (role as AgentRole),
 		status: status === ALL ? undefined : (status as AgentStatus),
 		is_active: isActive === ALL ? undefined : isActive === 'true',
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -78,6 +85,7 @@ export function useAgentsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate: () => navigate('/agents/new'),
 		openAgent: (id: string) => navigate(`/agents/${id}`),
 	}

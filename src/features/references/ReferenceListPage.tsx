@@ -24,14 +24,20 @@ export function ReferenceListPage({ kind }: { kind: ReferenceKind }) {
 		isFetching,
 		goToCreate,
 		openItem,
+		sorting,
 	} = useReferenceListPage(kind)
 
 	const columns = useMemo<ColumnDef<CatalogRecord, unknown>[]>(
 		() => [
-			{ accessorKey: 'name', header: 'Name' },
+			{
+				accessorKey: 'name',
+				header: 'Name',
+				meta: { sortKey: 'name', className: 'w-72' },
+			},
 			{
 				accessorKey: 'sort',
 				header: 'Sort',
+				meta: { sortKey: 'sort', className: 'w-28' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.sort}
@@ -82,6 +88,11 @@ export function ReferenceListPage({ kind }: { kind: ReferenceKind }) {
 					isLoading={isLoading || isFetching}
 					emptyMessage={config.emptyMessage}
 					minWidth="320px"
+					sorting={{
+						sortBy: sorting.sortBy,
+						order: sorting.order,
+						onToggle: sorting.toggle,
+					}}
 					onRowClick={(r) => openItem(r.id)}
 				/>
 			</Reveal>

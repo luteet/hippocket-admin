@@ -15,16 +15,22 @@ export function LinkNamesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openItem,
 	} = useLinkNamesPage()
 
 	const columns = useMemo<ColumnDef<LinkName, unknown>[]>(
 		() => [
-			{ accessorKey: 'name', header: 'Name' },
+			{
+				accessorKey: 'name',
+				header: 'Name',
+				meta: { sortKey: 'name', className: 'w-48' },
+			},
 			{
 				accessorKey: 'link',
 				header: 'Link',
+				meta: { sortKey: 'link', className: 'w-72' },
 				// Long URLs have no spaces to wrap on — cap the width and break
 				// per-character so they don't stretch the column.
 				cell: ({ row }) => (
@@ -36,6 +42,7 @@ export function LinkNamesPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created at',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.created_at.slice(0, 16)}
@@ -64,6 +71,11 @@ export function LinkNamesPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No links found"
 			minWidth="640px"
 			onRowClick={(r) => openItem(r.id)}

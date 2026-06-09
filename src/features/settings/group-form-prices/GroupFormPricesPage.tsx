@@ -16,23 +16,38 @@ export function GroupFormPricesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openItem,
 	} = useGroupFormPricesPage()
 
 	const columns = useMemo<ColumnDef<GroupFormPrice, unknown>[]>(
 		() => [
-			{ accessorKey: 'name', header: 'Name' },
-			{ accessorKey: 'form_config_name', header: 'Form' },
-			{ accessorKey: 'group_name', header: 'Group' },
+			{
+				accessorKey: 'name',
+				header: 'Name',
+				meta: { sortKey: 'name', className: 'w-48' },
+			},
+			{
+				accessorKey: 'form_config_name',
+				header: 'Form',
+				meta: { sortKey: 'form_config_name', className: 'w-48' },
+			},
+			{
+				accessorKey: 'group_name',
+				header: 'Group',
+				meta: { sortKey: 'group_name', className: 'w-44' },
+			},
 			{
 				accessorKey: 'price',
 				header: 'Price',
+				meta: { sortKey: 'price', className: 'w-32' },
 				cell: ({ row }) => row.original.price,
 			},
 			{
 				accessorKey: 'is_active',
 				header: 'Active',
+				meta: { sortKey: 'is_active', className: 'w-28' },
 				cell: ({ row }) => (
 					<Badge
 						variant={row.original.is_active ? 'success' : 'muted'}
@@ -44,6 +59,7 @@ export function GroupFormPricesPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created at',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.created_at.slice(0, 16)}
@@ -72,6 +88,11 @@ export function GroupFormPricesPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No form prices found"
 			minWidth="900px"
 			onRowClick={(r) => openItem(r.id)}

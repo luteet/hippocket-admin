@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { AiMessageRole } from '@/types/api'
 import { useMessages, useSessionRefs } from './hooks'
@@ -26,6 +27,10 @@ export function useMessagesPage() {
 		() => searchParams.get('session') ?? ALL,
 	)
 	const pagination = usePagination({ count: 20, storageKey: 'ai-messages' })
+	const sorting = useSorting({
+		defaultSortBy: 'created_at',
+		defaultOrder: 'desc',
+	})
 
 	const { data: sessionRefs, isLoading: sessionsLoading } = useSessionRefs()
 
@@ -41,7 +46,7 @@ export function useMessagesPage() {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, role, sessionId])
+	}, [debouncedSearch, role, sessionId, sorting.sortBy, sorting.order])
 
 	const { data, isLoading, isFetching } = useMessages({
 		offset: pagination.offset,
@@ -49,6 +54,8 @@ export function useMessagesPage() {
 		search: debouncedSearch || undefined,
 		role: role === ALL ? undefined : (role as AiMessageRole),
 		session_id: sessionId === ALL ? undefined : sessionId,
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -66,6 +73,7 @@ export function useMessagesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate: () => navigate('/ai-chat/messages/new'),
 		openMessage: (id: string) => navigate(`/ai-chat/messages/${id}`),
 	}

@@ -16,16 +16,22 @@ export function FormConfigsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openItem,
 	} = useFormConfigsPage()
 
 	const columns = useMemo<ColumnDef<FormConfig, unknown>[]>(
 		() => [
-			{ accessorKey: 'name', header: 'Name' },
+			{
+				accessorKey: 'name',
+				header: 'Name',
+				meta: { sortKey: 'name', className: 'w-52' },
+			},
 			{
 				accessorKey: 'slug',
 				header: 'Slug',
+				meta: { sortKey: 'slug', className: 'w-44' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.slug}
@@ -35,12 +41,14 @@ export function FormConfigsPage() {
 			{
 				accessorKey: 'price',
 				header: 'Price',
+				meta: { sortKey: 'price', className: 'w-32' },
 				cell: ({ row }) =>
 					`${row.original.price} ${row.original.currency}`,
 			},
 			{
 				accessorKey: 'is_active',
 				header: 'Active',
+				meta: { sortKey: 'is_active', className: 'w-28' },
 				cell: ({ row }) => (
 					<Badge
 						variant={row.original.is_active ? 'success' : 'muted'}
@@ -52,6 +60,7 @@ export function FormConfigsPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created at',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.created_at.slice(0, 16)}
@@ -80,6 +89,11 @@ export function FormConfigsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No forms found"
 			minWidth="820px"
 			onRowClick={(r) => openItem(r.id)}

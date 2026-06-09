@@ -31,6 +31,7 @@ export function PaymentsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToDetail,
 	} = usePaymentsPage()
 
@@ -39,6 +40,7 @@ export function PaymentsPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'When',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground whitespace-nowrap">
 						{row.original.created_at.slice(0, 16)}
@@ -48,6 +50,7 @@ export function PaymentsPage() {
 			{
 				accessorKey: 'user_email',
 				header: 'User',
+				meta: { sortKey: 'user_email', className: 'w-64' },
 				cell: ({ row }) => {
 					const { user_id, user_email } = row.original
 					if (!user_email)
@@ -63,10 +66,15 @@ export function PaymentsPage() {
 					)
 				},
 			},
-			{ accessorKey: 'referral_name', header: 'Referral' },
+			{
+				accessorKey: 'referral_name',
+				header: 'Referral',
+				meta: { sortKey: 'referral_name', className: 'w-48' },
+			},
 			{
 				accessorKey: 'payment_type',
 				header: 'Type',
+				meta: { sortKey: 'payment_type', className: 'w-32' },
 				cell: ({ row }) => (
 					<Badge variant="outline">
 						{titleizeSlug(row.original.payment_type)}
@@ -76,6 +84,7 @@ export function PaymentsPage() {
 			{
 				accessorKey: 'form_name',
 				header: 'Form',
+				meta: { sortKey: 'form_name', className: 'w-44' },
 				cell: ({ row }) =>
 					row.original.form_name ? (
 						titleizeSlug(row.original.form_name)
@@ -86,6 +95,7 @@ export function PaymentsPage() {
 			{
 				accessorKey: 'amount_dollars',
 				header: 'Amount',
+				meta: { sortKey: 'amount_dollars', className: 'w-32' },
 				cell: ({ row }) => (
 					<span className="whitespace-nowrap font-medium">
 						{formatAmount(row.original.amount_dollars)}
@@ -147,6 +157,11 @@ export function PaymentsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No payments found"
 			minWidth="1000px"
 			onRowClick={(r) => goToDetail(r.id)}

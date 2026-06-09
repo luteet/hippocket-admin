@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useReferrals, useStatuses } from './hooks'
 
@@ -14,6 +15,10 @@ export function useReferralsPage() {
 	const [statusLabel, setStatusLabel] = useState(ALL)
 	const [isPaid, setIsPaid] = useState(ALL)
 	const pagination = usePagination({ count: 20, storageKey: 'referrals' })
+	const sorting = useSorting({
+		defaultSortBy: 'created_at',
+		defaultOrder: 'desc',
+	})
 
 	const { data: statuses } = useStatuses()
 
@@ -36,7 +41,7 @@ export function useReferralsPage() {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, statusLabel, isPaid])
+	}, [debouncedSearch, statusLabel, isPaid, sorting.sortBy, sorting.order])
 
 	const { data, isLoading, isFetching } = useReferrals({
 		offset: pagination.offset,
@@ -44,6 +49,8 @@ export function useReferralsPage() {
 		search: debouncedSearch || undefined,
 		status_label: statusLabel === ALL ? undefined : statusLabel,
 		is_paid: isPaid === ALL ? undefined : isPaid === 'true',
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -61,6 +68,7 @@ export function useReferralsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToDetail: (id: string) => navigate(`/referrals/${id}`),
 	}
 }

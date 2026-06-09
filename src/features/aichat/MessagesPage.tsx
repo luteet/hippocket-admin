@@ -28,6 +28,7 @@ export function MessagesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openMessage,
 	} = useMessagesPage()
@@ -37,10 +38,12 @@ export function MessagesPage() {
 			{
 				accessorKey: 'session_user_email',
 				header: 'User',
+				meta: { sortKey: 'session_user_email', className: 'w-64' },
 			},
 			{
 				accessorKey: 'role',
 				header: 'Role',
+				meta: { sortKey: 'role', className: 'w-32' },
 				cell: ({ row }) => <RoleBadge role={row.original.role} />,
 			},
 			{
@@ -51,11 +54,12 @@ export function MessagesPage() {
 						{previewContent(row.original.content) || '—'}
 					</span>
 				),
-				meta: { className: 'max-w-md' },
+				meta: { sortKey: 'content', className: 'w-72' },
 			},
 			{
 				accessorKey: 'is_visible',
 				header: 'Visible',
+				meta: { sortKey: 'is_visible', className: 'w-28' },
 				cell: ({ row }) =>
 					row.original.is_visible ? (
 						<Icon
@@ -69,6 +73,7 @@ export function MessagesPage() {
 			{
 				accessorKey: 'created_at',
 				header: 'Created',
+				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{formatDateTime(row.original.created_at)}
@@ -117,6 +122,11 @@ export function MessagesPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No messages found"
 			minWidth="900px"
 			onRowClick={(m) => openMessage(m.id)}

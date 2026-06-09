@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 
 import { getApiErrorMessage } from '@/lib/api/client'
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { Partner, UpdatePartnerDto, ValueType } from '@/types/api'
 import { usePartners, useUpdatePartner } from './hooks'
@@ -52,17 +53,20 @@ export function usePartnersPage() {
 	const [search, setSearch] = useState('')
 	const debouncedSearch = useDebouncedValue(search)
 	const pagination = usePagination({ count: 20, storageKey: 'partners' })
+	const sorting = useSorting({ defaultSortBy: 'name', defaultOrder: 'asc' })
 
-	// Reset to the first page when the search query changes.
+	// Reset to the first page when the search query or sort changes.
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch])
+	}, [debouncedSearch, sorting.sortBy, sorting.order])
 
 	const { data, isLoading, isFetching } = usePartners({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	const updateMut = useUpdatePartner()
@@ -177,6 +181,7 @@ export function usePartnersPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate: () => navigate('/partners/new'),
 		openPartner: (id: string) => navigate(`/partners/${id}`),
 		// Inline editing

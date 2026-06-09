@@ -18,6 +18,8 @@ export async function listPartners(
 			offset: params.offset,
 			count: params.count,
 			...(params.search ? { search: params.search } : {}),
+			...(params.sort_by ? { sort_by: params.sort_by } : {}),
+			...(params.order ? { order: params.order } : {}),
 		},
 	})
 	return data

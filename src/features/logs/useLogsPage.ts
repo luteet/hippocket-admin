@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 
 import { usePagination } from '@/hooks/usePagination'
+import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useLogs, useLogsMeta } from './hooks'
 
@@ -50,6 +51,10 @@ export function useLogsPage(slug: LogSlug) {
 	const [createdTo, setCreatedTo] = useState('')
 	// A per-slug storage key so each section keeps its own page size.
 	const pagination = usePagination({ count: 20, storageKey: `logs:${slug}` })
+	const sorting = useSorting({
+		defaultSortBy: 'created_at',
+		defaultOrder: 'desc',
+	})
 
 	const { data: meta } = useLogsMeta()
 
@@ -74,7 +79,15 @@ export function useLogsPage(slug: LogSlug) {
 	useEffect(() => {
 		pagination.reset()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, effectiveEvent, sendStatus, createdFrom, createdTo])
+	}, [
+		debouncedSearch,
+		effectiveEvent,
+		sendStatus,
+		createdFrom,
+		createdTo,
+		sorting.sortBy,
+		sorting.order,
+	])
 
 	const { data, isLoading, isFetching } = useLogs({
 		offset: pagination.offset,
@@ -84,6 +97,8 @@ export function useLogsPage(slug: LogSlug) {
 		send_status: sendStatus === ALL ? undefined : sendStatus,
 		created_from: createdFrom || undefined,
 		created_to: createdTo || undefined,
+		sort_by: sorting.sortBy,
+		order: sorting.order,
 	})
 
 	return {
@@ -108,5 +123,6 @@ export function useLogsPage(slug: LogSlug) {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 	}
 }

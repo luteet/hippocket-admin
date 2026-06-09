@@ -1,12 +1,13 @@
 import { api } from '@/lib/api/client'
 import type {
 	CreateTeamLeaderDto,
+	SortParams,
 	TeamLeader,
 	TeamLeaderData,
 	UpdateTeamLeaderDto,
 } from '@/types/api'
 
-export interface TeamLeaderFilters {
+export interface TeamLeaderFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -25,6 +26,8 @@ export async function listTeamLeaders(
 	if (filters.group_id !== undefined) params.group_id = filters.group_id
 	if (filters.office_location)
 		params.office_location = filters.office_location
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<TeamLeaderData>('/team-leaders/', { params })
 	return data

@@ -24,6 +24,7 @@ export function ContactsPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openContact,
 	} = useContactsPage()
@@ -33,6 +34,7 @@ export function ContactsPage() {
 			{
 				id: 'name',
 				header: 'Name',
+				meta: { className: 'w-48' },
 				cell: ({ row }) =>
 					fullName(
 						row.original.first_name,
@@ -42,6 +44,7 @@ export function ContactsPage() {
 			{
 				accessorKey: 'email',
 				header: 'Email',
+				meta: { sortKey: 'email', className: 'w-64' },
 				cell: ({ row }) =>
 					row.original.email || (
 						<span className="text-muted-foreground">—</span>
@@ -50,6 +53,7 @@ export function ContactsPage() {
 			{
 				accessorKey: 'phone',
 				header: 'Phone',
+				meta: { sortKey: 'phone', className: 'w-40' },
 				cell: ({ row }) =>
 					row.original.phone || (
 						<span className="text-muted-foreground">—</span>
@@ -58,6 +62,7 @@ export function ContactsPage() {
 			{
 				accessorKey: 'owner',
 				header: 'Owner',
+				meta: { className: 'w-48' },
 				cell: ({ row }) => {
 					const { owner, user_id, partner_user_id } = row.original
 					const to = user_id
@@ -85,6 +90,7 @@ export function ContactsPage() {
 			{
 				accessorKey: 'referral_type',
 				header: 'Referral Type',
+				meta: { sortKey: 'referral_type', className: 'w-36' },
 				cell: ({ row }) =>
 					row.original.referral_type ? (
 						<Badge variant="outline">
@@ -97,6 +103,7 @@ export function ContactsPage() {
 			{
 				accessorKey: 'is_deleted',
 				header: 'Status',
+				meta: { sortKey: 'is_deleted', className: 'w-28' },
 				cell: ({ row }) =>
 					row.original.is_deleted ? (
 						<Badge variant="muted">Deleted</Badge>
@@ -107,6 +114,7 @@ export function ContactsPage() {
 			{
 				accessorKey: 'date',
 				header: 'Created At',
+				meta: { sortKey: 'date', className: 'w-40' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.date.slice(0, 16)}
@@ -148,6 +156,11 @@ export function ContactsPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No contacts found"
 			minWidth="1000px"
 			onRowClick={(c) => openContact(c.id)}

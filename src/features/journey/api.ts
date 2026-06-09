@@ -8,13 +8,14 @@ import type {
 	SharedPartner,
 	SharedPartnerEntry,
 	SharedPartnersData,
+	SortParams,
 	UpdateSharedPartnerDto,
 	UpdateSharedPartnerEntryDto,
 } from '@/types/api'
 
 // ---- Shared partners ----
 
-export interface SharedPartnerFilters {
+export interface SharedPartnerFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -28,6 +29,8 @@ export async function listSharedPartners(
 		count: filters.count,
 	}
 	if (filters.search) params.search = filters.search
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<SharedPartnersData>('/shared-partners/', {
 		params,

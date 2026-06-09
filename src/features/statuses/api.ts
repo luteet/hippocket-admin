@@ -1,12 +1,13 @@
 import { api } from '@/lib/api/client'
 import type {
 	CreateStatusDto,
+	SortParams,
 	Status,
 	StatusData,
 	UpdateStatusDto,
 } from '@/types/api'
 
-export interface StatusFilters {
+export interface StatusFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -20,6 +21,8 @@ export async function listStatuses(
 		count: filters.count,
 	}
 	if (filters.search) params.search = filters.search
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<StatusData>('/statuses/', { params })
 	return data

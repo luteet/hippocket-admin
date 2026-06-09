@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { useSorting } from '@/hooks/useSorting'
+import type { CatalogRecord } from '@/types/api'
 import { useCatalog } from './hooks'
 
 // The partner-taxonomy sections (nested under Partners in the sidebar) are
@@ -91,6 +93,9 @@ export function useReferenceListPage(kind: ReferenceKind) {
 	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const debouncedSearch = useDebouncedValue(search)
+	// Catalogs default to `sort`/asc (the order the backend ships them in).
+	const sorting = useSorting({ defaultSortBy: 'sort', defaultOrder: 'asc' })
+	const { sortBy, order } = sorting
 
 	// These lists are short, so fetch them whole and filter/search client-side
 	// (preserving the no-pagination UX these sections always had).
@@ -103,9 +108,33 @@ export function useReferenceListPage(kind: ReferenceKind) {
 	const rows = useMemo(() => {
 		const items = data?.items ?? []
 		const query = debouncedSearch.trim().toLowerCase()
-		if (!query) return items
-		return items.filter((o) => o.name.toLowerCase().includes(query))
-	}, [data, debouncedSearch])
+		const filtered = query
+			? items.filter((o) => o.name.toLowerCase().includes(query))
+			: items
+
+		// Client-side sort: no sortBy means keep server/insertion order.
+		if (!sortBy) return filtered
+
+		const key = sortBy as keyof CatalogRecord
+		const dir = order === 'desc' ? -1 : 1
+		const cmp = (a: CatalogRecord, b: CatalogRecord) => {
+			const av = a[key]
+			const bv = b[key]
+			// null/undefined sort last regardless of direction.
+			if (av == null && bv == null) return 0
+			if (av == null) return 1
+			if (bv == null) return -1
+			const result =
+				typeof av === 'number' && typeof bv === 'number'
+					? av - bv
+					: String(av).localeCompare(String(bv), undefined, {
+							sensitivity: 'base',
+						})
+			return result * dir
+		}
+		// Sort a copy — never mutate the query cache's array.
+		return [...filtered].sort(cmp)
+	}, [data, debouncedSearch, sortBy, order])
 
 	return {
 		config,
@@ -113,6 +142,7 @@ export function useReferenceListPage(kind: ReferenceKind) {
 		total: data?.total ?? 0,
 		search,
 		setSearch,
+		sorting,
 		isLoading,
 		isFetching,
 		goToCreate: () => navigate(`/${kind}/new`),

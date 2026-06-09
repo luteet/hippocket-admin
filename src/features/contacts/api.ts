@@ -4,10 +4,11 @@ import type {
 	Contact,
 	ContactsData,
 	CreateContactDto,
+	SortParams,
 	UpdateContactDto,
 } from '@/types/api'
 
-export interface ContactFilters {
+export interface ContactFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -24,6 +25,8 @@ export async function listContacts(
 	if (filters.search) params.search = filters.search
 	if (filters.is_deleted !== undefined)
 		params.is_deleted = String(filters.is_deleted)
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<ContactsData>('/contacts/', { params })
 	return data

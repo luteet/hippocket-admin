@@ -15,16 +15,22 @@ export function StatusesPage() {
 		isLoading,
 		isFetching,
 		pagination,
+		sorting,
 		goToCreate,
 		openStatus,
 	} = useStatusesPage()
 
 	const columns = useMemo<ColumnDef<Status, unknown>[]>(
 		() => [
-			{ accessorKey: 'name', header: 'Name' },
+			{
+				accessorKey: 'name',
+				header: 'Name',
+				meta: { sortKey: 'name', className: 'w-56' },
+			},
 			{
 				accessorKey: 'label',
 				header: 'Label',
+				meta: { sortKey: 'label', className: 'w-48' },
 				cell: ({ row }) => (
 					<span className="text-muted-foreground">
 						{row.original.label}
@@ -53,6 +59,11 @@ export function StatusesPage() {
 			isLoading={isLoading}
 			isFetching={isFetching}
 			columns={columns}
+			sorting={{
+				sortBy: sorting.sortBy,
+				order: sorting.order,
+				onToggle: sorting.toggle,
+			}}
 			emptyMessage="No statuses found"
 			minWidth="320px"
 			onRowClick={(s) => openStatus(s.id)}

@@ -18,9 +18,9 @@
 		resize: none;
 		overflow: hidden;
 		transition:
-			color .15s,
-			background-color .15s,
-			border-color .15s;
+			color 0.15s,
+			background-color 0.15s,
+			border-color 0.15s;
 		outline: none;
 
 		@media (hover: hover) {

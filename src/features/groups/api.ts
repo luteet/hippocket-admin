@@ -4,10 +4,11 @@ import type {
 	CreateGroupDto,
 	Group,
 	GroupsData,
+	SortParams,
 	UpdateGroupDto,
 } from '@/types/api'
 
-export interface GroupFilters {
+export interface GroupFilters extends SortParams {
 	offset: number
 	count: number
 	/** Matches name or slug. */
@@ -24,6 +25,8 @@ export async function listGroups(filters: GroupFilters): Promise<GroupsData> {
 	if (filters.search) params.search = filters.search
 	if (filters.is_deleted !== undefined)
 		params.is_deleted = String(filters.is_deleted)
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<GroupsData>('/groups/', { params })
 	return data

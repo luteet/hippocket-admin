@@ -8,12 +8,13 @@ import type {
 	AiSessionsData,
 	CreateAiMessageDto,
 	CreateAiSessionDto,
+	SortParams,
 	UpdateAiMessageDto,
 } from '@/types/api'
 
 // ---- Sessions ----
 
-export interface SessionFilters {
+export interface SessionFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -27,6 +28,8 @@ export async function listSessions(
 		count: filters.count,
 	}
 	if (filters.search) params.search = filters.search
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<AiSessionsData>('/ai-chat/sessions/', {
 		params,
@@ -60,7 +63,7 @@ export async function listSessionRefs(): Promise<AiSession[]> {
 
 // ---- Messages ----
 
-export interface MessageFilters {
+export interface MessageFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -78,6 +81,8 @@ export async function listMessages(
 	if (filters.search) params.search = filters.search
 	if (filters.session_id) params.session_id = filters.session_id
 	if (filters.role) params.role = filters.role
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<AiMessagesData>('/ai-chat/messages/', {
 		params,

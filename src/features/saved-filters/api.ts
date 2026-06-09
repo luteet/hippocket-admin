@@ -4,10 +4,11 @@ import type {
 	CreateSavedFilterDto,
 	SavedFilter,
 	SavedFilterData,
+	SortParams,
 	UpdateSavedFilterDto,
 } from '@/types/api'
 
-export interface SavedFilterFilters {
+export interface SavedFilterFilters extends SortParams {
 	offset: number
 	count: number
 	search?: string
@@ -23,6 +24,8 @@ export async function listSavedFilters(
 	}
 	if (filters.search) params.search = filters.search
 	if (filters.user_id) params.user_id = filters.user_id
+	if (filters.sort_by) params.sort_by = filters.sort_by
+	if (filters.order) params.order = filters.order
 
 	const { data } = await api.get<SavedFilterData>('/saved-filters/', {
 		params,

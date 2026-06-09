@@ -24,6 +24,7 @@ dist-ssr
 collections.json
 environment.json
 admin_api_frontend_guide.md
+admin_sorting.md
 
 # Local dev credentials
 .dev-credentials.json

@@ -49,9 +49,9 @@ export function ChatDetailPage() {
 													to={`/agents/${uid}`}
 													className="link"
 												>
-													{chat.user_list.split(
-														', ',
-													)[i] ?? uid}
+													{chat.user_list.split(', ')[
+														i
+													] ?? uid}
 												</Link>
 											))}
 										</div>
