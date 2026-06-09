@@ -1,3 +1,5 @@
+import { Link } from 'react-router'
+
 import { Badge } from '@/components/ui/badge'
 import { DetailPage } from '@/components/detail/DetailPage'
 import { usePaymentDetailPage } from './usePaymentDetailPage'
@@ -28,7 +30,17 @@ export function PaymentDetailPage() {
 			fields={
 				payment
 					? [
-							{ label: 'User', value: payment.user_email },
+							{
+								label: 'User',
+								render: (
+									<Link
+										to={`/agents/${payment.user_id}`}
+										className="link"
+									>
+										{payment.user_email}
+									</Link>
+								),
+							},
 							{ label: 'User ID', value: payment.user_id },
 							{
 								label: 'Referral',
