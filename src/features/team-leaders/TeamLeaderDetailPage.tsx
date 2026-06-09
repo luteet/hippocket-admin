@@ -22,36 +22,36 @@ export function TeamLeaderDetailPage() {
 			heading={
 				leader
 					? {
-						title: leader.tl_name,
-						subtitle: formatDateTime(leader.created_at),
-					}
+							title: leader.tl_name,
+							subtitle: formatDateTime(leader.created_at),
+						}
 					: undefined
 			}
 			fields={
 				leader
 					? [
-						{
-							label: 'Group',
-							render: (
-								<Link
-									to={`/groups/${leader.group_id}`}
-									className="link"
-								>
-									{leader.group_name}
-								</Link>
-							),
-						},
-						{ label: 'Email', value: leader.tl_email },
-						{ label: 'Phone', value: leader.tl_phone },
-						{
-							label: 'Office location',
-							value: leader.office_location,
-						},
-						{
-							label: 'Created',
-							value: formatDateTime(leader.created_at),
-						},
-					]
+							{
+								label: 'Group',
+								render: (
+									<Link
+										to={`/groups/${leader.group_id}`}
+										className="link"
+									>
+										{leader.group_name}
+									</Link>
+								),
+							},
+							{ label: 'Email', value: leader.tl_email },
+							{ label: 'Phone', value: leader.tl_phone },
+							{
+								label: 'Office location',
+								value: leader.office_location,
+							},
+							{
+								label: 'Created',
+								value: formatDateTime(leader.created_at),
+							},
+						]
 					: undefined
 			}
 		/>

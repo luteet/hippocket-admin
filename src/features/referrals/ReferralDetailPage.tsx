@@ -49,81 +49,81 @@ export function ReferralDetailPage() {
 			heading={
 				referral
 					? {
-						title: referral.referral_name,
-						subtitle: formatDateTime(referral.created_at),
-						badge: referral.is_paid ? (
-							<Badge variant="success">Paid</Badge>
-						) : (
-							<Badge variant="muted">Unpaid</Badge>
-						),
-					}
+							title: referral.referral_name,
+							subtitle: formatDateTime(referral.created_at),
+							badge: referral.is_paid ? (
+								<Badge variant="success">Paid</Badge>
+							) : (
+								<Badge variant="muted">Unpaid</Badge>
+							),
+						}
 					: undefined
 			}
 			fields={
 				referral
 					? [
-						{
-							label: 'Status',
-							render: (
-								<Badge variant="outline">
-									{statusName}
-								</Badge>
-							),
-						},
-						{ label: 'Agent', value: referral.agent_email },
-						{
-							label: 'Agent phone',
-							value: referral.agent_phone,
-						},
-						{
-							label: 'Partner',
-							render: (
-								<Link
-									to={`/partners/${referral.partner_id}`}
-									className="link"
-								>
-									{referral.partner_name}
-								</Link>
-							),
-						},
-						{
-							label: 'Partner email',
-							value: referral.partner_email,
-						},
-						{
-							label: 'Contact (email)',
-							value: referral.contact_email,
-						},
-						{
-							label: 'Contact (phone)',
-							value: referral.contact_phone,
-						},
-						{ label: 'Group', value: referral.group_name },
-						{
-							label: 'Potential',
-							value: referral.potential_value,
-						},
-						{
-							label: 'Value type',
-							value: valueTypeLabel(referral.value_type),
-						},
-						{
-							label: 'Agent income',
-							value: referral.agent_potential_value,
-						},
-						{
-							label: 'Partner income',
-							value: referral.partner_potential_value,
-						},
-						{
-							label: 'Coin course',
-							value: referral.coin_course,
-						},
-						{
-							label: 'Created',
-							value: formatDateTime(referral.created_at),
-						},
-					]
+							{
+								label: 'Status',
+								render: (
+									<Badge variant="outline">
+										{statusName}
+									</Badge>
+								),
+							},
+							{ label: 'Agent', value: referral.agent_email },
+							{
+								label: 'Agent phone',
+								value: referral.agent_phone,
+							},
+							{
+								label: 'Partner',
+								render: (
+									<Link
+										to={`/partners/${referral.partner_id}`}
+										className="link"
+									>
+										{referral.partner_name}
+									</Link>
+								),
+							},
+							{
+								label: 'Partner email',
+								value: referral.partner_email,
+							},
+							{
+								label: 'Contact (email)',
+								value: referral.contact_email,
+							},
+							{
+								label: 'Contact (phone)',
+								value: referral.contact_phone,
+							},
+							{ label: 'Group', value: referral.group_name },
+							{
+								label: 'Potential',
+								value: referral.potential_value,
+							},
+							{
+								label: 'Value type',
+								value: valueTypeLabel(referral.value_type),
+							},
+							{
+								label: 'Agent income',
+								value: referral.agent_potential_value,
+							},
+							{
+								label: 'Partner income',
+								value: referral.partner_potential_value,
+							},
+							{
+								label: 'Coin course',
+								value: referral.coin_course,
+							},
+							{
+								label: 'Created',
+								value: formatDateTime(referral.created_at),
+							},
+						]
 					: undefined
 			}
 		>

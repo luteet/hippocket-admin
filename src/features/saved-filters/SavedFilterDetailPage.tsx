@@ -22,39 +22,39 @@ export function SavedFilterDetailPage() {
 			heading={
 				filter
 					? {
-						title: savedFilterTitle(filter.title),
-						subtitle: formatDateTime(filter.created_at),
-					}
+							title: savedFilterTitle(filter.title),
+							subtitle: formatDateTime(filter.created_at),
+						}
 					: undefined
 			}
 			fields={
 				filter
 					? [
-						{
-							label: 'Agent',
-							render: (
-								<Link
-									to={`/agents/${filter.user_id}`}
-									className="link"
-								>
-									{filter.user_email}
-								</Link>
-							),
-						},
-						{ label: 'Email', value: filter.user_email },
-						{
-							label: 'Value',
-							render: (
-								<span className="font-mono text-xs break-all">
-									{filter.value}
-								</span>
-							),
-						},
-						{
-							label: 'Created',
-							value: formatDateTime(filter.created_at),
-						},
-					]
+							{
+								label: 'Agent',
+								render: (
+									<Link
+										to={`/agents/${filter.user_id}`}
+										className="link"
+									>
+										{filter.user_email}
+									</Link>
+								),
+							},
+							{ label: 'Email', value: filter.user_email },
+							{
+								label: 'Value',
+								render: (
+									<span className="font-mono text-xs break-all">
+										{filter.value}
+									</span>
+								),
+							},
+							{
+								label: 'Created',
+								value: formatDateTime(filter.created_at),
+							},
+						]
 					: undefined
 			}
 		/>

@@ -36,8 +36,7 @@ export function useVersionCheck() {
 				notified.current = true
 				toast('A new version is available', {
 					id: TOAST_ID,
-					description:
-						'Refresh the page to get the latest updates.',
+					description: 'Refresh the page to get the latest updates.',
 					duration: Infinity,
 					action: {
 						label: 'Refresh',

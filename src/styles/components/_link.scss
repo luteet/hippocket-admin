@@ -2,15 +2,15 @@
 	.link {
 		color: var(--primary);
 		text-decoration: underline;
-		text-underline-offset: .35ch;
+		text-underline-offset: 0.35ch;
 
 		@media (hover: hover) {
-			transition: filter .15s;
+			transition: filter 0.15s;
 
 			&:hover {
 				filter: brightness(110%);
 			}
-		
+
 			&:active {
 				filter: brightness(90%);
 			}

@@ -23,6 +23,7 @@ export type IconName =
 	| 'file-question'
 	| 'construction'
 	| 'building-2'
+	| 'house'
 	| 'contact'
 	| 'users'
 	| 'boxes'

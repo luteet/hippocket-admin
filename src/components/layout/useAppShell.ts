@@ -42,6 +42,7 @@ export const NAV_ITEMS: NavItem[] = [
 		children: [{ to: '/statuses', label: 'Statuses', icon: 'list-checks' }],
 	},
 	{ to: '/contacts', label: 'Contacts', icon: 'contact' },
+	{ to: '/properties', label: 'Properties', icon: 'house' },
 	{
 		to: '/agents',
 		label: 'Agents',

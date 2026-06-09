@@ -37,6 +37,22 @@ const PartnerEditPage = lazyNamed(
 	() => import('@/features/partners/PartnerEditPage'),
 	'PartnerEditPage',
 )
+const PropertiesPage = lazyNamed(
+	() => import('@/features/properties/PropertiesPage'),
+	'PropertiesPage',
+)
+const PropertyCreatePage = lazyNamed(
+	() => import('@/features/properties/PropertyCreatePage'),
+	'PropertyCreatePage',
+)
+const PropertyDetailPage = lazyNamed(
+	() => import('@/features/properties/PropertyDetailPage'),
+	'PropertyDetailPage',
+)
+const PropertyEditPage = lazyNamed(
+	() => import('@/features/properties/PropertyEditPage'),
+	'PropertyEditPage',
+)
 const ContactsPage = lazyNamed(
 	() => import('@/features/contacts/ContactsPage'),
 	'ContactsPage',
@@ -365,6 +381,15 @@ const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
 			Create: PartnerCreatePage,
 			Detail: PartnerDetailPage,
 			Edit: PartnerEditPage,
+		},
+	},
+	{
+		path: 'properties',
+		pages: {
+			List: PropertiesPage,
+			Create: PropertyCreatePage,
+			Detail: PropertyDetailPage,
+			Edit: PropertyEditPage,
 		},
 	},
 	{
