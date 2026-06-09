@@ -1,3 +1,5 @@
+import { Link } from 'react-router'
+
 import { Badge } from '@/components/ui/badge'
 import { DetailPage } from '@/components/detail/DetailPage'
 import { useContactDetailPage } from './useContactDetailPage'
@@ -56,7 +58,26 @@ export function ContactDetailPage() {
 								label: 'Relation type',
 								value: contact.relation_type,
 							},
-							{ label: 'Owner', value: contact.owner },
+							{
+								label: 'Owner',
+								render: contact.user_id ? (
+									<Link
+										to={`/agents/${contact.user_id}`}
+										className="link"
+									>
+										{contact.owner}
+									</Link>
+								) : contact.partner_user_id ? (
+									<Link
+										to={`/partners/${contact.partner_user_id}`}
+										className="link"
+									>
+										{contact.owner}
+									</Link>
+								) : (
+									(contact.owner ?? '—')
+								),
+							},
 							{
 								label: 'Referrals sent',
 								value: contact.referrals_sent,

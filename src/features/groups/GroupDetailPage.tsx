@@ -86,7 +86,7 @@ export function GroupDetailPage() {
 									label: 'Admins',
 									render: group.admin_ids.length ? (
 										<div className="flex flex-col gap-1">
-											{group.admin_ids.map((adminId) => (
+											{group.admin_ids.map((adminId, index) => (
 												<button
 													key={adminId}
 													type="button"
@@ -95,7 +95,7 @@ export function GroupDetailPage() {
 													}
 													className="text-left link"
 												>
-													{adminId}
+													Admin #{index + 1}
 												</button>
 											))}
 										</div>

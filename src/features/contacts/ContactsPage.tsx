@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
@@ -57,11 +58,29 @@ export function ContactsPage() {
 			{
 				accessorKey: 'owner',
 				header: 'Owner',
-				cell: ({ row }) => (
-					<span className="text-muted-foreground">
-						{row.original.owner}
-					</span>
-				),
+				cell: ({ row }) => {
+					const { owner, user_id, partner_user_id } = row.original
+					const to = user_id
+						? `/agents/${user_id}`
+						: partner_user_id
+							? `/partners/${partner_user_id}`
+							: null
+					if (!to || !owner)
+						return (
+							<span className="text-muted-foreground">
+								{owner || '—'}
+							</span>
+						)
+					return (
+						<Link
+							to={to}
+							className="link"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{owner}
+						</Link>
+					)
+				},
 			},
 			{
 				accessorKey: 'referral_type',
