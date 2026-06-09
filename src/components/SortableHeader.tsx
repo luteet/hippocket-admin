@@ -41,7 +41,7 @@ export function SortableHeader({
 			type="button"
 			onClick={() => onToggle(sortKey)}
 			className={cn(
-				'-mx-1 inline-flex items-center gap-1 rounded px-1 select-none transition-colors hover:text-foreground',
+				'-mx-1 inline-flex items-center gap-1 rounded px-1 select-none uppercase transition-colors hover:text-foreground',
 				active && 'text-foreground',
 			)}
 		>
