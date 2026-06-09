@@ -33,6 +33,8 @@ export function PropertiesPage() {
 						shape="square"
 						placeholderIcon="image"
 						className="size-10"
+						canvas
+						size={128}
 					/>
 				),
 				meta: { className: 'w-14' },

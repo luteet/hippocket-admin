@@ -46,6 +46,8 @@ export function PropertyDetailPage() {
 										url={property.image}
 										shape="square"
 										placeholderIcon="image"
+										canvas
+										size={256}
 									/>
 								),
 								badge: property.status ? (

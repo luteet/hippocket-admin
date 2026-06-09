@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { CanvasThumbnail } from '@/components/CanvasThumbnail'
 import { Icon } from '@/components/Icon'
 import { Card, CardContent } from '@/components/ui/card'
 import { resolveMediaUrl } from '@/lib/media'
@@ -42,11 +43,7 @@ export function PropertyImagesTab({ images, onOpen }: Props) {
 						className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-md border border-border bg-muted text-muted-foreground transition-opacity hover:opacity-80"
 					>
 						{src ? (
-							<img
-								src={src}
-								alt=""
-								className="size-full object-cover"
-							/>
+							<CanvasThumbnail src={src} />
 						) : (
 							<Icon name="image" className="size-7" />
 						)}
