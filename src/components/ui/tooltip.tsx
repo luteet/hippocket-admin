@@ -1,7 +1,7 @@
 import {
 	forwardRef,
 	type ComponentPropsWithoutRef,
-	type ElementRef,
+	type ComponentRef,
 	type ReactElement,
 	type ReactNode,
 } from 'react'
@@ -17,7 +17,7 @@ const TooltipRoot = TooltipPrimitive.Root
 const TooltipTrigger = TooltipPrimitive.Trigger
 
 const TooltipContent = forwardRef<
-	ElementRef<typeof TooltipPrimitive.Content>,
+	ComponentRef<typeof TooltipPrimitive.Content>,
 	ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
 >(({ className, sideOffset = 6, ...props }, ref) => (
 	<TooltipPrimitive.Portal>

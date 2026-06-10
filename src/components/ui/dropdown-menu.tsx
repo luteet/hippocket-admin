@@ -1,6 +1,6 @@
 import {
 	forwardRef,
-	type ElementRef,
+	type ComponentRef,
 	type ComponentPropsWithoutRef,
 } from 'react'
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu'
@@ -12,7 +12,7 @@ const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 const DropdownMenuGroup = DropdownMenuPrimitive.Group
 
 const DropdownMenuContent = forwardRef<
-	ElementRef<typeof DropdownMenuPrimitive.Content>,
+	ComponentRef<typeof DropdownMenuPrimitive.Content>,
 	ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
 >(({ className, sideOffset = 4, ...props }, ref) => (
 	<DropdownMenuPrimitive.Portal>
@@ -30,7 +30,7 @@ const DropdownMenuContent = forwardRef<
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
 const DropdownMenuItem = forwardRef<
-	ElementRef<typeof DropdownMenuPrimitive.Item>,
+	ComponentRef<typeof DropdownMenuPrimitive.Item>,
 	ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
 		inset?: boolean
 		variant?: 'default' | 'destructive'
@@ -51,7 +51,7 @@ const DropdownMenuItem = forwardRef<
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
 
 const DropdownMenuLabel = forwardRef<
-	ElementRef<typeof DropdownMenuPrimitive.Label>,
+	ComponentRef<typeof DropdownMenuPrimitive.Label>,
 	ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label>
 >(({ className, ...props }, ref) => (
 	<DropdownMenuPrimitive.Label
@@ -63,7 +63,7 @@ const DropdownMenuLabel = forwardRef<
 DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName
 
 const DropdownMenuSeparator = forwardRef<
-	ElementRef<typeof DropdownMenuPrimitive.Separator>,
+	ComponentRef<typeof DropdownMenuPrimitive.Separator>,
 	ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
 >(({ className, ...props }, ref) => (
 	<DropdownMenuPrimitive.Separator

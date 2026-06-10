@@ -6,7 +6,7 @@ import {
 	useEffect,
 	useRef,
 	useState,
-	type ElementRef,
+	type ComponentRef,
 	type ComponentPropsWithoutRef,
 } from 'react'
 import * as SelectPrimitive from '@radix-ui/react-select'
@@ -87,7 +87,7 @@ const SelectGroup = SelectPrimitive.Group
 const SelectValue = SelectPrimitive.Value
 
 const SelectTrigger = forwardRef<
-	ElementRef<typeof SelectPrimitive.Trigger>,
+	ComponentRef<typeof SelectPrimitive.Trigger>,
 	ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Trigger
@@ -104,7 +104,7 @@ const SelectTrigger = forwardRef<
 SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
 
 const SelectContent = forwardRef<
-	ElementRef<typeof SelectPrimitive.Content>,
+	ComponentRef<typeof SelectPrimitive.Content>,
 	ComponentPropsWithoutRef<typeof SelectPrimitive.Content> & {
 		// Override the portal target. Defaults to <body>; pass a node inside a
 		// Popover/Dialog so the dropdown is part of that layer's DOM and
@@ -147,7 +147,7 @@ const SelectContent = forwardRef<
 SelectContent.displayName = SelectPrimitive.Content.displayName
 
 const SelectItem = forwardRef<
-	ElementRef<typeof SelectPrimitive.Item>,
+	ComponentRef<typeof SelectPrimitive.Item>,
 	ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
 >(({ className, children, ...props }, ref) => (
 	<SelectPrimitive.Item
