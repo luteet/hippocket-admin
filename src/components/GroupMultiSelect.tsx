@@ -19,9 +19,9 @@ export function GroupMultiSelect({
 }) {
 	const label = selected.length
 		? options
-				.filter((o) => selected.includes(o.id))
-				.map((o) => o.name)
-				.join(', ')
+			.filter((o) => selected.includes(o.id))
+			.map((o) => o.name)
+			.join(', ')
 		: 'Select groups'
 
 	return (
@@ -30,7 +30,7 @@ export function GroupMultiSelect({
 				<Button
 					type="button"
 					variant="outline-2"
-					className="w-full justify-between text-base font-normal"
+					className="w-full justify-between text-sm font-normal"
 				>
 					<span
 						className={
