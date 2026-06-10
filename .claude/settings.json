@@ -37,6 +37,8 @@
       "Bash(tr:*)",
       "Bash(node:*)",
       "Bash(pkill:*)",
+      "Bash(kill:*)",
+      "Bash(sleep:*)",
       "Bash(cp:*)",
       "Bash(od:*)"
     ]

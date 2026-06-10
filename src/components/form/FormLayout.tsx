@@ -5,6 +5,7 @@ import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { TabButton } from '@/components/TabButton'
+import { useUnsavedChangesGuard } from '@/hooks/useUnsavedChangesGuard'
 import { FormFieldRenderer } from './FormFieldRenderer'
 import type { FormFieldEntry } from './types'
 
@@ -65,6 +66,14 @@ export function FormLayout({
 }: FormLayoutProps) {
 	const [confirmOpen, setConfirmOpen] = useState(false)
 	const canDelete = Boolean(isEdit && onDelete)
+
+	// Guard against discarding unsaved edits. Off while submitting and after a
+	// successful submit, so the post-save programmatic navigation isn't blocked
+	// (the page navigates from inside the submit handler, before RHF flips
+	// `isSubmitSuccessful`, so `isSubmitting` is what suppresses the prompt then).
+	const { isDirty, isSubmitting, isSubmitSuccessful } = form.formState
+	const guardOn = isDirty && !isSubmitting && !isSubmitSuccessful
+	const blocker = useUnsavedChangesGuard(guardOn)
 
 	return (
 		<form onSubmit={onSubmit} className="space-y-6">
@@ -149,6 +158,21 @@ export function FormLayout({
 					onConfirm={onDelete}
 				/>
 			)}
+
+			{/* Unsaved-changes prompt. A sidebar link, Back, or the footer Cancel
+			    all trigger a path change that the blocker intercepts; confirming
+			    resumes the navigation, cancelling stays on the form. */}
+			<ConfirmDialog
+				open={blocker.state === 'blocked'}
+				onOpenChange={(open) => {
+					if (!open) blocker.reset?.()
+				}}
+				title="Discard changes?"
+				description="You have unsaved changes that will be lost."
+				confirmLabel="Discard"
+				destructive
+				onConfirm={() => blocker.proceed?.()}
+			/>
 		</form>
 	)
 }
