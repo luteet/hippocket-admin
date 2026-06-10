@@ -1,0 +1,113 @@
+// Dropdown menu (Radix). Semantic classes for the content surface, items, label
+// and separator (their Tailwind class strings had grown unwieldy). Rules live in
+// @layer components so utilities passed via className still win.
+@layer components {
+	// Dropdown surface.
+	.dropdown-content {
+		z-index: 50;
+		min-width: 8rem; // min-w-32
+		overflow: hidden;
+		border-radius: 0.375rem; // rounded-md
+		border: 1px solid var(--border);
+		background-color: var(--popover);
+		padding: 0.25rem; // p-1
+		color: var(--popover-foreground);
+		box-shadow:
+			0 4px 6px -1px rgb(0 0 0 / 0.1),
+			0 2px 4px -2px rgb(0 0 0 / 0.1); // shadow-md
+
+		&[data-state='open'] {
+			animation: dropdown-fade-in 0.15s ease;
+		}
+
+		&[data-state='closed'] {
+			animation: dropdown-fade-out 0.15s ease forwards;
+		}
+	}
+
+	// Menu item.
+	.dropdown-item {
+		position: relative;
+		display: flex;
+		cursor: pointer;
+		user-select: none;
+		align-items: center;
+		gap: 0.5rem; // gap-2
+		border-radius: 0.125rem; // rounded-sm
+		padding-inline: 0.5rem; // px-2
+		padding-block: 0.375rem; // py-1.5
+		font-size: var(--text-sm);
+		line-height: 1.25rem;
+		outline: none;
+		transition: background-color 0.15s, color 0.15s;
+
+		&:focus {
+			background-color: var(--muted);
+			color: var(--foreground);
+		}
+
+		&[data-disabled] {
+			pointer-events: none;
+			opacity: 0.5;
+		}
+
+		& svg {
+			width: 1rem; // size-4
+			height: 1rem;
+		}
+
+		// inset prop — leave room for a leading indicator.
+		&.is-inset {
+			padding-left: 2rem; // pl-8
+		}
+
+		// destructive variant.
+		&.is-destructive {
+			color: var(--destructive);
+
+			&:focus {
+				background-color: color-mix(
+					in srgb,
+					var(--destructive) 10%,
+					transparent
+				);
+				color: var(--destructive);
+			}
+		}
+	}
+
+	// Section label.
+	.dropdown-label {
+		padding-inline: 0.5rem; // px-2
+		padding-block: 0.375rem; // py-1.5
+		font-size: var(--text-sm);
+		line-height: 1.25rem;
+		font-weight: 600;
+	}
+
+	// Divider.
+	.dropdown-separator {
+		margin-inline: -0.25rem; // -mx-1
+		margin-block: 0.25rem; // my-1
+		height: 1px;
+		background-color: var(--border);
+	}
+}
+
+@keyframes dropdown-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes dropdown-fade-out {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
