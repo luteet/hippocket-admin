@@ -9,6 +9,7 @@ import { Icon } from '@/components/Icon'
 import { resolveMediaUrl } from '@/lib/media'
 import type { PropertyImage } from '@/types/api'
 import { usePropertyImagesPage } from './usePropertyImagesPage'
+import { MediaThumbnail } from '@/components/media/MediaThumbnail'
 
 export function PropertyImagesPage() {
 	const { data, isLoading, isFetching, pagination, sorting, openImage } =
@@ -26,10 +27,10 @@ export function PropertyImagesPage() {
 					return (
 						<div className="flex size-12 items-center justify-center overflow-hidden rounded-md border border-border bg-muted text-muted-foreground">
 							{src ? (
-								<img
-									src={src}
-									alt=""
+								<MediaThumbnail
+									url={src}
 									className="size-full object-cover"
+									canvas size={256}
 								/>
 							) : (
 								<Icon name="image" className="size-5" />
