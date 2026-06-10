@@ -3,6 +3,8 @@ import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Icon } from '@/components/Icon'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
@@ -119,6 +121,14 @@ export function ReferralsPage() {
 		<ListPage
 			title="Pipeline Logs"
 			description="Pipeline log requests, statuses, and payouts"
+			actions={
+				<Button asChild variant="outline">
+					<Link to="/referrals/export">
+						<Icon name="download" />
+						<span className="sm:inline hidden">Export</span>
+					</Link>
+				</Button>
+			}
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search…"

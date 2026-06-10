@@ -52,6 +52,7 @@ export type IconName =
 	| 'badge-dollar'
 	| 'user'
 	| 'upload'
+	| 'download'
 	| 'image'
 	| 'grip-vertical'
 

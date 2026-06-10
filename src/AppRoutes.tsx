@@ -109,6 +109,10 @@ const ReferralEditPage = lazyNamed(
 	() => import('@/features/referrals/ReferralEditPage'),
 	'ReferralEditPage',
 )
+const ReferralExportPage = lazyNamed(
+	() => import('@/features/referrals/ReferralExportPage'),
+	'ReferralExportPage',
+)
 const AgentsPage = lazyNamed(
 	() => import('@/features/agents/AgentsPage'),
 	'AgentsPage',
@@ -636,6 +640,13 @@ export function AppRoutes({ location }: { location: Location }) {
 				<Route index element={<DashboardPage />} />
 				{/* General settings singleton — the Settings group's own page. */}
 				<Route path="settings" element={<GeneralSettingsPage />} />
+				{/* Referrals export settings page. Declared before the CRUD
+				    `referrals/:id` route, though React Router ranks this static
+				    path higher regardless of order. */}
+				<Route
+					path="referrals/export"
+					element={<ReferralExportPage />}
+				/>
 				{CRUD_SECTIONS.map(({ path, pages }) =>
 					crudRoutes(path, pages),
 				)}

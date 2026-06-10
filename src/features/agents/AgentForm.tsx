@@ -6,11 +6,11 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { FormLayout } from '@/components/form/FormLayout'
+import { GroupMultiSelect } from '@/components/GroupMultiSelect'
 import type { FormFieldEntry } from '@/components/form/types'
 import type { Agent } from '@/types/api'
 import { ROLE_OPTIONS, STATUS_OPTIONS } from './useAgentsPage'
 import { useAgentForm } from './useAgentForm'
-import { GroupMultiSelect } from './components/GroupMultiSelect'
 import { AvatarUpload } from './components/AvatarUpload'
 
 interface Props {
