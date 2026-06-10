@@ -15,3 +15,6 @@ export const MONTHS = [
 	'November',
 	'December',
 ]
+
+// Number of years shown per page in the year-grid view.
+export const YEARS_PER_PAGE = 12
