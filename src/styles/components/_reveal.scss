@@ -15,9 +15,16 @@
 		animation: reveal-in 0.25s ease-out both;
 	}
 
+	// Detail-card body fade: the consumer re-keys this wrapper on the
+	// loading→ready swap so the skeleton→content transition replays this fade.
+	.detail-fade {
+		animation: reveal-in 0.25s ease-out both;
+	}
+
 	@media (prefers-reduced-motion: reduce) {
 		.reveal,
-		.table-fade {
+		.table-fade,
+		.detail-fade {
 			animation: none;
 		}
 	}

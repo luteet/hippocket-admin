@@ -115,11 +115,18 @@ export function DetailPage({
 	const carded = (content: ReactNode) => (
 		<Card className={maxWidth}>
 			<CardContent className="pt-6">
-				{isLoading
-					? SKELETON
-					: !ready
-						? (notFound ?? SKELETON)
-						: content}
+				{/* Re-keyed on the loading→ready swap so the skeleton→content
+				    transition replays the fade (same trick as DataTable's tbody). */}
+				<div
+					key={isLoading ? 'loading' : 'ready'}
+					className="detail-fade"
+				>
+					{isLoading
+						? SKELETON
+						: !ready
+							? (notFound ?? SKELETON)
+							: content}
+				</div>
 			</CardContent>
 		</Card>
 	)
@@ -197,17 +204,17 @@ export function DetailPage({
 					</AnimatePresence>
 				</Reveal>
 			) : (
+				// The `carded` wrapper owns the entrance fade (Reveal would
+				// stack a second opacity animation on the same content).
 				carded(
-					<Reveal index={1}>
-						<DetailBody
-							heading={heading}
-							header={header}
-							intro={intro}
-							fields={fields}
-						>
-							{children}
-						</DetailBody>
-					</Reveal>,
+					<DetailBody
+						heading={heading}
+						header={header}
+						intro={intro}
+						fields={fields}
+					>
+						{children}
+					</DetailBody>,
 				)
 			)}
 
