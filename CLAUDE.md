@@ -87,6 +87,19 @@ Read-only `GET`s against any record are fine.
       `useDebouncedValue` and feeds a `{ items, total }` result; the page file
       keeps only the `columns` config. See
       [src/features/partners/usePartnersPage.ts](src/features/partners/usePartnersPage.ts).
+        - **URL-synced list state (deep-linkable views).** Search, sort, page,
+          page size, and filters persist in the URL query so a view survives
+          reload and can be shared. Pass `syncToUrl: true` to `usePagination`
+          (`?page=` 1-based, `?count=`) and `useSorting` (`?sort=`/`?order=`);
+          for search/filters use `useUrlParams()` from
+          [src/hooks/useUrlState.ts](src/hooks/useUrlState.ts) — `params.get(key)`
+          to read, `setParams({ key: value, page: null })` to write (a `null`/`''`
+          value drops the key, keeping URLs clean; patching `page: null` in the
+          same call resets to page one, so **no `pagination.reset()` effect is
+          needed**). Use the `ALL` sentinel → `null` mapping for "All …" filters.
+          Migrated: Partners, Referrals, AI-chat messages — copy one of those.
+          Without `syncToUrl`, both hooks keep their old local-state behaviour
+          (so non-list usages like `useChatMessagesTab` are unaffected).
     - `src/components/form/` — `FormLayout` + `FormFieldRenderer` render a
       create/edit form from a declarative field array (text/select/combobox/
       switch/custom, single-panel or tabbed) with the standard Cancel/Save/Delete

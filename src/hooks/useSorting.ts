@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import type { SortOrder } from '@/types/api'
+import { useUrlParams } from './useUrlState'
 
 interface UseSortingOptions {
 	/**
@@ -10,6 +11,14 @@ interface UseSortingOptions {
 	defaultSortBy?: string
 	/** Initial direction for {@link defaultSortBy}. Defaults to `'asc'`. */
 	defaultOrder?: SortOrder
+	/**
+	 * When true, the sort lives in the URL (`?sort=` / `?order=`) so it's
+	 * deep-linkable and survives a reload. The default/"off" state omits both
+	 * keys (clean URL → falls back to the endpoint's default ordering). Toggling
+	 * also resets `?page=` in the same write. When absent, state is local
+	 * (unchanged behaviour).
+	 */
+	syncToUrl?: boolean
 }
 
 /**
@@ -28,23 +37,56 @@ interface SortState {
 export function useSorting({
 	defaultSortBy,
 	defaultOrder = 'asc',
+	syncToUrl = false,
 }: UseSortingOptions = {}) {
-	const [state, setState] = useState<SortState>(() =>
+	const [searchParams, setParams] = useUrlParams()
+	const [localState, setLocalState] = useState<SortState>(() =>
 		defaultSortBy
 			? { sortBy: defaultSortBy, order: defaultOrder }
 			: { sortBy: undefined, order: undefined },
 	)
 
-	const toggle = useCallback((key: string) => {
-		setState((prev) => {
-			if (prev.sortBy !== key) return { sortBy: key, order: 'asc' }
-			// Same column: asc → desc → off.
-			if (prev.order === 'asc') return { sortBy: key, order: 'desc' }
-			return { sortBy: undefined, order: undefined }
-		})
-	}, [])
+	// In URL mode a missing `?sort=` means the default/"off" state: show the
+	// default column's arrow (the backend's default ordering) on first render.
+	let sortBy: string | undefined
+	let order: SortOrder | undefined
+	if (syncToUrl) {
+		const urlSort = searchParams.get('sort')
+		if (urlSort) {
+			sortBy = urlSort
+			order = searchParams.get('order') === 'desc' ? 'desc' : 'asc'
+		} else {
+			sortBy = defaultSortBy
+			order = defaultSortBy ? defaultOrder : undefined
+		}
+	} else {
+		sortBy = localState.sortBy
+		order = localState.order
+	}
 
-	return { sortBy: state.sortBy, order: state.order, toggle }
+	const toggle = useCallback(
+		(key: string) => {
+			// Cycle the clicked column: new column → asc, then asc → desc → off.
+			let next: SortState
+			if (sortBy !== key) next = { sortBy: key, order: 'asc' }
+			else if (order === 'asc') next = { sortBy: key, order: 'desc' }
+			else next = { sortBy: undefined, order: undefined }
+
+			if (syncToUrl) {
+				setParams({
+					sort: next.sortBy ?? null,
+					order: next.sortBy ? next.order : null,
+					// Sorting changes the result set order — go back to page one.
+					page: null,
+				})
+			} else {
+				setLocalState(next)
+			}
+		},
+		[sortBy, order, syncToUrl, setParams],
+	)
+
+	return { sortBy, order, toggle }
 }
 
 /** The object returned by `useSorting`. */

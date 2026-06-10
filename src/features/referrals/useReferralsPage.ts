@@ -1,8 +1,9 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
+import { useUrlParams } from '@/hooks/useUrlState'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useReferrals, useStatuses } from './hooks'
 
@@ -10,14 +11,27 @@ export const ALL = '__all__'
 
 export function useReferralsPage() {
 	const navigate = useNavigate()
-	const [search, setSearch] = useState('')
+	// Search, filters (status, paid), sort and page all live in the URL
+	// (deep-linkable, survives reload). Each change resets the page in one write.
+	const [params, setParams] = useUrlParams()
+	const search = params.get('q') ?? ''
+	const setSearch = (value: string) => setParams({ q: value, page: null })
 	const debouncedSearch = useDebouncedValue(search)
-	const [statusLabel, setStatusLabel] = useState(ALL)
-	const [isPaid, setIsPaid] = useState(ALL)
-	const pagination = usePagination({ count: 20, storageKey: 'referrals' })
+	const statusLabel = params.get('status') ?? ALL
+	const setStatusLabel = (value: string) =>
+		setParams({ status: value === ALL ? null : value, page: null })
+	const isPaid = params.get('paid') ?? ALL
+	const setIsPaid = (value: string) =>
+		setParams({ paid: value === ALL ? null : value, page: null })
+	const pagination = usePagination({
+		count: 20,
+		storageKey: 'referrals',
+		syncToUrl: true,
+	})
 	const sorting = useSorting({
 		defaultSortBy: 'created_at',
 		defaultOrder: 'desc',
+		syncToUrl: true,
 	})
 
 	const { data: statuses } = useStatuses()
@@ -33,15 +47,8 @@ export function useReferralsPage() {
 	// How many popover filters are set — shown as a badge on the Filters button.
 	const activeFilterCount =
 		(statusLabel !== ALL ? 1 : 0) + (isPaid !== ALL ? 1 : 0)
-	const clearFilters = () => {
-		setStatusLabel(ALL)
-		setIsPaid(ALL)
-	}
-
-	useEffect(() => {
-		pagination.reset()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, statusLabel, isPaid, sorting.sortBy, sorting.order])
+	const clearFilters = () =>
+		setParams({ status: null, paid: null, page: null })
 
 	const { data, isLoading, isFetching } = useReferrals({
 		offset: pagination.offset,

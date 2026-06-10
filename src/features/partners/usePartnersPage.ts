@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useState, useRef, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
 
 import { getApiErrorMessage } from '@/lib/api/client'
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
+import { useUrlParams } from '@/hooks/useUrlState'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { Partner, UpdatePartnerDto, ValueType } from '@/types/api'
 import { usePartners, useUpdatePartner } from './hooks'
@@ -50,16 +51,23 @@ function buildUpdateDto(
 
 export function usePartnersPage() {
 	const navigate = useNavigate()
-	const [search, setSearch] = useState('')
+	// Search, sort, page and page size all live in the URL (deep-linkable,
+	// survives reload). Changing the search resets the page in the same write so
+	// there's no flash of page-N results for the new query.
+	const [params, setParams] = useUrlParams()
+	const search = params.get('q') ?? ''
+	const setSearch = (value: string) => setParams({ q: value, page: null })
 	const debouncedSearch = useDebouncedValue(search)
-	const pagination = usePagination({ count: 20, storageKey: 'partners' })
-	const sorting = useSorting({ defaultSortBy: 'name', defaultOrder: 'asc' })
-
-	// Reset to the first page when the search query or sort changes.
-	useEffect(() => {
-		pagination.reset()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, sorting.sortBy, sorting.order])
+	const pagination = usePagination({
+		count: 20,
+		storageKey: 'partners',
+		syncToUrl: true,
+	})
+	const sorting = useSorting({
+		defaultSortBy: 'name',
+		defaultOrder: 'asc',
+		syncToUrl: true,
+	})
 
 	const { data, isLoading, isFetching } = usePartners({
 		offset: pagination.offset,

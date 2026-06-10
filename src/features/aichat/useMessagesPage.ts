@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router'
+import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
+import { useUrlParams } from '@/hooks/useUrlState'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { AiMessageRole } from '@/types/api'
 import { useMessages, useSessionRefs } from './hooks'
@@ -18,18 +18,28 @@ export const ROLE_OPTIONS: { value: AiMessageRole; label: string }[] = [
 
 export function useMessagesPage() {
 	const navigate = useNavigate()
-	// A session id may be pre-set via `?session=…` (e.g. from a session detail).
-	const [searchParams] = useSearchParams()
-	const [search, setSearch] = useState('')
+	// Search, filters (role, session), sort and page all live in the URL. The
+	// session can also be pre-set via `?session=…` (e.g. from a session detail) —
+	// it's the same param. Changing search/filters resets the page in one write.
+	const [params, setParams] = useUrlParams()
+	const search = params.get('q') ?? ''
+	const setSearch = (value: string) => setParams({ q: value, page: null })
 	const debouncedSearch = useDebouncedValue(search)
-	const [role, setRole] = useState(ALL)
-	const [sessionId, setSessionId] = useState(
-		() => searchParams.get('session') ?? ALL,
-	)
-	const pagination = usePagination({ count: 20, storageKey: 'ai-messages' })
+	const role = params.get('role') ?? ALL
+	const setRole = (value: string) =>
+		setParams({ role: value === ALL ? null : value, page: null })
+	const sessionId = params.get('session') ?? ALL
+	const setSessionId = (value: string) =>
+		setParams({ session: value === ALL ? null : value, page: null })
+	const pagination = usePagination({
+		count: 20,
+		storageKey: 'ai-messages',
+		syncToUrl: true,
+	})
 	const sorting = useSorting({
 		defaultSortBy: 'created_at',
 		defaultOrder: 'desc',
+		syncToUrl: true,
 	})
 
 	const { data: sessionRefs, isLoading: sessionsLoading } = useSessionRefs()
@@ -37,16 +47,8 @@ export function useMessagesPage() {
 	// How many popover filters are set — shown as a badge on the Filters button.
 	const activeFilterCount =
 		(role !== ALL ? 1 : 0) + (sessionId !== ALL ? 1 : 0)
-	const clearFilters = () => {
-		setRole(ALL)
-		setSessionId(ALL)
-	}
-
-	// Reset to the first page when any filter changes.
-	useEffect(() => {
-		pagination.reset()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [debouncedSearch, role, sessionId, sorting.sortBy, sorting.order])
+	const clearFilters = () =>
+		setParams({ role: null, session: null, page: null })
 
 	const { data, isLoading, isFetching } = useMessages({
 		offset: pagination.offset,

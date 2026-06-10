@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { useUrlParams } from './useUrlState'
 
 interface UsePaginationOptions {
 	count?: number
@@ -7,6 +8,17 @@ interface UsePaginationOptions {
 	 * key (prefixed) and restored on the next visit. Use a per-page key.
 	 */
 	storageKey?: string
+	/**
+	 * When true, `page` and `count` are read from / written to the URL query
+	 * (`?page=` is 1-based, `?count=`), so the view is deep-linkable and survives
+	 * a reload. When absent, state is local (unchanged behaviour) — keeps
+	 * non-list usages (tabs, etc.) working.
+	 *
+	 * Precedence for page size: `?count=` wins when present and valid, otherwise
+	 * the localStorage value, otherwise `count`. Setting the size back to the
+	 * default drops `?count=` from the URL.
+	 */
+	syncToUrl?: boolean
 }
 
 /** Page-size options offered by the "N per page" selectors. */
@@ -34,25 +46,54 @@ function readStoredCount(storageKey: string | undefined): number | null {
 export function usePagination({
 	count: initialCount = 20,
 	storageKey,
+	syncToUrl = false,
 }: UsePaginationOptions = {}) {
-	const [page, setPage] = useState(0)
-	const [count, setCountState] = useState(
+	const [searchParams, setParams] = useUrlParams()
+
+	// Local fallback state, used when not syncing to the URL. In URL mode `page`
+	// derives from `?page=`; `count` keeps a local copy too so the fallback (when
+	// `?count=` is absent) reflects the latest chosen size, not just page load.
+	const [localPage, setLocalPage] = useState(0)
+	const [localCount, setLocalCount] = useState(
 		() => readStoredCount(storageKey) ?? initialCount,
 	)
+
+	let page: number
+	if (syncToUrl) {
+		const raw = Number(searchParams.get('page'))
+		page = Number.isFinite(raw) && raw >= 1 ? Math.floor(raw) - 1 : 0
+	} else {
+		page = localPage
+	}
+
+	let count: number
+	if (syncToUrl) {
+		const raw = Number(searchParams.get('count'))
+		count = PAGE_SIZE_OPTIONS.includes(raw) ? raw : localCount
+	} else {
+		count = localCount
+	}
 
 	const offset = page * count
 
 	const goTo = useCallback(
-		(p: number) => setPage((p2) => Math.max(0, p ?? p2)),
-		[],
+		(p: number) => {
+			const next = Math.max(0, p)
+			if (syncToUrl) setParams({ page: next === 0 ? null : next + 1 })
+			else setLocalPage(next)
+		},
+		[syncToUrl, setParams],
 	)
-	const reset = useCallback(() => setPage(0), [])
+
+	const reset = useCallback(() => {
+		if (syncToUrl) setParams({ page: null })
+		else setLocalPage(0)
+	}, [syncToUrl, setParams])
 
 	/** Change the page size, persist it (if keyed), and return to page one. */
 	const setCount = useCallback(
 		(c: number) => {
-			setCountState(c)
-			setPage(0)
+			setLocalCount(c)
 			if (storageKey) {
 				try {
 					localStorage.setItem(STORAGE_PREFIX + storageKey, String(c))
@@ -60,8 +101,14 @@ export function usePagination({
 					// ignore write failures (private mode, quota, …)
 				}
 			}
+			if (syncToUrl) {
+				// Omit `?count=` when it's the default, to keep the URL clean.
+				setParams({ count: c === initialCount ? null : c, page: null })
+			} else {
+				setLocalPage(0)
+			}
 		},
-		[storageKey],
+		[storageKey, syncToUrl, initialCount, setParams],
 	)
 
 	/** Number of pages for a given total record count (at least 1). */
