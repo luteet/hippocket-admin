@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities'
 
 import { CanvasThumbnail } from '@/components/CanvasThumbnail'
 import { Icon } from '@/components/Icon'
+import { Tooltip } from '@/components/ui/tooltip'
 
 interface SortableImageProps {
 	id: string
@@ -42,18 +43,19 @@ export function SortableImage({ id, src, onOpen }: SortableImageProps) {
 			}}
 			className="group relative"
 		>
-			<button
-				type="button"
-				onClick={onOpen}
-				title="Open image"
-				className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-md border border-border bg-muted text-muted-foreground transition-opacity hover:opacity-80"
-			>
-				{src ? (
-					<CanvasThumbnail src={src} />
-				) : (
-					<Icon name="image" className="size-7" />
-				)}
-			</button>
+			<Tooltip content="Open image">
+				<button
+					type="button"
+					onClick={onOpen}
+					className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-md border border-border bg-muted text-muted-foreground transition-opacity hover:opacity-80"
+				>
+					{src ? (
+						<CanvasThumbnail src={src} />
+					) : (
+						<Icon name="image" className="size-7" />
+					)}
+				</button>
+			</Tooltip>
 			<button
 				type="button"
 				{...attributes}

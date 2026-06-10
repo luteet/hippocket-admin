@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
+import { Tooltip } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import {
 	Select,
@@ -57,25 +58,28 @@ export function PartnersPage() {
 									exit={{ opacity: 0, scale: 0.6 }}
 									transition={{ duration: 0.15 }}
 								>
-									<Button
-										size="icon"
-										className="size-7"
-										title="Save changes"
-										disabled={isRowSaving(row.original.id)}
-										onClick={(e) => {
-											stopRowClick(e)
-											handleSaveRow(row.original.id)
-										}}
-									>
-										{isRowSaving(row.original.id) ? (
-											<Icon
-												name="loader"
-												className="animate-spin"
-											/>
-										) : (
-											<Icon name="check" />
-										)}
-									</Button>
+									<Tooltip content="Save changes">
+										<Button
+											size="icon"
+											className="size-7"
+											disabled={isRowSaving(
+												row.original.id,
+											)}
+											onClick={(e) => {
+												stopRowClick(e)
+												handleSaveRow(row.original.id)
+											}}
+										>
+											{isRowSaving(row.original.id) ? (
+												<Icon
+													name="loader"
+													className="animate-spin"
+												/>
+											) : (
+												<Icon name="check" />
+											)}
+										</Button>
+									</Tooltip>
 								</motion.div>
 							)}
 						</AnimatePresence>

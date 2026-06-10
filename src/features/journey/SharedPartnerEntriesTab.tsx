@@ -4,6 +4,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
+import { Tooltip } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import { DataTable } from '@/components/DataTable'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
@@ -77,22 +78,24 @@ export function SharedPartnerEntriesTab({ sharedId, entries }: Props) {
 						onMouseDown={stopRowClick}
 						onClick={stopRowClick}
 					>
-						<Button
-							variant="ghost"
-							size="icon"
-							title="Edit entry"
-							onClick={() => openEdit(row.original)}
-						>
-							<Icon name="pencil" />
-						</Button>
-						<Button
-							variant="ghost"
-							size="icon"
-							title="Remove entry"
-							onClick={() => setPendingDelete(row.original)}
-						>
-							<Icon name="trash-2" />
-						</Button>
+						<Tooltip content="Edit entry">
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => openEdit(row.original)}
+							>
+								<Icon name="pencil" />
+							</Button>
+						</Tooltip>
+						<Tooltip content="Remove entry">
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => setPendingDelete(row.original)}
+							>
+								<Icon name="trash-2" />
+							</Button>
+						</Tooltip>
 					</div>
 				),
 			},

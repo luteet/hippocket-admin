@@ -1,5 +1,6 @@
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
+import { Tooltip } from '@/components/ui/tooltip'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MediaThumbnail } from '@/components/media/MediaThumbnail'
@@ -68,24 +69,26 @@ export function PartnerReviewsTab({ partnerId }: Props) {
 										</p>
 									</div>
 									<div className="flex shrink-0 gap-1">
-										<Button
-											variant="ghost"
-											size="icon"
-											title="Edit review"
-											onClick={() => openEdit(review)}
-										>
-											<Icon name="pencil" />
-										</Button>
-										<Button
-											variant="ghost"
-											size="icon"
-											title="Delete review"
-											onClick={() =>
-												setPendingDelete(review)
-											}
-										>
-											<Icon name="trash-2" />
-										</Button>
+										<Tooltip content="Edit review">
+											<Button
+												variant="ghost"
+												size="icon"
+												onClick={() => openEdit(review)}
+											>
+												<Icon name="pencil" />
+											</Button>
+										</Tooltip>
+										<Tooltip content="Delete review">
+											<Button
+												variant="ghost"
+												size="icon"
+												onClick={() =>
+													setPendingDelete(review)
+												}
+											>
+												<Icon name="trash-2" />
+											</Button>
+										</Tooltip>
 									</div>
 								</CardContent>
 							</Card>

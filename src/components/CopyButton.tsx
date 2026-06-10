@@ -2,6 +2,7 @@ import type { MouseEvent } from 'react'
 
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { Tooltip } from '@/components/ui/tooltip'
 import { Icon } from '@/components/Icon'
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard'
 
@@ -31,16 +32,17 @@ export function CopyButton({
 	}
 
 	return (
-		<Button
-			type="button"
-			variant="ghost"
-			size="icon"
-			aria-label={label}
-			title={label}
-			onClick={handleClick}
-			className={cn('size-6 text-muted-foreground', className)}
-		>
-			<Icon name={copied ? 'check' : 'copy'} className="size-3.5" />
-		</Button>
+		<Tooltip content={label}>
+			<Button
+				type="button"
+				variant="ghost"
+				size="icon"
+				aria-label={label}
+				onClick={handleClick}
+				className={cn('size-6 text-muted-foreground', className)}
+			>
+				<Icon name={copied ? 'check' : 'copy'} className="size-3.5" />
+			</Button>
+		</Tooltip>
 	)
 }

@@ -1,5 +1,6 @@
 import { Icon, type IconName } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
+import { Tooltip } from '@/components/ui/tooltip'
 import { resolveMediaUrl } from '@/lib/media'
 import { useMediaUpload } from './useMediaUpload'
 
@@ -76,15 +77,16 @@ export function DocumentUpload({
 
 			<div className="min-w-0 flex-1">
 				{resolved ? (
-					<a
-						href={resolved}
-						target="_blank"
-						rel="noreferrer"
-						className="block truncate text-sm font-medium text-primary hover:underline"
-						title={fileNameFromUrl(resolved)}
-					>
-						{fileNameFromUrl(resolved)}
-					</a>
+					<Tooltip content={fileNameFromUrl(resolved)}>
+						<a
+							href={resolved}
+							target="_blank"
+							rel="noreferrer"
+							className="block truncate text-sm font-medium text-primary hover:underline"
+						>
+							{fileNameFromUrl(resolved)}
+						</a>
+					</Tooltip>
 				) : (
 					<p className="truncate text-sm text-muted-foreground">
 						{emptyLabel}

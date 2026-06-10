@@ -4,6 +4,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
+import { Tooltip } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
@@ -57,12 +58,11 @@ export function ContactsPage() {
 				meta: { sortKey: 'phone', className: 'w-40' },
 				cell: ({ row }) =>
 					row.original.phone ? (
-						<span
-							className="block truncate"
-							title={row.original.phone}
-						>
-							{row.original.phone}
-						</span>
+						<Tooltip content={row.original.phone}>
+							<span className="block truncate">
+								{row.original.phone}
+							</span>
+						</Tooltip>
 					) : (
 						<span className="text-muted-foreground">—</span>
 					),
@@ -85,14 +85,15 @@ export function ContactsPage() {
 							</span>
 						)
 					return (
-						<Link
-							to={to}
-							className="link block truncate"
-							title={owner}
-							onClick={(e) => e.stopPropagation()}
-						>
-							{owner}
-						</Link>
+						<Tooltip content={owner}>
+							<Link
+								to={to}
+								className="link block truncate"
+								onClick={(e) => e.stopPropagation()}
+							>
+								{owner}
+							</Link>
+						</Tooltip>
 					)
 				},
 			},

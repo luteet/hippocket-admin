@@ -1,8 +1,9 @@
 import { formatDateTime, formatRelativeTime } from '@/lib/format'
+import { Tooltip } from '@/components/ui/tooltip'
 
 /**
  * Render a timestamp as relative time ("2 hours ago") with the full absolute
- * date-time available on hover (native `title`) and a machine-readable
+ * date-time available on hover (custom `Tooltip`) and a machine-readable
  * `dateTime` attribute on the `<time>` element. Null renders the shared em-dash
  * placeholder with no tooltip. Recency scans far easier than absolute-only
  * dates in lists (logs, referrals, withdrawals, chats); keep `formatDateTime`
@@ -21,12 +22,13 @@ export function TimeAgo({
 	const valid = !Number.isNaN(date.getTime())
 
 	return (
-		<time
-			dateTime={valid ? date.toISOString() : undefined}
-			title={formatDateTime(value)}
-			className={className}
-		>
-			{formatRelativeTime(value)}
-		</time>
+		<Tooltip content={formatDateTime(value)}>
+			<time
+				dateTime={valid ? date.toISOString() : undefined}
+				className={className}
+			>
+				{formatRelativeTime(value)}
+			</time>
+		</Tooltip>
 	)
 }
