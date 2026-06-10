@@ -2,9 +2,9 @@ import { Link } from 'react-router'
 
 import { DetailPage } from '@/components/detail/DetailPage'
 import { DetailBody } from '@/components/detail/DetailBody'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useChatDetailPage } from './useChatDetailPage'
 import { ChatMessagesTab } from './ChatMessagesTab'
-import { formatDateTime } from './format'
 
 export function ChatDetailPage() {
 	const {
@@ -64,7 +64,7 @@ export function ChatDetailPage() {
 								{ label: 'Chat ID', value: chat.id },
 								{
 									label: 'Created',
-									value: formatDateTime(chat.created_at),
+									render: <TimeAgo value={chat.created_at} />,
 								},
 							]}
 						/>

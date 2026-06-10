@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 
 import { DetailPage } from '@/components/detail/DetailPage'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useSavedFilterDetailPage } from './useSavedFilterDetailPage'
 import { formatDateTime, savedFilterTitle } from './format'
 
@@ -52,7 +53,7 @@ export function SavedFilterDetailPage() {
 							},
 							{
 								label: 'Created',
-								value: formatDateTime(filter.created_at),
+								render: <TimeAgo value={filter.created_at} />,
 							},
 						]
 					: undefined

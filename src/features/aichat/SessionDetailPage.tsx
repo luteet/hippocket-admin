@@ -1,6 +1,6 @@
 import { DetailPage } from '@/components/detail/DetailPage'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useSessionDetailPage } from './useSessionDetailPage'
-import { formatDateTime } from './format'
 
 export function SessionDetailPage() {
 	const {
@@ -41,11 +41,11 @@ export function SessionDetailPage() {
 							{ label: 'Session ID', value: session.id },
 							{
 								label: 'Created',
-								value: formatDateTime(session.created_at),
+								render: <TimeAgo value={session.created_at} />,
 							},
 							{
 								label: 'Updated',
-								value: formatDateTime(session.updated_at),
+								render: <TimeAgo value={session.updated_at} />,
 							},
 						]
 					: undefined

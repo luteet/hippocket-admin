@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Badge } from '@/components/ui/badge'
+import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
@@ -42,9 +43,10 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 				header: 'When',
 				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
-					<span className="text-muted-foreground whitespace-nowrap">
-						{row.original.created_at.slice(0, 16)}
-					</span>
+					<TimeAgo
+						value={row.original.created_at}
+						className="text-muted-foreground whitespace-nowrap"
+					/>
 				),
 			},
 			{

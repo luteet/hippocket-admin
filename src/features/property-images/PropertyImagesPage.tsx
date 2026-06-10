@@ -30,7 +30,8 @@ export function PropertyImagesPage() {
 								<MediaThumbnail
 									url={src}
 									className="size-full object-cover"
-									canvas size={256}
+									canvas
+									size={256}
 								/>
 							) : (
 								<Icon name="image" className="size-5" />

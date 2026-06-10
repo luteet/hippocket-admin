@@ -12,6 +12,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { DetailPage } from '@/components/detail/DetailPage'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useReferralDetailPage } from './useReferralDetailPage'
 import { formatDateTime, valueTypeLabel } from './format'
 
@@ -121,7 +122,7 @@ export function ReferralDetailPage() {
 							},
 							{
 								label: 'Created',
-								value: formatDateTime(referral.created_at),
+								render: <TimeAgo value={referral.created_at} />,
 							},
 						]
 					: undefined

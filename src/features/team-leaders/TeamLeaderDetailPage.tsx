@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 
 import { DetailPage } from '@/components/detail/DetailPage'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useTeamLeaderDetailPage } from './useTeamLeaderDetailPage'
 import { formatDateTime } from './format'
 
@@ -49,7 +50,7 @@ export function TeamLeaderDetailPage() {
 							},
 							{
 								label: 'Created',
-								value: formatDateTime(leader.created_at),
+								render: <TimeAgo value={leader.created_at} />,
 							},
 						]
 					: undefined

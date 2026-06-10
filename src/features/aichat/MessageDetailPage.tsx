@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge'
 import { DetailPage } from '@/components/detail/DetailPage'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useMessageDetailPage } from './useMessageDetailPage'
-import { formatDateTime } from './format'
 import { RoleBadge } from './components/RoleBadge'
 
 export function MessageDetailPage() {
@@ -67,7 +67,7 @@ export function MessageDetailPage() {
 							},
 							{
 								label: 'Created',
-								value: formatDateTime(message.created_at),
+								render: <TimeAgo value={message.created_at} />,
 							},
 							{ label: 'Message ID', value: message.id },
 						]

@@ -2,8 +2,9 @@ import { Link } from 'react-router'
 
 import { Badge } from '@/components/ui/badge'
 import { DetailPage } from '@/components/detail/DetailPage'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useContactDetailPage } from './useContactDetailPage'
-import { formatDateTime, fullName } from './format'
+import { fullName } from './format'
 
 export function ContactDetailPage() {
 	const { contact, isLoading, isDeleting, handleDelete, goBack, goToEdit } =
@@ -89,13 +90,11 @@ export function ContactDetailPage() {
 							{ label: 'Slug', value: contact.slug },
 							{
 								label: 'Created',
-								value: formatDateTime(contact.date),
+								render: <TimeAgo value={contact.date} />,
 							},
 							{
 								label: 'Deleted at',
-								value: contact.deleted_at
-									? formatDateTime(contact.deleted_at)
-									: '',
+								render: <TimeAgo value={contact.deleted_at} />,
 							},
 						]
 					: undefined

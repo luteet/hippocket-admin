@@ -1,8 +1,8 @@
 import { DetailPage } from '@/components/detail/DetailPage'
 import { DetailBody } from '@/components/detail/DetailBody'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useSharedPartnerDetailPage } from './useSharedPartnerDetailPage'
 import { SharedPartnerEntriesTab } from './SharedPartnerEntriesTab'
-import { formatDateTime } from './format'
 
 export function SharedPartnerDetailPage() {
 	const {
@@ -45,7 +45,9 @@ export function SharedPartnerDetailPage() {
 								{ label: 'ID', value: shared.id },
 								{
 									label: 'Created',
-									value: formatDateTime(shared.created_at),
+									render: (
+										<TimeAgo value={shared.created_at} />
+									),
 								},
 							]}
 						/>

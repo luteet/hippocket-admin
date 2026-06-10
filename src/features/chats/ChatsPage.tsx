@@ -4,10 +4,10 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import type { Chat } from '@/types/api'
 import { useChatsPage } from './useChatsPage'
-import { formatDateTime } from './format'
 
 export function ChatsPage() {
 	const {
@@ -44,9 +44,10 @@ export function ChatsPage() {
 				header: 'Created',
 				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
-					<span className="text-muted-foreground">
-						{formatDateTime(row.original.created_at)}
-					</span>
+					<TimeAgo
+						value={row.original.created_at}
+						className="text-muted-foreground"
+					/>
 				),
 			},
 		],

@@ -3,7 +3,7 @@ import { DetailGrid } from '@/components/DetailList'
 import { DetailPage } from '@/components/detail/DetailPage'
 import { DetailBody } from '@/components/detail/DetailBody'
 import { MediaThumbnail } from '@/components/media/MediaThumbnail'
-import { formatDateTime } from '@/lib/format'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useGroupDetailPage } from './useGroupDetailPage'
 import { ColorRow } from './components/ColorRow'
 
@@ -113,7 +113,9 @@ export function GroupDetailPage() {
 								},
 								{
 									label: 'Deleted at',
-									value: formatDateTime(group.deleted_at),
+									render: (
+										<TimeAgo value={group.deleted_at} />
+									),
 								},
 							]}
 						/>

@@ -4,10 +4,11 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
+import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import type { SavedFilter } from '@/types/api'
 import { useSavedFiltersPage } from './useSavedFiltersPage'
-import { formatDateTime, savedFilterTitle } from './format'
+import { savedFilterTitle } from './format'
 
 export function SavedFiltersPage() {
 	const {
@@ -66,9 +67,10 @@ export function SavedFiltersPage() {
 				header: 'Created At',
 				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
-					<span className="whitespace-nowrap text-muted-foreground">
-						{formatDateTime(row.original.created_at)}
-					</span>
+					<TimeAgo
+						value={row.original.created_at}
+						className="whitespace-nowrap text-muted-foreground"
+					/>
 				),
 			},
 		],

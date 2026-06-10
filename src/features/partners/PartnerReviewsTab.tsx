@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MediaThumbnail } from '@/components/media/MediaThumbnail'
+import { TimeAgo } from '@/components/TimeAgo'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { PartnerReviewDialog } from './PartnerReviewDialog'
 import { usePartnerReviewsTab } from './usePartnerReviewsTab'
-import { formatDateTime } from './format'
 
 interface Props {
 	partnerId: string
@@ -62,7 +62,9 @@ export function PartnerReviewsTab({ partnerId }: Props) {
 											{review.text}
 										</p>
 										<p className="pt-4 text-xs text-muted-foreground">
-											{formatDateTime(review.created_at)}
+											<TimeAgo
+												value={review.created_at}
+											/>
 										</p>
 									</div>
 									<div className="flex shrink-0 gap-1">

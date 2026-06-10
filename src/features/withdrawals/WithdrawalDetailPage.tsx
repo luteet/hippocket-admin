@@ -2,13 +2,9 @@ import { Link } from 'react-router'
 
 import { Badge } from '@/components/ui/badge'
 import { DetailPage } from '@/components/detail/DetailPage'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useWithdrawalDetailPage } from './useWithdrawalDetailPage'
-import {
-	formatAmount,
-	formatDateTime,
-	methodLabel,
-	STATUS_BADGE,
-} from './format'
+import { formatAmount, methodLabel, STATUS_BADGE } from './format'
 
 export function WithdrawalDetailPage() {
 	const {
@@ -89,7 +85,9 @@ export function WithdrawalDetailPage() {
 							{ label: 'Zelle', value: withdrawal.zelle },
 							{
 								label: 'Created',
-								value: formatDateTime(withdrawal.created_at),
+								render: (
+									<TimeAgo value={withdrawal.created_at} />
+								),
 							},
 						]
 					: undefined

@@ -5,6 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
@@ -15,12 +16,7 @@ import {
 	STATUS_OPTIONS,
 	METHOD_OPTIONS,
 } from './useWithdrawalsPage'
-import {
-	formatAmount,
-	formatDateTime,
-	methodLabel,
-	STATUS_BADGE,
-} from './format'
+import { formatAmount, methodLabel, STATUS_BADGE } from './format'
 
 export function WithdrawalsPage() {
 	const {
@@ -90,9 +86,10 @@ export function WithdrawalsPage() {
 				header: 'Created At',
 				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
-					<span className="text-muted-foreground">
-						{formatDateTime(row.original.created_at)}
-					</span>
+					<TimeAgo
+						value={row.original.created_at}
+						className="text-muted-foreground"
+					/>
 				),
 			},
 		],

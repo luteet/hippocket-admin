@@ -3,11 +3,11 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Reveal } from '@/components/Reveal'
+import { TimeAgo } from '@/components/TimeAgo'
 import { DataTable } from '@/components/DataTable'
 import { PageSizeSelect } from '@/components/list/PageSizeSelect'
 import type { ChatMedia } from '@/types/api'
 import { useChatMediaPage } from './useChatMediaPage'
-import { formatDateTime } from './format'
 import { MediaFileLink } from './components/MediaFileLink'
 
 export function ChatMediaPage() {
@@ -32,9 +32,10 @@ export function ChatMediaPage() {
 				header: 'Created',
 				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
-					<span className="text-muted-foreground">
-						{formatDateTime(row.original.created_at)}
-					</span>
+					<TimeAgo
+						value={row.original.created_at}
+						className="text-muted-foreground"
+					/>
 				),
 			},
 		],

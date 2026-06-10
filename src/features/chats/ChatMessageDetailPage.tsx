@@ -1,8 +1,8 @@
 import { Link } from 'react-router'
 
 import { DetailPage } from '@/components/detail/DetailPage'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useChatMessageDetailPage } from './useChatMessageDetailPage'
-import { formatDateTime } from './format'
 import { ReadBadge } from './components/ReadBadge'
 import { MediaFileLink } from './components/MediaFileLink'
 
@@ -66,7 +66,7 @@ export function ChatMessageDetailPage() {
 							},
 							{
 								label: 'Created',
-								value: formatDateTime(message.created_at),
+								render: <TimeAgo value={message.created_at} />,
 							},
 							{ label: 'Message ID', value: message.id },
 						]

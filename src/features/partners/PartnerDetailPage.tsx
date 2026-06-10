@@ -54,7 +54,8 @@ export function PartnerDetailPage() {
 										shape="square"
 										placeholderIcon="image"
 										fit="contain"
-										canvas size={256}
+										canvas
+										size={256}
 									/>
 								),
 								badge: partner.is_hide ? (
@@ -141,9 +142,9 @@ export function PartnerDetailPage() {
 									value:
 										partner.potential_value != null
 											? formatAmount(
-												partner.potential_value,
-												partner.value_type,
-											)
+													partner.potential_value,
+													partner.value_type,
+												)
 											: '',
 								},
 								{

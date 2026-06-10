@@ -3,12 +3,13 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
+import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import type { AiMessage } from '@/types/api'
 import { useMessagesPage, ALL, ROLE_OPTIONS } from './useMessagesPage'
-import { formatDateTime, previewContent } from './format'
+import { previewContent } from './format'
 import { RoleBadge } from './components/RoleBadge'
 import { SessionFilter } from './components/SessionFilter'
 
@@ -75,9 +76,10 @@ export function MessagesPage() {
 				header: 'Created',
 				meta: { sortKey: 'created_at', className: 'w-40' },
 				cell: ({ row }) => (
-					<span className="text-muted-foreground">
-						{formatDateTime(row.original.created_at)}
-					</span>
+					<TimeAgo
+						value={row.original.created_at}
+						className="text-muted-foreground"
+					/>
 				),
 			},
 		],

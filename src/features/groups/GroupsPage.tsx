@@ -4,10 +4,10 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
-import { formatDateTime } from '@/lib/format'
 import type { Group } from '@/types/api'
 import { useGroupsPage, DELETED_OPTIONS } from './useGroupsPage'
 
@@ -71,9 +71,10 @@ export function GroupsPage() {
 				header: 'Deleted At',
 				meta: { sortKey: 'deleted_at', className: 'w-40' },
 				cell: ({ row }) => (
-					<span className="text-muted-foreground">
-						{formatDateTime(row.original.deleted_at)}
-					</span>
+					<TimeAgo
+						value={row.original.deleted_at}
+						className="text-muted-foreground"
+					/>
 				),
 			},
 		],

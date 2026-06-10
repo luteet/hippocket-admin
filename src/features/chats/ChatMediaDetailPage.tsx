@@ -1,6 +1,7 @@
 import { DetailPage } from '@/components/detail/DetailPage'
+import { TimeAgo } from '@/components/TimeAgo'
 import { useChatMediaDetailPage } from './useChatMediaDetailPage'
-import { formatDateTime, isImage, mediaUrl } from './format'
+import { isImage, mediaUrl } from './format'
 import { MediaFileLink } from './components/MediaFileLink'
 
 export function ChatMediaDetailPage() {
@@ -58,7 +59,7 @@ export function ChatMediaDetailPage() {
 							{ label: 'Media ID', value: media.id },
 							{
 								label: 'Created',
-								value: formatDateTime(media.created_at),
+								render: <TimeAgo value={media.created_at} />,
 							},
 						]
 					: undefined

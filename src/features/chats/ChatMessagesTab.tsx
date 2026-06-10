@@ -4,11 +4,12 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { TimeAgo } from '@/components/TimeAgo'
 import { DataTable } from '@/components/DataTable'
 import { PageSizeSelect } from '@/components/list/PageSizeSelect'
 import type { ChatMessage } from '@/types/api'
 import { useChatMessagesTab } from './useChatMessagesTab'
-import { formatDateTime, previewText } from './format'
+import { previewText } from './format'
 import { ReadBadge } from './components/ReadBadge'
 
 interface Props {
@@ -53,9 +54,10 @@ export function ChatMessagesTab({ chatId }: Props) {
 				accessorKey: 'created_at',
 				header: 'Created',
 				cell: ({ row }) => (
-					<span className="text-muted-foreground">
-						{formatDateTime(row.original.created_at)}
-					</span>
+					<TimeAgo
+						value={row.original.created_at}
+						className="text-muted-foreground"
+					/>
 				),
 			},
 		],
