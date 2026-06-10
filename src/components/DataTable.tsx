@@ -135,6 +135,11 @@ interface DataTableProps<TData> {
 	 * current page size so the loading state matches the expected row count.
 	 */
 	skeletonRows?: number
+	/**
+	 * Pin the header row while the body scrolls (on by default). Set `false` for
+	 * a short embedded table where a bounded inner scroll area would look off.
+	 */
+	stickyHeader?: boolean
 }
 
 export function DataTable<TData>({
@@ -148,6 +153,7 @@ export function DataTable<TData>({
 	reorder,
 	minWidth,
 	skeletonRows = 5,
+	stickyHeader = true,
 }: DataTableProps<TData>) {
 	// A local mirror of the rows so a drop reorders them synchronously. dnd-kit
 	// resets the dragged row's transform on drop; if the order hasn't changed
@@ -212,22 +218,22 @@ export function DataTable<TData>({
 
 	const handleRowClick = onRowClick
 		? (row: TData) => (e: React.MouseEvent) => {
-				const start = downPos.current
-				downPos.current = null
-				if (
-					!start ||
-					Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
-				) {
-					return
-				}
-				onRowClick(row)
+			const start = downPos.current
+			downPos.current = null
+			if (
+				!start ||
+				Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
+			) {
+				return
 			}
+			onRowClick(row)
+		}
 		: undefined
 
 	const rowMouseDown = onRowClick
 		? (e: React.MouseEvent<HTMLTableRowElement>) => {
-				downPos.current = { x: e.clientX, y: e.clientY }
-			}
+			downPos.current = { x: e.clientX, y: e.clientY }
+		}
 		: undefined
 
 	const renderCells = (row: Row<TData>) =>
@@ -272,6 +278,7 @@ export function DataTable<TData>({
 				    the rows and the sort buttons stay put under the cursor. */}
 			<Table
 				className={sorting ? 'table-fixed' : undefined}
+				stickyHeader={stickyHeader}
 				style={minWidth ? { minWidth } : undefined}
 			>
 				<TableHeader>
@@ -289,9 +296,9 @@ export function DataTable<TData>({
 								const label = header.isPlaceholder
 									? null
 									: flexRender(
-											header.column.columnDef.header,
-											header.getContext(),
-										)
+										header.column.columnDef.header,
+										header.getContext(),
+									)
 								return (
 									<TableHead
 										key={header.id}

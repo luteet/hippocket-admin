@@ -1,0 +1,41 @@
+// Shared DataTable scroll container + sticky header.
+//
+// The page-scroll model traps `position: sticky` on a <thead>: the rounded
+// card's `overflow: hidden` and the table's horizontal-scroll wrapper each
+// establish a scroll container with no scrollable height, so a header stuck to
+// "the page" never moves. Instead we bound the table's own height here and let
+// the body scroll inside it, so the header sticks to the top of THIS container.
+//
+// In @layer components so utilities passed via className still win.
+@layer components {
+	.table-scroll {
+		overflow: auto;
+		// Conservative so the container stays within the viewport (chrome above:
+		// page padding + header + toolbar; below: pagination + padding), which
+		// keeps the pinned header on screen. Override per-page via --table-max-h.
+		max-height: var(--table-max-h, calc(100dvh - 17rem));
+
+		@media (min-width: 768px) {
+			max-height: var(--table-max-h, calc(100dvh - 20rem));
+		}
+
+		// Pin the header row to the top of the scroll container. The opaque
+		// background stops body rows bleeding through as they scroll under it;
+		// the inset shadow stands in for the bottom border, which border-collapse
+		// drops once the cells are stuck.
+		thead th {
+			position: sticky;
+			top: 0;
+			z-index: 10;
+			background-color: var(--card);
+			box-shadow: inset 0 -1px 0 var(--border);
+		}
+
+		// The th inset shadow already draws the divider under the header, so drop
+		// the header row's own bottom border — otherwise the two render as a
+		// doubled line above the first body row.
+		thead tr {
+			border-bottom: 0;
+		}
+	}
+}

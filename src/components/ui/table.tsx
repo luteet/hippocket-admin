@@ -2,9 +2,22 @@ import { type ComponentProps } from 'react'
 
 import { cn } from '@/lib/utils'
 
-function Table({ className, ...props }: ComponentProps<'table'>) {
+// `stickyHeader` (default on) makes the wrapper a bounded scroll container so
+// the <thead> can stick to its top while the body scrolls — see
+// `src/styles/components/_table.scss`. Pass `false` to opt a short embedded
+// table out and fall back to plain horizontal-only scrolling.
+function Table({
+	className,
+	stickyHeader = true,
+	...props
+}: ComponentProps<'table'> & { stickyHeader?: boolean }) {
 	return (
-		<div className="relative w-full overflow-x-auto">
+		<div
+			className={cn(
+				'relative w-full',
+				stickyHeader ? 'table-scroll' : 'overflow-x-auto',
+			)}
+		>
 			<table
 				className={cn('w-full caption-bottom text-sm', className)}
 				{...props}
@@ -30,7 +43,7 @@ function TableRow({ className, ...props }: ComponentProps<'tr'>) {
 	return (
 		<tr
 			className={cn(
-				'border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
+				'first:last:border-b-0 border-b border-border transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
 				className,
 			)}
 			{...props}
