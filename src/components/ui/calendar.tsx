@@ -8,9 +8,13 @@ import { cn } from '@/lib/utils'
 // drills down from the day grid into month- and year-picker grids.
 export function Calendar({
 	value,
+	min,
+	max,
 	onSelect,
 }: {
 	value?: string
+	min?: string
+	max?: string
 	onSelect: (value: string) => void
 }) {
 	const {
@@ -23,7 +27,7 @@ export function Calendar({
 		drillDown,
 		selectMonth,
 		selectYear,
-	} = useCalendar({ value, onSelect })
+	} = useCalendar({ value, min, max, onSelect })
 
 	return (
 		<div className="w-64">
@@ -72,6 +76,7 @@ export function Calendar({
 							<button
 								key={cell.iso}
 								type="button"
+								disabled={cell.isDisabled}
 								onClick={() => onSelect(cell.iso)}
 								className={cn(
 									'flex size-8 items-center justify-center rounded-md text-sm transition-colors hover:bg-muted',
@@ -80,6 +85,8 @@ export function Calendar({
 										'font-medium text-primary',
 									cell.isSelected &&
 										'bg-primary text-primary-foreground hover:bg-primary',
+									cell.isDisabled &&
+										'pointer-events-none text-muted-foreground/40',
 								)}
 							>
 								{cell.day}
@@ -95,6 +102,7 @@ export function Calendar({
 						<button
 							key={cell.month}
 							type="button"
+							disabled={cell.isDisabled}
 							onClick={() => selectMonth(cell.month)}
 							className={cn(
 								'flex h-9 items-center justify-center rounded-md text-sm transition-colors hover:bg-muted',
@@ -103,6 +111,8 @@ export function Calendar({
 									'font-medium text-primary',
 								cell.isSelected &&
 									'bg-primary text-primary-foreground hover:bg-primary',
+								cell.isDisabled &&
+									'pointer-events-none text-muted-foreground/40',
 							)}
 						>
 							{cell.label.slice(0, 3)}
@@ -117,6 +127,7 @@ export function Calendar({
 						<button
 							key={cell.year}
 							type="button"
+							disabled={cell.isDisabled}
 							onClick={() => selectYear(cell.year)}
 							className={cn(
 								'flex h-9 items-center justify-center rounded-md text-sm transition-colors hover:bg-muted',
@@ -125,6 +136,8 @@ export function Calendar({
 									'font-medium text-primary',
 								cell.isSelected &&
 									'bg-primary text-primary-foreground hover:bg-primary',
+								cell.isDisabled &&
+									'pointer-events-none text-muted-foreground/40',
 							)}
 						>
 							{cell.year}

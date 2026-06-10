@@ -123,6 +123,7 @@ export function ReferralExportPage() {
 							value={createdFrom}
 							onChange={setCreatedFrom}
 							placeholder="Any date"
+							max={createdTo || undefined}
 						/>
 					</Field>
 
@@ -131,6 +132,7 @@ export function ReferralExportPage() {
 							value={createdTo}
 							onChange={setCreatedTo}
 							placeholder="Any date"
+							min={createdFrom || undefined}
 						/>
 					</Field>
 

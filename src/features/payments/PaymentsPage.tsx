@@ -145,11 +145,13 @@ export function PaymentsPage() {
 							label="From"
 							value={createdFrom}
 							onChange={setCreatedFrom}
+							max={createdTo || undefined}
 						/>
 						<FilterDate
 							label="To"
 							value={createdTo}
 							onChange={setCreatedTo}
+							min={createdFrom || undefined}
 						/>
 					</div>
 				</FiltersPopover>

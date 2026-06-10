@@ -13,11 +13,15 @@ export function FilterDate({
 	value,
 	onChange,
 	placeholder,
+	min,
+	max,
 }: {
 	label: string
 	value: string
 	onChange: (value: string) => void
 	placeholder?: string
+	min?: string
+	max?: string
 }) {
 	const container = useFilterContainer()
 	const { open, onOpenChange } = useFilterOpenField()
@@ -29,6 +33,8 @@ export function FilterDate({
 				onChange={onChange}
 				container={container}
 				placeholder={placeholder ?? label}
+				min={min}
+				max={max}
 				open={open}
 				onOpenChange={onOpenChange}
 			/>

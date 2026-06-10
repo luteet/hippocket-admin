@@ -19,9 +19,9 @@ export function GroupMultiSelect({
 }) {
 	const label = selected.length
 		? options
-			.filter((o) => selected.includes(o.id))
-			.map((o) => o.name)
-			.join(', ')
+				.filter((o) => selected.includes(o.id))
+				.map((o) => o.name)
+				.join(', ')
 		: 'Select groups'
 
 	return (

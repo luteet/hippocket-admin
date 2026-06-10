@@ -8,6 +8,7 @@ export interface CalendarCell {
 	iso: string
 	isSelected: boolean
 	isToday: boolean
+	isDisabled: boolean
 }
 
 export interface MonthCell {
@@ -15,12 +16,14 @@ export interface MonthCell {
 	label: string
 	isSelected: boolean
 	isCurrent: boolean
+	isDisabled: boolean
 }
 
 export interface YearCell {
 	year: number
 	isSelected: boolean
 	isCurrent: boolean
+	isDisabled: boolean
 }
 
 // Which sub-view the calendar is showing: the day grid, the month grid, or the
@@ -30,10 +33,17 @@ export type CalendarView = 'days' | 'months' | 'years'
 
 interface UseCalendarParams {
 	value?: string
+	min?: string
+	max?: string
 	onSelect: (value: string) => void
 }
 
-export function useCalendar({ value, onSelect }: UseCalendarParams) {
+export function useCalendar({ value, min, max, onSelect }: UseCalendarParams) {
+	// ISO `YYYY-MM-DD` strings compare lexicographically, so range checks are
+	// plain string comparisons. A whole month/year is disabled only when its
+	// entire span falls outside [min, max].
+	const outOfRange = (from: string, to: string) =>
+		(!!min && to < min) || (!!max && from > max)
 	const today = new Date()
 	const selected = parseISO(value)
 	const [view, setView] = useState(() =>
@@ -62,32 +72,38 @@ export function useCalendar({ value, onSelect }: UseCalendarParams) {
 				iso,
 				isSelected: iso === value,
 				isToday: iso === todayISO,
+				isDisabled: outOfRange(iso, iso),
 			}
 		}),
 	]
 
-	const months: MonthCell[] = MONTHS.map((label, month) => ({
-		month,
-		label,
-		isSelected: selected?.y === view.y && selected?.m === month,
-		isCurrent:
-			today.getFullYear() === view.y && today.getMonth() === month,
-	}))
+	const months: MonthCell[] = MONTHS.map((label, month) => {
+		const lastDay = new Date(view.y, month + 1, 0).getDate()
+		return {
+			month,
+			label,
+			isSelected: selected?.y === view.y && selected?.m === month,
+			isCurrent:
+				today.getFullYear() === view.y && today.getMonth() === month,
+			isDisabled: outOfRange(
+				toISO(view.y, month, 1),
+				toISO(view.y, month, lastDay),
+			),
+		}
+	})
 
 	// The year grid shows a fixed window of `YEARS_PER_PAGE` years containing
 	// the current view year.
 	const yearStart = view.y - (view.y % YEARS_PER_PAGE)
-	const years: YearCell[] = Array.from(
-		{ length: YEARS_PER_PAGE },
-		(_, i) => {
-			const year = yearStart + i
-			return {
-				year,
-				isSelected: selected?.y === year,
-				isCurrent: today.getFullYear() === year,
-			}
-		},
-	)
+	const years: YearCell[] = Array.from({ length: YEARS_PER_PAGE }, (_, i) => {
+		const year = yearStart + i
+		return {
+			year,
+			isSelected: selected?.y === year,
+			isCurrent: today.getFullYear() === year,
+			isDisabled: outOfRange(`${year}-01-01`, `${year}-12-31`),
+		}
+	})
 
 	// The header chevrons step by month / year / year-page depending on mode.
 	const shift = (delta: number) => {
@@ -99,8 +115,7 @@ export function useCalendar({ value, onSelect }: UseCalendarParams) {
 					m: ((next % 12) + 12) % 12,
 				}
 			})
-		else if (mode === 'months')
-			setView((v) => ({ ...v, y: v.y + delta }))
+		else if (mode === 'months') setView((v) => ({ ...v, y: v.y + delta }))
 		else setView((v) => ({ ...v, y: v.y + delta * YEARS_PER_PAGE }))
 	}
 

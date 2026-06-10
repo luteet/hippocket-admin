@@ -22,6 +22,8 @@ export function DatePicker({
 	placeholder = 'Pick a date',
 	container,
 	align = 'start',
+	min,
+	max,
 	open: openProp,
 	onOpenChange,
 }: DatePickerProps) {
@@ -51,6 +53,8 @@ export function DatePicker({
 			>
 				<Calendar
 					value={value}
+					min={min}
+					max={max}
 					onSelect={(v) => {
 						onChange(v)
 						setOpen(false)
