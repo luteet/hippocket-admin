@@ -2,12 +2,13 @@ import {
 	forwardRef,
 	type ComponentPropsWithoutRef,
 	type ComponentRef,
-	type ReactElement,
-	type ReactNode,
 } from 'react'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
+import type { TooltipProps } from '@/components/ui/tooltip.types'
 import { cn } from '@/lib/utils'
+
+export type { TooltipProps }
 
 // `TooltipProvider` is mounted once at the app root (see App.tsx) so any
 // `<Tooltip>` works without its own provider. The low-level primitives are
@@ -30,20 +31,6 @@ const TooltipContent = forwardRef<
 	</TooltipPrimitive.Portal>
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
-
-interface TooltipProps {
-	/** The hover hint. Falsy content renders `children` with no tooltip. */
-	content: ReactNode
-	/** A single element that receives the hover/focus trigger behaviour. */
-	children: ReactElement
-	side?: TooltipPrimitive.TooltipContentProps['side']
-	align?: TooltipPrimitive.TooltipContentProps['align']
-	sideOffset?: number
-	/** Hover delay before the tooltip opens (ms). Inherits the provider default. */
-	delayDuration?: number
-	/** Extra classes for the tooltip content. */
-	className?: string
-}
 
 /**
  * Custom replacement for the native `title` attribute: a styled, on-brand

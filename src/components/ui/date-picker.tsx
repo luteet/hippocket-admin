@@ -1,5 +1,3 @@
-import { useState } from 'react'
-
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -8,28 +6,12 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover'
+import type { DatePickerProps } from '@/components/ui/date-picker.types'
+import { formatDisplay } from '@/components/ui/date-picker.utils'
+import { useDatePicker } from '@/components/ui/useDatePicker'
 import { cn } from '@/lib/utils'
 
-const MONTHS_SHORT = [
-	'Jan',
-	'Feb',
-	'Mar',
-	'Apr',
-	'May',
-	'Jun',
-	'Jul',
-	'Aug',
-	'Sep',
-	'Oct',
-	'Nov',
-	'Dec',
-]
-
-function formatDisplay(value: string) {
-	const [y, m, d] = value.split('-').map(Number)
-	if (!y || !m || !d) return value
-	return `${MONTHS_SHORT[m - 1]} ${d}, ${y}`
-}
+export type { DatePickerProps }
 
 // A date field: a button showing the picked date that opens a calendar popover.
 // Value is a `YYYY-MM-DD` string (empty = unset). `container` nests the popover
@@ -42,22 +24,9 @@ export function DatePicker({
 	align = 'start',
 	open: openProp,
 	onOpenChange,
-}: {
-	value: string
-	onChange: (value: string) => void
-	placeholder?: string
-	container?: HTMLElement | null
-	align?: 'start' | 'center' | 'end'
-	/** Optional controlled open state (e.g. coordinated by FiltersPopover). */
-	open?: boolean
-	onOpenChange?: (open: boolean) => void
-}) {
-	const [openState, setOpenState] = useState(false)
-	const open = openProp ?? openState
-	const setOpen = (next: boolean) => {
-		onOpenChange?.(next)
-		if (openProp === undefined) setOpenState(next)
-	}
+}: DatePickerProps) {
+	const { open, setOpen } = useDatePicker({ open: openProp, onOpenChange })
+
 	return (
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>

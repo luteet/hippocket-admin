@@ -1,5 +1,3 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-
 import { Icon } from '@/components/Icon'
 import { Input } from '@/components/ui/input'
 import {
@@ -7,42 +5,11 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover'
-import type { FormFieldOption } from '@/components/form/types'
+import type { ComboboxProps } from '@/components/ui/combobox.types'
+import { useCombobox } from '@/components/ui/useCombobox'
 import { cn } from '@/lib/utils'
 
-interface ComboboxProps {
-	value?: string
-	onValueChange: (value: string) => void
-	options: FormFieldOption[]
-	placeholder?: string
-	searchPlaceholder?: string
-	emptyText?: string
-	disabled?: boolean
-	/**
-	 * Server-side search. When provided, the query is sent here (debounced)
-	 * instead of filtering `options` locally — `options` are treated as the
-	 * already-filtered results. Use for lists too large to load in full.
-	 */
-	onSearch?: (query: string) => void
-	/** Show a loading row (server-search results are in flight). */
-	loading?: boolean
-	/**
-	 * Label to display for the current `value` when it isn't present in
-	 * `options` (e.g. the saved selection before a server search returns it).
-	 */
-	selectedLabel?: string
-	/** Load the next page when the user scrolls near the bottom of the list. */
-	onLoadMore?: () => void
-	/** Another page is available to load. */
-	hasMore?: boolean
-	/** The next page is currently loading. */
-	loadingMore?: boolean
-}
-
-// Distance (px) from the bottom of the list at which the next page is fetched.
-const LOAD_MORE_THRESHOLD = 48
-
-const SEARCH_DEBOUNCE = 250
+export type { ComboboxProps }
 
 /**
  * A single-select dropdown with a search field, for option lists too long to
@@ -54,92 +21,33 @@ const SEARCH_DEBOUNCE = 250
  * Filters client-side by default; pass `onSearch` to search server-side for
  * lists too large to load in full.
  */
-export function Combobox({
-	value,
-	onValueChange,
-	options,
-	placeholder = 'Select…',
-	searchPlaceholder = 'Search…',
-	emptyText = 'No results',
-	disabled,
-	onSearch,
-	loading,
-	selectedLabel,
-	onLoadMore,
-	hasMore,
-	loadingMore,
-}: ComboboxProps) {
-	const [open, setOpen] = useState(false)
-	const [query, setQuery] = useState('')
-	const [active, setActive] = useState(0)
-	const listRef = useRef<HTMLDivElement>(null)
-
-	const selected = options.find((o) => o.value === value)
-	// Fall back to the caller-supplied label (then the raw value) so the trigger
-	// still names the current selection even when it isn't in `options`.
-	const displayLabel =
-		selected?.label ?? (value ? (selectedLabel ?? value) : '')
-
-	const filtered = useMemo(() => {
-		// Server-side mode: trust the caller's already-filtered options.
-		if (onSearch) return options
-		const q = query.trim().toLowerCase()
-		if (!q) return options
-		return options.filter((o) => o.label.toLowerCase().includes(q))
-	}, [options, query, onSearch])
-
-	// Server-side mode: push the (debounced) query to the caller while open.
-	useEffect(() => {
-		if (!onSearch || !open) return
-		const t = setTimeout(() => onSearch(query), SEARCH_DEBOUNCE)
-		return () => clearTimeout(t)
-	}, [query, open, onSearch])
-
-	// Scroll the highlighted row into view while arrow-keying through a long
-	// list. (The filter resets the highlight in the input's change handler.)
-	useEffect(() => {
-		if (!open) return
-		listRef.current
-			?.querySelector('[data-active="true"]')
-			?.scrollIntoView({ block: 'nearest' })
-	}, [active, open])
-
-	function choose(next: string) {
-		onValueChange(next)
-		setOpen(false)
-		setQuery('')
-	}
-
-	function onListScroll(e: React.UIEvent<HTMLDivElement>) {
-		if (!onLoadMore || !hasMore || loadingMore) return
-		const el = e.currentTarget
-		const distanceToBottom =
-			el.scrollHeight - el.scrollTop - el.clientHeight
-		if (distanceToBottom < LOAD_MORE_THRESHOLD) onLoadMore()
-	}
-
-	function onInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-		if (e.key === 'ArrowDown') {
-			e.preventDefault()
-			setActive((i) => Math.min(i + 1, filtered.length - 1))
-		} else if (e.key === 'ArrowUp') {
-			e.preventDefault()
-			setActive((i) => Math.max(i - 1, 0))
-		} else if (e.key === 'Enter') {
-			e.preventDefault()
-			const o = filtered[active]
-			if (o) choose(o.value)
-		}
-	}
+export function Combobox(props: ComboboxProps) {
+	const {
+		value,
+		placeholder = 'Select…',
+		searchPlaceholder = 'Search…',
+		emptyText = 'No results',
+		disabled,
+		loading,
+		loadingMore,
+	} = props
+	const {
+		open,
+		query,
+		active,
+		listRef,
+		displayLabel,
+		filtered,
+		choose,
+		setActive,
+		onOpenChange,
+		onQueryChange,
+		onListScroll,
+		onInputKeyDown,
+	} = useCombobox(props)
 
 	return (
-		<Popover
-			open={open}
-			onOpenChange={(next) => {
-				setOpen(next)
-				if (!next) setQuery('')
-			}}
-		>
+		<Popover open={open} onOpenChange={onOpenChange}>
 			<PopoverTrigger asChild>
 				<button
 					type="button"
@@ -159,10 +67,7 @@ export function Combobox({
 					<Input
 						autoFocus
 						value={query}
-						onChange={(e) => {
-							setQuery(e.target.value)
-							setActive(0)
-						}}
+						onChange={(e) => onQueryChange(e.target.value)}
 						onKeyDown={onInputKeyDown}
 						placeholder={searchPlaceholder}
 					/>

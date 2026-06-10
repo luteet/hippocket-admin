@@ -23,6 +23,7 @@
       "Bash(timeout:*)",
       "Bash(find:*)",
       "Bash(grep:*)",
+      "Bash(wc:*)",
       "Bash(rg:*)",
       "Bash(rm:*)",
       "Bash(rmdir:*)",
