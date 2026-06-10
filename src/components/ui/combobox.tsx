@@ -98,7 +98,7 @@ export function Combobox(props: ComboboxProps) {
 								onClick={() => choose(o.value)}
 								onMouseMove={() => setActive(i)}
 								className={cn(
-									'select-item hover:bg-muted',
+									'select-item text-start hover:bg-muted',
 									i === active && 'bg-muted',
 								)}
 							>
