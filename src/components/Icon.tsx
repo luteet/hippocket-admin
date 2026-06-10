@@ -11,6 +11,7 @@ export type IconName =
 	| 'pencil'
 	| 'trash-2'
 	| 'circle-check'
+	| 'copy'
 	| 'chevron-down'
 	| 'chevron-up'
 	| 'chevrons-up-down'

@@ -49,8 +49,16 @@ export function AgentDetailPage() {
 			fields={
 				agent
 					? [
-							{ label: 'Username', value: agent.username },
-							{ label: 'Phone', value: agent.phone },
+							{
+								label: 'Username',
+								value: agent.username,
+								copyable: true,
+							},
+							{
+								label: 'Phone',
+								value: agent.phone,
+								copyable: true,
+							},
 							{
 								label: 'Role',
 								value: agent.role,
@@ -98,6 +106,7 @@ export function AgentDetailPage() {
 							{
 								label: 'Referral code',
 								value: agent.referral_code ?? '',
+								copyable: true,
 							},
 							{
 								label: 'License number',

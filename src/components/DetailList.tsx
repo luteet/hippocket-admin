@@ -2,6 +2,7 @@ import { type ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 import { Icon } from '@/components/Icon'
+import { CopyButton } from '@/components/CopyButton'
 
 /**
  * Declarative config for one {@link DetailRow}, consumed by `<DetailBody>` /
@@ -18,6 +19,12 @@ export interface DetailField {
 	hidden?: boolean
 	/** Span both columns of the grid (for long text like descriptions). */
 	fullWidth?: boolean
+	/**
+	 * Show a copy button after the value. Pass `true` to copy `value`, or a
+	 * string to copy that instead (e.g. for `render` rows like links). Falsy
+	 * values render no button.
+	 */
+	copyable?: boolean | string | number | null
 }
 
 /**
@@ -61,6 +68,7 @@ export function DetailRow({
 	bool,
 	capitalize,
 	className,
+	copyText,
 	children,
 }: {
 	label: string
@@ -68,6 +76,8 @@ export function DetailRow({
 	bool?: boolean
 	capitalize?: boolean
 	className?: string
+	/** When set, render a copy button for this string after the value. */
+	copyText?: string
 	children?: ReactNode
 }) {
 	return (
@@ -75,23 +85,32 @@ export function DetailRow({
 			<dt className="text-xs text-muted-foreground">{label}</dt>
 			<dd
 				className={cn(
-					'pt-1 wrap-break-word',
+					'flex items-start gap-1 pt-1 wrap-break-word',
 					capitalize && 'capitalize',
 				)}
 			>
-				{children ??
-					(bool !== undefined ? (
-						bool ? (
-							<Icon
-								name="circle-check"
-								className="size-5 text-emerald-600"
-							/>
+				<span className="min-w-0">
+					{children ??
+						(bool !== undefined ? (
+							bool ? (
+								<Icon
+									name="circle-check"
+									className="size-5 text-emerald-600"
+								/>
+							) : (
+								<span className="text-muted-foreground">—</span>
+							)
 						) : (
-							<span className="text-muted-foreground">—</span>
-						)
-					) : (
-						value || '—'
-					))}
+							value || '—'
+						))}
+				</span>
+				{copyText && (
+					<CopyButton
+						value={copyText}
+						label={`Copy ${label}`}
+						className="-my-0.5 shrink-0"
+					/>
+				)}
 			</dd>
 		</div>
 	)

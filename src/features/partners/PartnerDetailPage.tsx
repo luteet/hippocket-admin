@@ -84,10 +84,19 @@ export function PartnerDetailPage() {
 										/>
 									),
 								},
-								{ label: 'Email', value: partner.email },
-								{ label: 'Phone', value: partner.phone },
+								{
+									label: 'Email',
+									value: partner.email,
+									copyable: true,
+								},
+								{
+									label: 'Phone',
+									value: partner.phone,
+									copyable: true,
+								},
 								{
 									label: 'Website',
+									copyable: partner.website,
 									render: partner.website ? (
 										<a
 											href={

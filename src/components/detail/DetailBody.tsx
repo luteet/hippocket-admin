@@ -91,6 +91,7 @@ export function DetailBody({
 							className={
 								f.fullWidth ? 'sm:col-span-2' : undefined
 							}
+							copyText={copyTextOf(f)}
 						>
 							{f.render}
 						</DetailRow>
@@ -101,4 +102,13 @@ export function DetailBody({
 			{children}
 		</div>
 	)
+}
+
+/** Resolve the text a row's copy button should copy: an explicit `copyable`
+ *  string/number, or the row's own `value` when `copyable === true`. Returns
+ *  undefined (no button) for falsy/empty values. */
+function copyTextOf(f: DetailField): string | undefined {
+	const source = f.copyable === true ? f.value : f.copyable
+	if (source == null || source === '' || source === false) return undefined
+	return String(source)
 }

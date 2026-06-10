@@ -71,10 +71,15 @@ export function ReferralDetailPage() {
 									</Badge>
 								),
 							},
-							{ label: 'Agent', value: referral.agent_email },
+							{
+								label: 'Agent',
+								value: referral.agent_email,
+								copyable: true,
+							},
 							{
 								label: 'Agent phone',
 								value: referral.agent_phone,
+								copyable: true,
 							},
 							{
 								label: 'Partner',
@@ -90,14 +95,17 @@ export function ReferralDetailPage() {
 							{
 								label: 'Partner email',
 								value: referral.partner_email,
+								copyable: true,
 							},
 							{
 								label: 'Contact (email)',
 								value: referral.contact_email,
+								copyable: true,
 							},
 							{
 								label: 'Contact (phone)',
 								value: referral.contact_phone,
+								copyable: true,
 							},
 							{ label: 'Group', value: referral.group_name },
 							{
