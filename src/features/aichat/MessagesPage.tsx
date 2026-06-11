@@ -22,6 +22,8 @@ export function MessagesPage() {
 		sessionId,
 		setSessionId,
 		activeFilterCount,
+		activeFilters,
+		removeFilter,
 		clearFilters,
 		sessionRefs,
 		sessionsLoading,
@@ -101,6 +103,9 @@ export function MessagesPage() {
 			onSearchChange={setSearch}
 			searchPlaceholder="Search messages…"
 			onRefresh={onRefresh}
+			activeFilters={activeFilters}
+			onRemoveFilter={removeFilter}
+			onClearFilters={clearFilters}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

@@ -12,6 +12,7 @@ import { Reveal } from '@/components/Reveal'
 import type { Pagination } from '@/hooks/usePagination'
 import { SearchInput } from './SearchInput'
 import { PageSizeSelect } from './PageSizeSelect'
+import { FilterChips, type ActiveFilter } from './FilterChips'
 
 interface ListPageProps<TData> {
 	// Header
@@ -26,6 +27,12 @@ interface ListPageProps<TData> {
 	searchPlaceholder?: string
 	/** A <FiltersPopover> with the page's filter fields, if the page has any. */
 	filters?: ReactNode
+	/** Active filters, rendered as removable chips below the toolbar. */
+	activeFilters?: ActiveFilter[]
+	/** Clear a single filter by its param key (chip ×). */
+	onRemoveFilter?: (key: string) => void
+	/** Clear every active filter (chips' "Clear all"). */
+	onClearFilters?: () => void
 	/** Re-fetch the current view; when provided, renders a refresh button. */
 	onRefresh?: () => void
 
@@ -65,6 +72,9 @@ export function ListPage<TData>({
 	onSearchChange,
 	searchPlaceholder,
 	filters,
+	activeFilters,
+	onRemoveFilter,
+	onClearFilters,
 	onRefresh,
 	pagination,
 	data,
@@ -107,6 +117,14 @@ export function ListPage<TData>({
 						/>
 					</div>
 				</div>
+
+				{activeFilters && onRemoveFilter && (
+					<FilterChips
+						filters={activeFilters}
+						onRemove={onRemoveFilter}
+						onClearAll={onClearFilters}
+					/>
+				)}
 
 				<DataTable
 					columns={columns}

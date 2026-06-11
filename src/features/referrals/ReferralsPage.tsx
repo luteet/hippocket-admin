@@ -28,6 +28,8 @@ export function ReferralsPage() {
 		isPaid,
 		setIsPaid,
 		activeFilterCount,
+		activeFilters,
+		removeFilter,
 		clearFilters,
 		statuses,
 		statusNameByLabel,
@@ -167,6 +169,9 @@ export function ReferralsPage() {
 			onSearchChange={setSearch}
 			searchPlaceholder="Search…"
 			onRefresh={onRefresh}
+			activeFilters={activeFilters}
+			onRemoveFilter={removeFilter}
+			onClearFilters={clearFilters}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

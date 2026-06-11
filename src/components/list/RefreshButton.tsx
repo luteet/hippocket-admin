@@ -23,10 +23,7 @@ export function RefreshButton({
 			disabled={isFetching}
 			aria-label="Refresh"
 			title="Refresh"
-			className={cn(
-				'hover:text-foreground',
-				className,
-			)}
+			className={cn('hover:text-foreground', className)}
 		>
 			<Icon
 				name="refresh-cw"

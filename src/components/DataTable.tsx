@@ -229,14 +229,14 @@ export function DataTable<TData>({
 		state: selection ? { rowSelection } : undefined,
 		onRowSelectionChange: selection
 			? (updater) => {
-				const next =
-					typeof updater === 'function'
-						? updater(rowSelection)
-						: updater
-				selection.onSelectionChange(
-					Object.keys(next).filter((id) => next[id]),
-				)
-			}
+					const next =
+						typeof updater === 'function'
+							? updater(rowSelection)
+							: updater
+					selection.onSelectionChange(
+						Object.keys(next).filter((id) => next[id]),
+					)
+				}
 			: undefined,
 	})
 
@@ -276,22 +276,22 @@ export function DataTable<TData>({
 
 	const handleRowClick = onRowClick
 		? (row: TData) => (e: React.MouseEvent) => {
-			const start = downPos.current
-			downPos.current = null
-			if (
-				!start ||
-				Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
-			) {
-				return
+				const start = downPos.current
+				downPos.current = null
+				if (
+					!start ||
+					Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
+				) {
+					return
+				}
+				onRowClick(row)
 			}
-			onRowClick(row)
-		}
 		: undefined
 
 	const rowMouseDown = onRowClick
 		? (e: React.MouseEvent<HTMLTableRowElement>) => {
-			downPos.current = { x: e.clientX, y: e.clientY }
-		}
+				downPos.current = { x: e.clientX, y: e.clientY }
+			}
 		: undefined
 
 	const renderCells = (row: Row<TData>) => [
@@ -392,9 +392,9 @@ export function DataTable<TData>({
 								const label = header.isPlaceholder
 									? null
 									: flexRender(
-										header.column.columnDef.header,
-										header.getContext(),
-									)
+											header.column.columnDef.header,
+											header.getContext(),
+										)
 								return (
 									<TableHead
 										key={header.id}

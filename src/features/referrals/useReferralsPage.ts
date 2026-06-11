@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
 import { useUrlParams } from '@/hooks/useUrlState'
+import type { ActiveFilter } from '@/components/list/FilterChips'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useRowSelection } from '@/hooks/useRowSelection'
 import { useBulkAction } from '@/hooks/useBulkAction'
@@ -49,9 +50,24 @@ export function useReferralsPage() {
 		return map
 	}, [statuses])
 
-	// How many popover filters are set — shown as a badge on the Filters button.
-	const activeFilterCount =
-		(statusLabel !== ALL ? 1 : 0) + (isPaid !== ALL ? 1 : 0)
+	// Active filters as chips (Status / Payment), resolved to human labels so a
+	// chip reads "Status: Closed". A stale value with no matching option still
+	// renders (raw value) so the user can clear it. The badge count is derived.
+	const activeFilters: ActiveFilter[] = [
+		statusLabel !== ALL && {
+			key: 'status',
+			label: 'Status',
+			value: statusNameByLabel[statusLabel] ?? statusLabel,
+		},
+		isPaid !== ALL && {
+			key: 'paid',
+			label: 'Payment',
+			value: isPaid === 'true' ? 'Paid' : 'Unpaid',
+		},
+	].filter(Boolean) as ActiveFilter[]
+
+	const activeFilterCount = activeFilters.length
+	const removeFilter = (key: string) => setParams({ [key]: null, page: null })
 	const clearFilters = () =>
 		setParams({ status: null, paid: null, page: null })
 
@@ -111,6 +127,8 @@ export function useReferralsPage() {
 		isPaid,
 		setIsPaid,
 		activeFilterCount,
+		activeFilters,
+		removeFilter,
 		clearFilters,
 		statuses,
 		statusNameByLabel,

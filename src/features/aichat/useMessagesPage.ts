@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
 import { useUrlParams } from '@/hooks/useUrlState'
+import type { ActiveFilter } from '@/components/list/FilterChips'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { AiMessageRole } from '@/types/api'
 import { useMessages, useSessionRefs } from './hooks'
@@ -44,9 +45,27 @@ export function useMessagesPage() {
 
 	const { data: sessionRefs, isLoading: sessionsLoading } = useSessionRefs()
 
-	// How many popover filters are set — shown as a badge on the Filters button.
-	const activeFilterCount =
-		(role !== ALL ? 1 : 0) + (sessionId !== ALL ? 1 : 0)
+	// Active filters as chips (Role / Session), resolved to human labels. A stale
+	// session id with no matching ref still renders (truncated id) so it can be
+	// cleared. The badge count is derived from this list.
+	const session = sessionRefs?.find((s) => s.id === sessionId)
+	const activeFilters: ActiveFilter[] = [
+		role !== ALL && {
+			key: 'role',
+			label: 'Role',
+			value: ROLE_OPTIONS.find((o) => o.value === role)?.label ?? role,
+		},
+		sessionId !== ALL && {
+			key: 'session',
+			label: 'Session',
+			value: session
+				? `${session.user_email} · ${session.id.slice(0, 8)}`
+				: sessionId.slice(0, 8),
+		},
+	].filter(Boolean) as ActiveFilter[]
+
+	const activeFilterCount = activeFilters.length
+	const removeFilter = (key: string) => setParams({ [key]: null, page: null })
 	const clearFilters = () =>
 		setParams({ role: null, session: null, page: null })
 
@@ -68,6 +87,8 @@ export function useMessagesPage() {
 		sessionId,
 		setSessionId,
 		activeFilterCount,
+		activeFilters,
+		removeFilter,
 		clearFilters,
 		sessionRefs: sessionRefs ?? [],
 		sessionsLoading,
