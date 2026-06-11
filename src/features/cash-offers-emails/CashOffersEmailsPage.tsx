@@ -29,6 +29,7 @@ export function CashOffersEmailsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -97,6 +98,7 @@ export function CashOffersEmailsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search emails…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

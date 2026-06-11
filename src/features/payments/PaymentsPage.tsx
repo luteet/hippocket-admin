@@ -31,6 +31,7 @@ export function PaymentsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToDetail,
@@ -115,6 +116,7 @@ export function PaymentsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

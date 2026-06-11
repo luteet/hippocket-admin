@@ -18,6 +18,7 @@ export function PropertiesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -121,6 +122,7 @@ export function PropertiesPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search properties…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

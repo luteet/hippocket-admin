@@ -55,6 +55,7 @@ export type IconName =
 	| 'download'
 	| 'image'
 	| 'grip-vertical'
+	| 'refresh-cw'
 
 const SPRITE_URL = `${import.meta.env.BASE_URL}img/sprites.svg`
 

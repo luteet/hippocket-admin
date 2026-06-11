@@ -59,7 +59,7 @@ export function useAgentsPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, role, status, isActive, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useAgents({
+	const { data, isLoading, isFetching, refetch } = useAgents({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -84,6 +84,7 @@ export function useAgentsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/agents/new'),

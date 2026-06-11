@@ -15,6 +15,7 @@ export function LinkNamesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -68,6 +69,7 @@ export function LinkNamesPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search links…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

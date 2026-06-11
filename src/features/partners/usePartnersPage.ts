@@ -78,7 +78,7 @@ export function usePartnersPage() {
 		syncToUrl: true,
 	})
 
-	const { data, isLoading, isFetching } = usePartners({
+	const { data, isLoading, isFetching, refetch } = usePartners({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -233,6 +233,7 @@ export function usePartnersPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/partners/new'),

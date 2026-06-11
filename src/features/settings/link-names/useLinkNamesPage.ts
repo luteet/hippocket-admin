@@ -21,7 +21,7 @@ export function useLinkNamesPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useLinkNames({
+	const { data, isLoading, isFetching, refetch } = useLinkNames({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -35,6 +35,7 @@ export function useLinkNamesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/link-names/new'),

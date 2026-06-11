@@ -33,7 +33,7 @@ export function useTeamLeadersPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, groupId, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useTeamLeaders({
+	const { data, isLoading, isFetching, refetch } = useTeamLeaders({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -53,6 +53,7 @@ export function useTeamLeadersPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		openTeamLeader: (id: string) => navigate(`/team-leaders/${id}`),

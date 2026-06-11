@@ -23,6 +23,7 @@ export function TeamLeadersPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		openTeamLeader,
@@ -108,6 +109,7 @@ export function TeamLeadersPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search by name, email or office…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

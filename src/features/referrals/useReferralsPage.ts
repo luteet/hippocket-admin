@@ -55,7 +55,7 @@ export function useReferralsPage() {
 	const clearFilters = () =>
 		setParams({ status: null, paid: null, page: null })
 
-	const { data, isLoading, isFetching } = useReferrals({
+	const { data, isLoading, isFetching, refetch } = useReferrals({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -117,6 +117,7 @@ export function useReferralsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToDetail: (id: string) => navigate(`/referrals/${id}`),

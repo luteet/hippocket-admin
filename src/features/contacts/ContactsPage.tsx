@@ -25,6 +25,7 @@ export function ContactsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -149,6 +150,7 @@ export function ContactsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search contacts…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

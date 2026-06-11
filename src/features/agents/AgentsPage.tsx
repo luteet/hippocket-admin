@@ -33,6 +33,7 @@ export function AgentsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -135,6 +136,7 @@ export function AgentsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search agents…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

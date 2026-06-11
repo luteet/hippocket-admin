@@ -89,7 +89,7 @@ export function useLogsPage(slug: LogSlug) {
 		sorting.order,
 	])
 
-	const { data, isLoading, isFetching } = useLogs({
+	const { data, isLoading, isFetching, refetch } = useLogs({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -122,6 +122,7 @@ export function useLogsPage(slug: LogSlug) {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 	}

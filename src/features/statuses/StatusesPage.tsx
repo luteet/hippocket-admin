@@ -14,6 +14,7 @@ export function StatusesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		reorder,
@@ -55,6 +56,7 @@ export function StatusesPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search statuses…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

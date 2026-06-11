@@ -32,6 +32,7 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 	} = useLogsPage(slug)
@@ -105,6 +106,7 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search email or description…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

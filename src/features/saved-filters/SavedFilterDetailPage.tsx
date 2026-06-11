@@ -23,40 +23,40 @@ export function SavedFilterDetailPage() {
 			heading={
 				filter
 					? {
-						title: savedFilterTitle(filter.title),
-						subtitle: formatDateTime(filter.created_at),
-					}
+							title: savedFilterTitle(filter.title),
+							subtitle: formatDateTime(filter.created_at),
+						}
 					: undefined
 			}
 			fields={
 				filter
 					? [
-						{
-							label: 'Agent',
-							render: (
-								<Link
-									to={`/agents/${filter.user_id}`}
-									className="link"
-								>
-									{filter.user_email}
-								</Link>
-							),
-						},
-						{ label: 'Email', value: filter.user_email },
-						{
-							label: 'Value',
-							fullWidth: true,
-							render: (
-								<span className="font-mono text-xs break-all">
-									{filter.value}
-								</span>
-							),
-						},
-						{
-							label: 'Created',
-							render: <TimeAgo value={filter.created_at} />,
-						},
-					]
+							{
+								label: 'Agent',
+								render: (
+									<Link
+										to={`/agents/${filter.user_id}`}
+										className="link"
+									>
+										{filter.user_email}
+									</Link>
+								),
+							},
+							{ label: 'Email', value: filter.user_email },
+							{
+								label: 'Value',
+								fullWidth: true,
+								render: (
+									<span className="font-mono text-xs break-all">
+										{filter.value}
+									</span>
+								),
+							},
+							{
+								label: 'Created',
+								render: <TimeAgo value={filter.created_at} />,
+							},
+						]
 					: undefined
 			}
 		/>

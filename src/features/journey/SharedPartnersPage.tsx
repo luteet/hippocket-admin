@@ -16,6 +16,7 @@ export function SharedPartnersPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -67,6 +68,7 @@ export function SharedPartnersPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search by agent email…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

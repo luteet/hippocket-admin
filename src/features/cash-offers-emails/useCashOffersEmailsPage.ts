@@ -44,7 +44,7 @@ export function useCashOffersEmailsPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, group, isActive, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useCashOffersEmails({
+	const { data, isLoading, isFetching, refetch } = useCashOffersEmails({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -67,6 +67,7 @@ export function useCashOffersEmailsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/cash-offers-emails/new'),

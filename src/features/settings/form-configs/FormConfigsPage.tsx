@@ -16,6 +16,7 @@ export function FormConfigsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -86,6 +87,7 @@ export function FormConfigsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search forms…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

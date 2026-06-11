@@ -25,6 +25,7 @@ export function PartnersPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -211,6 +212,7 @@ export function PartnersPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search partners…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

@@ -22,7 +22,7 @@ export function useSessionsPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useSessions({
+	const { data, isLoading, isFetching, refetch } = useSessions({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -36,6 +36,7 @@ export function useSessionsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/ai-chat/sessions/new'),

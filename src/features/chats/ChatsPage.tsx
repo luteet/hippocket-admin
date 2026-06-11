@@ -16,6 +16,7 @@ export function ChatsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -67,6 +68,7 @@ export function ChatsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search chats…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

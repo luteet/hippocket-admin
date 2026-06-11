@@ -21,7 +21,7 @@ export function useTokenCoursesPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useTokenCourses({
+	const { data, isLoading, isFetching, refetch } = useTokenCourses({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -35,6 +35,7 @@ export function useTokenCoursesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/token-courses/new'),

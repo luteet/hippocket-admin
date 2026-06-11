@@ -22,6 +22,7 @@ export function GroupsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -94,6 +95,7 @@ export function GroupsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search groups…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

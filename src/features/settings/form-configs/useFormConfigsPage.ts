@@ -18,7 +18,7 @@ export function useFormConfigsPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useFormConfigs({
+	const { data, isLoading, isFetching, refetch } = useFormConfigs({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -32,6 +32,7 @@ export function useFormConfigsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/form-configs/new'),

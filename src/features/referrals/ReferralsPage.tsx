@@ -34,6 +34,7 @@ export function ReferralsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToDetail,
@@ -165,6 +166,7 @@ export function ReferralsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

@@ -25,7 +25,7 @@ export function useSharedPartnersPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useSharedPartners({
+	const { data, isLoading, isFetching, refetch } = useSharedPartners({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -39,6 +39,7 @@ export function useSharedPartnersPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/shared-partners/new'),

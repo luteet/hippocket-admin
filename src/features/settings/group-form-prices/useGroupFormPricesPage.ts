@@ -24,7 +24,7 @@ export function useGroupFormPricesPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useGroupFormPrices({
+	const { data, isLoading, isFetching, refetch } = useGroupFormPrices({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -38,6 +38,7 @@ export function useGroupFormPricesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/group-form-prices/new'),

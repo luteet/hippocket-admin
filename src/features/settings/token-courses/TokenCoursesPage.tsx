@@ -15,6 +15,7 @@ export function TokenCoursesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -57,6 +58,7 @@ export function TokenCoursesPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

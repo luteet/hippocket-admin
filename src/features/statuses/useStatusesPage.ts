@@ -23,7 +23,7 @@ export function useStatusesPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useStatuses({
+	const { data, isLoading, isFetching, refetch } = useStatuses({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -39,6 +39,7 @@ export function useStatusesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		// Drag-and-drop only makes sense in the natural `priority` order with no

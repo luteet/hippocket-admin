@@ -32,6 +32,7 @@ export function WithdrawalsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		openWithdrawal,
@@ -142,6 +143,7 @@ export function WithdrawalsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search by agent…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

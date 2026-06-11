@@ -32,7 +32,7 @@ export function useContactsPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, deleted, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useContacts({
+	const { data, isLoading, isFetching, refetch } = useContacts({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -51,6 +51,7 @@ export function useContactsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/contacts/new'),

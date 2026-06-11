@@ -22,7 +22,7 @@ export function useSavedFiltersPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useSavedFilters({
+	const { data, isLoading, isFetching, refetch } = useSavedFilters({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -36,6 +36,7 @@ export function useSavedFiltersPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		openSavedFilter: (id: string) => navigate(`/saved-filters/${id}`),

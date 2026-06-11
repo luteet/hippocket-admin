@@ -16,6 +16,7 @@ export function SessionsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -78,6 +79,7 @@ export function SessionsPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search sessions…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

@@ -32,7 +32,7 @@ export function useGroupsPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, deleted, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useGroups({
+	const { data, isLoading, isFetching, refetch } = useGroups({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -51,6 +51,7 @@ export function useGroupsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/groups/new'),

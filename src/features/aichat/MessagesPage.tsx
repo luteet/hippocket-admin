@@ -28,6 +28,7 @@ export function MessagesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -99,6 +100,7 @@ export function MessagesPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search messages…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

@@ -50,7 +50,7 @@ export function useMessagesPage() {
 	const clearFilters = () =>
 		setParams({ role: null, session: null, page: null })
 
-	const { data, isLoading, isFetching } = useMessages({
+	const { data, isLoading, isFetching, refetch } = useMessages({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -74,6 +74,7 @@ export function useMessagesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/ai-chat/messages/new'),

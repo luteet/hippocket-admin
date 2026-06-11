@@ -17,6 +17,7 @@ export function SavedFiltersPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		openSavedFilter,
@@ -90,6 +91,7 @@ export function SavedFiltersPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search by title or agent…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

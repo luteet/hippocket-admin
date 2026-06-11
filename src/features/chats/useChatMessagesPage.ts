@@ -43,7 +43,7 @@ export function useChatMessagesPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, readState, chatId, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useChatMessages({
+	const { data, isLoading, isFetching, refetch } = useChatMessages({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -67,6 +67,7 @@ export function useChatMessagesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToCreate: () => navigate('/chats/messages/new'),

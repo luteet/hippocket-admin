@@ -39,6 +39,7 @@ import {
 	TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
+import { RefreshButton } from '@/components/list/RefreshButton'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { SortOrder } from '@/types/api'
@@ -132,6 +133,13 @@ interface DataTableProps<TData> {
 	isLoading?: boolean
 	emptyMessage?: string
 	onRowClick?: (row: TData) => void
+	/**
+	 * Re-fetch the current view. When set, a quiet refresh button is pinned to
+	 * the top-right corner of the table card.
+	 */
+	onRefresh?: () => void
+	/** Whether a background fetch is in flight (spins/disables the refresh button). */
+	isFetching?: boolean
 	pagination?: PaginationProps
 	/**
 	 * Server-side sorting state + toggle. When set, columns with a `meta.sortKey`
@@ -171,6 +179,8 @@ export function DataTable<TData>({
 	isLoading,
 	emptyMessage = 'No data',
 	onRowClick,
+	onRefresh,
+	isFetching,
 	pagination,
 	sorting,
 	reorder,
@@ -219,14 +229,14 @@ export function DataTable<TData>({
 		state: selection ? { rowSelection } : undefined,
 		onRowSelectionChange: selection
 			? (updater) => {
-					const next =
-						typeof updater === 'function'
-							? updater(rowSelection)
-							: updater
-					selection.onSelectionChange(
-						Object.keys(next).filter((id) => next[id]),
-					)
-				}
+				const next =
+					typeof updater === 'function'
+						? updater(rowSelection)
+						: updater
+				selection.onSelectionChange(
+					Object.keys(next).filter((id) => next[id]),
+				)
+			}
 			: undefined,
 	})
 
@@ -266,22 +276,22 @@ export function DataTable<TData>({
 
 	const handleRowClick = onRowClick
 		? (row: TData) => (e: React.MouseEvent) => {
-				const start = downPos.current
-				downPos.current = null
-				if (
-					!start ||
-					Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
-				) {
-					return
-				}
-				onRowClick(row)
+			const start = downPos.current
+			downPos.current = null
+			if (
+				!start ||
+				Math.hypot(e.clientX - start.x, e.clientY - start.y) > 4
+			) {
+				return
 			}
+			onRowClick(row)
+		}
 		: undefined
 
 	const rowMouseDown = onRowClick
 		? (e: React.MouseEvent<HTMLTableRowElement>) => {
-				downPos.current = { x: e.clientX, y: e.clientY }
-			}
+			downPos.current = { x: e.clientX, y: e.clientY }
+		}
 		: undefined
 
 	const renderCells = (row: Row<TData>) => [
@@ -382,9 +392,9 @@ export function DataTable<TData>({
 								const label = header.isPlaceholder
 									? null
 									: flexRender(
-											header.column.columnDef.header,
-											header.getContext(),
-										)
+										header.column.columnDef.header,
+										header.getContext(),
+									)
 								return (
 									<TableHead
 										key={header.id}
@@ -461,7 +471,14 @@ export function DataTable<TData>({
 
 	return (
 		<div className="space-y-4">
-			<div className="overflow-hidden rounded-xl border border-border bg-card">
+			<div className="relative overflow-hidden rounded-xl border border-border bg-card">
+				{onRefresh && (
+					<RefreshButton
+						onRefresh={onRefresh}
+						isFetching={isFetching}
+						className="absolute right-4 top-0.75 z-20 size-8 bg-white border border-muted text-muted-foreground"
+					/>
+				)}
 				{reorder ? (
 					<DndContext
 						sensors={sensors}

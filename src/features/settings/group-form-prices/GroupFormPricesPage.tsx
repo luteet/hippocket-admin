@@ -16,6 +16,7 @@ export function GroupFormPricesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -85,6 +86,7 @@ export function GroupFormPricesPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search prices…"
+			onRefresh={onRefresh}
 			pagination={pagination}
 			data={data}
 			isLoading={isLoading}

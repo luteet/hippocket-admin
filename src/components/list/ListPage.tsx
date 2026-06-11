@@ -26,6 +26,8 @@ interface ListPageProps<TData> {
 	searchPlaceholder?: string
 	/** A <FiltersPopover> with the page's filter fields, if the page has any. */
 	filters?: ReactNode
+	/** Re-fetch the current view; when provided, renders a refresh button. */
+	onRefresh?: () => void
 
 	// Data + pagination (the usePagination object and the list result)
 	pagination: Pagination
@@ -63,6 +65,7 @@ export function ListPage<TData>({
 	onSearchChange,
 	searchPlaceholder,
 	filters,
+	onRefresh,
 	pagination,
 	data,
 	isLoading,
@@ -109,6 +112,8 @@ export function ListPage<TData>({
 					columns={columns}
 					data={data?.items ?? []}
 					isLoading={isLoading || isFetching}
+					isFetching={isFetching}
+					onRefresh={onRefresh}
 					emptyMessage={emptyMessage}
 					minWidth={minWidth}
 					skeletonRows={pagination.count}

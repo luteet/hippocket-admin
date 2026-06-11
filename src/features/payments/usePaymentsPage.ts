@@ -53,7 +53,7 @@ export function usePaymentsPage() {
 		sorting.order,
 	])
 
-	const { data, isLoading, isFetching } = usePayments({
+	const { data, isLoading, isFetching, refetch } = usePayments({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -83,6 +83,7 @@ export function usePaymentsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		goToDetail: (id: string) => navigate(`/payments/${id}`),

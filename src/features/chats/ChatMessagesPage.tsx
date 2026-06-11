@@ -29,6 +29,7 @@ export function ChatMessagesPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh,
 		pagination,
 		sorting,
 		goToCreate,
@@ -99,6 +100,7 @@ export function ChatMessagesPage() {
 			search={search}
 			onSearchChange={setSearch}
 			searchPlaceholder="Search messages…"
+			onRefresh={onRefresh}
 			filters={
 				<FiltersPopover
 					activeCount={activeFilterCount}

@@ -56,7 +56,7 @@ export function useWithdrawalsPage() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [debouncedSearch, status, method, sorting.sortBy, sorting.order])
 
-	const { data, isLoading, isFetching } = useWithdrawals({
+	const { data, isLoading, isFetching, refetch } = useWithdrawals({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: debouncedSearch || undefined,
@@ -116,6 +116,7 @@ export function useWithdrawalsPage() {
 		data,
 		isLoading,
 		isFetching,
+		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
 		openWithdrawal: (id: string) => navigate(`/withdrawals/${id}`),
