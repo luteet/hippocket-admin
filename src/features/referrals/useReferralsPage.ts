@@ -1,11 +1,16 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
 import { useUrlParams } from '@/hooks/useUrlState'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { useRowSelection } from '@/hooks/useRowSelection'
+import { useBulkAction } from '@/hooks/useBulkAction'
+import type { ReferralListItem } from '@/types/api'
 import { useReferrals, useStatuses } from './hooks'
+import { deleteReferral, markReferralPaid } from './api'
 
 export const ALL = '__all__'
 
@@ -60,7 +65,45 @@ export function useReferralsPage() {
 		order: sorting.order,
 	})
 
+	// --- Bulk actions (mark-paid / delete the selected referrals) -----------
+	const qc = useQueryClient()
+	const {
+		selectedIds,
+		setSelectedIds,
+		clear: clearSelection,
+	} = useRowSelection(data?.items)
+	const { run, isRunning: isBulkRunning } = useBulkAction<ReferralListItem>()
+
+	const selectedItems = useMemo(
+		() => data?.items.filter((r) => selectedIds.includes(r.id)) ?? [],
+		[data, selectedIds],
+	)
+
+	const finishBulk = (failed: ReferralListItem[]) => {
+		qc.invalidateQueries({ queryKey: ['referrals'] })
+		setSelectedIds(failed.map((r) => r.id))
+	}
+
+	const bulkMarkPaid = () =>
+		run(selectedItems, (r) => markReferralPaid(r.id), {
+			verb: 'Marked paid',
+			onDone: finishBulk,
+		})
+
+	const bulkDelete = () =>
+		run(selectedItems, (r) => deleteReferral(r.id), {
+			verb: 'Deleted',
+			onDone: finishBulk,
+		})
+
 	return {
+		selectedIds,
+		setSelectedIds,
+		clearSelection,
+		selectedCount: selectedItems.length,
+		isBulkRunning,
+		bulkMarkPaid,
+		bulkDelete,
 		search,
 		setSearch,
 		statusLabel,

@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/layout/PageHeader'
 import {
 	DataTable,
 	type DataTableReorder,
+	type DataTableSelection,
 	type DataTableSorting,
 } from '@/components/DataTable'
 import { Reveal } from '@/components/Reveal'
@@ -41,6 +42,8 @@ interface ListPageProps<TData> {
 	sorting?: DataTableSorting
 	/** Drag-and-drop row reordering wiring; adds a drag handle per row. */
 	reorder?: DataTableReorder<TData>
+	/** Row-selection wiring; adds a leading checkbox column for bulk actions. */
+	selection?: DataTableSelection<TData>
 
 	/** Extra content after the table (e.g. Partners' sticky save bar). */
 	footer?: ReactNode
@@ -70,6 +73,7 @@ export function ListPage<TData>({
 	onRowClick,
 	sorting,
 	reorder,
+	selection,
 	footer,
 	className,
 }: ListPageProps<TData>) {
@@ -111,6 +115,7 @@ export function ListPage<TData>({
 					onRowClick={onRowClick}
 					sorting={sorting}
 					reorder={reorder}
+					selection={selection}
 					pagination={{
 						page: pagination.page,
 						pageCount: pagination.pageCount(data?.total ?? 0),

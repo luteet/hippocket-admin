@@ -9,6 +9,7 @@ import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
+import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
 import type { Withdrawal } from '@/types/api'
 import {
 	useWithdrawalsPage,
@@ -35,7 +36,39 @@ export function WithdrawalsPage() {
 		sorting,
 		openWithdrawal,
 		goToCreate,
+		selectedIds,
+		setSelectedIds,
+		clearSelection,
+		selectedCount,
+		isBulkRunning,
+		bulkApprove,
+		bulkReject,
 	} = useWithdrawalsPage()
+
+	const plural = selectedCount === 1 ? '' : 's'
+	const bulkActions: BulkAction[] = [
+		{
+			label: 'Approve',
+			icon: 'check',
+			confirm: {
+				title: `Approve ${selectedCount} withdrawal${plural}?`,
+				description: 'The agents will be notified of the payout.',
+				confirmLabel: 'Approve',
+			},
+			onRun: bulkApprove,
+		},
+		{
+			label: 'Reject',
+			icon: 'x',
+			destructive: true,
+			confirm: {
+				title: `Reject ${selectedCount} withdrawal${plural}?`,
+				description: 'The requests will be marked as cancelled.',
+				confirmLabel: 'Reject',
+			},
+			onRun: bulkReject,
+		},
+	]
 
 	const columns = useMemo<ColumnDef<Withdrawal, unknown>[]>(
 		() => [
@@ -143,6 +176,20 @@ export function WithdrawalsPage() {
 			emptyMessage="No withdrawals found"
 			minWidth="800px"
 			onRowClick={(w) => openWithdrawal(w.id)}
+			selection={{
+				getRowId: (w) => w.id,
+				selectedIds,
+				onSelectionChange: setSelectedIds,
+			}}
+			className={selectedCount > 0 ? 'pb-24' : undefined}
+			footer={
+				<BulkActionBar
+					count={selectedCount}
+					actions={bulkActions}
+					onClear={clearSelection}
+					isRunning={isBulkRunning}
+				/>
+			}
 		/>
 	)
 }

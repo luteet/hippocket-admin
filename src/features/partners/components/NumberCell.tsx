@@ -7,9 +7,17 @@ interface CellProps {
 	field: EditableField
 	getCell: (partner: Partner, field: EditableField) => string
 	setCell: (partner: Partner, field: EditableField, value: string) => void
+	/** Persist this field on blur (no-op if the value is unchanged). */
+	saveField: (partner: Partner, field: EditableField, value: string) => void
 }
 
-export function NumberCell({ partner, field, getCell, setCell }: CellProps) {
+export function NumberCell({
+	partner,
+	field,
+	getCell,
+	setCell,
+	saveField,
+}: CellProps) {
 	return (
 		<Input
 			type="number"
@@ -18,6 +26,7 @@ export function NumberCell({ partner, field, getCell, setCell }: CellProps) {
 			placeholder="-"
 			value={getCell(partner, field)}
 			onChange={(e) => setCell(partner, field, e.target.value)}
+			onBlur={() => saveField(partner, field, getCell(partner, field))}
 			onMouseDown={stopRowClick}
 			onClick={stopRowClick}
 		/>

@@ -1,11 +1,9 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { AnimatePresence, motion } from 'motion/react'
 
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
-import { Tooltip } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import {
 	Select,
@@ -15,6 +13,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { ListPage } from '@/components/list/ListPage'
+import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
 import type { Partner } from '@/types/api'
 import { usePartnersPage, stopRowClick } from './usePartnersPage'
 import { NumberCell } from './components/NumberCell'
@@ -32,60 +31,36 @@ export function PartnersPage() {
 		openPartner,
 		getCell,
 		setCell,
-		isDirty,
-		dirtyCount,
-		isSaving,
-		isRowDirty,
-		isRowSaving,
-		handleSaveRow,
-		handleSaveAll,
-		discard,
+		saveField,
+		selectedIds,
+		setSelectedIds,
+		clearSelection,
+		selectedCount,
+		isBulkRunning,
+		bulkHide,
+		bulkShow,
+		bulkDelete,
 	} = usePartnersPage()
+
+	const plural = selectedCount === 1 ? '' : 's'
+	const bulkActions: BulkAction[] = [
+		{ label: 'Hide', onRun: bulkHide },
+		{ label: 'Show', onRun: bulkShow },
+		{
+			label: 'Delete',
+			icon: 'trash-2',
+			destructive: true,
+			confirm: {
+				title: `Delete ${selectedCount} partner${plural}?`,
+				description: 'This permanently removes the selected partners.',
+				confirmLabel: 'Delete',
+			},
+			onRun: bulkDelete,
+		},
+	]
 
 	const columns = useMemo<ColumnDef<Partner, unknown>[]>(
 		() => [
-			{
-				id: 'rowSave',
-				meta: { className: 'w-14' },
-				header: () => <div className="w-7" />,
-				cell: ({ row }) => (
-					<div className="w-7">
-						<AnimatePresence>
-							{isRowDirty(row.original.id) && (
-								<motion.div
-									initial={{ opacity: 0, scale: 0.6 }}
-									animate={{ opacity: 1, scale: 1 }}
-									exit={{ opacity: 0, scale: 0.6 }}
-									transition={{ duration: 0.15 }}
-								>
-									<Tooltip content="Save changes">
-										<Button
-											size="icon"
-											className="size-7"
-											disabled={isRowSaving(
-												row.original.id,
-											)}
-											onClick={(e) => {
-												stopRowClick(e)
-												handleSaveRow(row.original.id)
-											}}
-										>
-											{isRowSaving(row.original.id) ? (
-												<Icon
-													name="loader"
-													className="animate-spin"
-												/>
-											) : (
-												<Icon name="check" />
-											)}
-										</Button>
-									</Tooltip>
-								</motion.div>
-							)}
-						</AnimatePresence>
-					</div>
-				),
-			},
 			{
 				accessorKey: 'name',
 				header: 'Name',
@@ -118,6 +93,7 @@ export function PartnersPage() {
 						field="potential_value"
 						getCell={getCell}
 						setCell={setCell}
+						saveField={saveField}
 					/>
 				),
 			},
@@ -133,9 +109,11 @@ export function PartnersPage() {
 					<div onMouseDown={stopRowClick} onClick={stopRowClick}>
 						<Select
 							value={getCell(row.original, 'value_type')}
-							onValueChange={(v) =>
+							onValueChange={(v) => {
+								// Show it instantly, then persist the change.
 								setCell(row.original, 'value_type', v)
-							}
+								saveField(row.original, 'value_type', v)
+							}}
 						>
 							<SelectTrigger className="h-9 w-28">
 								<SelectValue />
@@ -158,6 +136,7 @@ export function PartnersPage() {
 						field="agent_fee"
 						getCell={getCell}
 						setCell={setCell}
+						saveField={saveField}
 					/>
 				),
 			},
@@ -171,6 +150,7 @@ export function PartnersPage() {
 						field="group_owner_fee"
 						getCell={getCell}
 						setCell={setCell}
+						saveField={saveField}
 					/>
 				),
 			},
@@ -184,6 +164,7 @@ export function PartnersPage() {
 						field="hippocket_fee"
 						getCell={getCell}
 						setCell={setCell}
+						saveField={saveField}
 					/>
 				),
 			},
@@ -243,45 +224,19 @@ export function PartnersPage() {
 			emptyMessage="No partners found"
 			minWidth="1800px"
 			onRowClick={(p) => openPartner(p.id)}
-			className={isDirty ? 'pb-24' : undefined}
+			selection={{
+				getRowId: (p) => p.id,
+				selectedIds,
+				onSelectionChange: setSelectedIds,
+			}}
+			className={selectedCount > 0 ? 'pb-24' : undefined}
 			footer={
-				<AnimatePresence>
-					{isDirty && (
-						<motion.div
-							initial={{ opacity: 0, x: '-50%', y: 24 }}
-							animate={{ opacity: 1, x: '-50%', y: 0 }}
-							exit={{ opacity: 0, x: '-50%', y: 24 }}
-							transition={{ duration: 0.2, ease: 'easeOut' }}
-							className="fixed bottom-6 left-1/2 z-50"
-						>
-							<div className="flex flex-col items-center gap-4 min-w-70 rounded-2xl border border-border bg-card px-5 py-3 shadow-lg sm:flex-row">
-								<span className="text-sm text-muted-foreground">
-									{dirtyCount} partner
-									{dirtyCount > 1 ? 's' : ''} changed
-								</span>
-								<div className="flex gap-4 w-full sm:w-auto">
-									<Button
-										variant="outline"
-										size="sm"
-										className="flex-auto text-sm"
-										onClick={discard}
-										disabled={isSaving}
-									>
-										Discard
-									</Button>
-									<Button
-										size="sm"
-										className="flex-auto text-sm"
-										onClick={handleSaveAll}
-										disabled={isSaving}
-									>
-										{isSaving ? 'Saving…' : 'Save All'}
-									</Button>
-								</div>
-							</div>
-						</motion.div>
-					)}
-				</AnimatePresence>
+				<BulkActionBar
+					count={selectedCount}
+					actions={bulkActions}
+					onClear={clearSelection}
+					isRunning={isBulkRunning}
+				/>
 			}
 		/>
 	)

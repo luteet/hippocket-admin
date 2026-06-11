@@ -1,11 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
-import type { WithdrawalMethod, WithdrawalStatus } from '@/types/api'
+import { useRowSelection } from '@/hooks/useRowSelection'
+import { useBulkAction } from '@/hooks/useBulkAction'
+import type {
+	Withdrawal,
+	WithdrawalMethod,
+	WithdrawalStatus,
+} from '@/types/api'
 import { useWithdrawals } from './hooks'
+import { updateWithdrawal } from './api'
 
 export const ALL = '__all__'
 
@@ -58,7 +66,45 @@ export function useWithdrawalsPage() {
 		order: sorting.order,
 	})
 
+	// --- Bulk actions (approve / reject the selected requests) --------------
+	const qc = useQueryClient()
+	const { selectedIds, setSelectedIds, clear } = useRowSelection(data?.items)
+	const { run, isRunning: isBulkRunning } = useBulkAction<Withdrawal>()
+
+	const selectedItems = useMemo(
+		() => data?.items.filter((w) => selectedIds.includes(w.id)) ?? [],
+		[data, selectedIds],
+	)
+
+	// Approve/reject reuse the full-update endpoint (status only changes; amount
+	// and method are sent unchanged). On done, refetch and keep any failed rows
+	// selected so the user can retry just those.
+	const bulkSetStatus = (newStatus: WithdrawalStatus, verb: string) =>
+		run(
+			selectedItems,
+			(w) =>
+				updateWithdrawal(w.id, {
+					amount: w.amount,
+					method: w.method,
+					status: newStatus,
+				}),
+			{
+				verb,
+				onDone: (failed) => {
+					qc.invalidateQueries({ queryKey: ['withdrawals'] })
+					setSelectedIds(failed.map((w) => w.id))
+				},
+			},
+		)
+
 	return {
+		selectedIds,
+		setSelectedIds,
+		clearSelection: clear,
+		selectedCount: selectedItems.length,
+		isBulkRunning,
+		bulkApprove: () => bulkSetStatus('success', 'Approved'),
+		bulkReject: () => bulkSetStatus('cancel', 'Rejected'),
 		search,
 		setSearch,
 		status,

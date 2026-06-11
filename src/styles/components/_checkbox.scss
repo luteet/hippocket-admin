@@ -1,0 +1,70 @@
+// Checkbox (Radix). Semantic class for the box plus its indicator (the check
+// glyph and the indeterminate dash); the Tailwind class string had grown
+// unwieldy. Rules live in @layer components so utilities passed via className
+// still win.
+@layer components {
+	.checkbox {
+		position: relative;
+		display: flex;
+		width: 1rem; // size-4
+		height: 1rem;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		border-radius: 0.25rem; // rounded-sm
+		border: 1px solid var(--border);
+		background-color: var(--card);
+		color: var(--primary-foreground);
+		outline: none;
+		transition:
+			border-color 0.15s,
+			background-color 0.15s,
+			color 0.15s;
+
+		// Visually a 16px box, but a transparent `::before` enlarges the hit
+		// target to ~32px so it's comfortable to click/tap without growing the
+		// box. The pseudo is part of the control, so clicks on it still toggle.
+		&::before {
+			content: '';
+			position: absolute;
+			inset: -1.5rem -1rem;
+		}
+
+		&:focus-visible {
+			box-shadow: 0 0 0 2px
+				color-mix(in srgb, var(--primary) 40%, transparent);
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.5;
+		}
+
+		&[data-state='checked'],
+		&[data-state='indeterminate'] {
+			border-color: var(--primary);
+			background-color: var(--primary);
+		}
+	}
+
+	.checkbox-indicator {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: currentColor;
+
+		svg {
+			width: 0.75rem; // size-3
+			height: 0.75rem;
+		}
+	}
+
+	// Indeterminate dash.
+	.checkbox-dash {
+		width: 0.625rem; // w-2.5
+		height: 0.125rem; // h-0.5
+		border-radius: 9999px;
+		background-color: currentColor;
+	}
+}

@@ -9,6 +9,7 @@ import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
+import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
 import type { ReferralListItem } from '@/types/api'
 import { useReferralsPage, ALL } from './useReferralsPage'
 
@@ -36,7 +37,39 @@ export function ReferralsPage() {
 		pagination,
 		sorting,
 		goToDetail,
+		selectedIds,
+		setSelectedIds,
+		clearSelection,
+		selectedCount,
+		isBulkRunning,
+		bulkMarkPaid,
+		bulkDelete,
 	} = useReferralsPage()
+
+	const plural = selectedCount === 1 ? '' : 's'
+	const bulkActions: BulkAction[] = [
+		{
+			label: 'Mark paid',
+			icon: 'badge-dollar',
+			confirm: {
+				title: `Mark ${selectedCount} pipeline log${plural} as paid?`,
+				confirmLabel: 'Mark paid',
+			},
+			onRun: bulkMarkPaid,
+		},
+		{
+			label: 'Delete',
+			icon: 'trash-2',
+			destructive: true,
+			confirm: {
+				title: `Delete ${selectedCount} pipeline log${plural}?`,
+				description:
+					'This permanently removes the selected pipeline logs.',
+				confirmLabel: 'Delete',
+			},
+			onRun: bulkDelete,
+		},
+	]
 
 	const statusOptions = useMemo(
 		() =>
@@ -165,6 +198,20 @@ export function ReferralsPage() {
 			emptyMessage="No pipeline logs found"
 			minWidth="1200px"
 			onRowClick={(r) => goToDetail(r.id)}
+			selection={{
+				getRowId: (r) => r.id,
+				selectedIds,
+				onSelectionChange: setSelectedIds,
+			}}
+			className={selectedCount > 0 ? 'pb-24' : undefined}
+			footer={
+				<BulkActionBar
+					count={selectedCount}
+					actions={bulkActions}
+					onClear={clearSelection}
+					isRunning={isBulkRunning}
+				/>
+			}
 		/>
 	)
 }

@@ -6,6 +6,7 @@ import {
 	type ColumnDef,
 	type Row,
 	type RowData,
+	type RowSelectionState,
 } from '@tanstack/react-table'
 import {
 	DndContext,
@@ -38,6 +39,7 @@ import {
 	TableRow,
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { SortOrder } from '@/types/api'
 
@@ -74,6 +76,22 @@ export interface DataTableReorder<TData> {
 	onReorder: (ids: (string | number)[]) => void
 	/** Whether dragging is currently permitted (handle stays visible but inert when false). */
 	enabled: boolean
+}
+
+/**
+ * Row-selection wiring (opt-in, controlled). When set, the table grows a leading
+ * checkbox column — a per-row box plus a "select all on this page" header box.
+ * Selection is keyed by the record id ({@link getRowId}); the owning page hook
+ * holds `selectedIds` and clears it when the underlying rows change (page,
+ * search, filter, sort). Because pagination is server-side, "select all" only
+ * ever covers the rows currently on screen, not the whole dataset.
+ */
+export interface DataTableSelection<TData> {
+	/** Stable row id — the record's UUID/int id. */
+	getRowId: (row: TData) => string | number
+	/** Current selection (controlled), keyed by row id. */
+	selectedIds: (string | number)[]
+	onSelectionChange: (ids: (string | number)[]) => void
 }
 
 interface PaginationProps {
@@ -126,6 +144,11 @@ interface DataTableProps<TData> {
 	 */
 	reorder?: DataTableReorder<TData>
 	/**
+	 * Row selection (controlled). When set, a leading checkbox column appears and
+	 * ticking rows updates `selection.selectedIds` via `onSelectionChange`.
+	 */
+	selection?: DataTableSelection<TData>
+	/**
 	 * Minimum table width (any CSS length). Below this the table scrolls
 	 * horizontally instead of squeezing columns until text wraps.
 	 */
@@ -151,6 +174,7 @@ export function DataTable<TData>({
 	pagination,
 	sorting,
 	reorder,
+	selection,
 	minWidth,
 	skeletonRows = 5,
 	stickyHeader = true,
@@ -170,16 +194,40 @@ export function DataTable<TData>({
 	}
 	const tableData = reorder ? orderedData : data
 
+	// Both reorder and selection key rows by the record id (not the row index):
+	// reorder needs it so dnd-kit moves the real DOM node, selection needs it so
+	// the controlled `selectedIds` survive a refetch/reorder of the rows.
+	const rowIdOf = reorder?.getRowId ?? selection?.getRowId
+
+	// Mirror the controlled `selectedIds` into TanStack's row-selection model
+	// (`{ [id]: true }`). Driving the table's own model keeps "select all on
+	// page" / indeterminate header state correct for free.
+	const rowSelection = useMemo<RowSelectionState>(() => {
+		const state: RowSelectionState = {}
+		selection?.selectedIds.forEach((id) => {
+			state[String(id)] = true
+		})
+		return state
+	}, [selection?.selectedIds])
+
 	const table = useReactTable({
 		data: tableData,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		// Key rows by their record id (not the row index) when reordering, so
-		// React moves the actual DOM nodes on a reorder instead of reusing them
-		// by position. dnd-kit tracks drag transforms by the same id, so without
-		// this the dropped row snaps back to its origin (node stays put, only its
-		// content swaps) before the data catches up.
-		getRowId: reorder ? (row) => String(reorder.getRowId(row)) : undefined,
+		getRowId: rowIdOf ? (row) => String(rowIdOf(row)) : undefined,
+		enableRowSelection: !!selection,
+		state: selection ? { rowSelection } : undefined,
+		onRowSelectionChange: selection
+			? (updater) => {
+					const next =
+						typeof updater === 'function'
+							? updater(rowSelection)
+							: updater
+					selection.onSelectionChange(
+						Object.keys(next).filter((id) => next[id]),
+					)
+				}
+			: undefined,
 	})
 
 	// Drag-and-drop reordering plumbing (no-op unless `reorder` is supplied).
@@ -236,15 +284,34 @@ export function DataTable<TData>({
 			}
 		: undefined
 
-	const renderCells = (row: Row<TData>) =>
-		row.getVisibleCells().map((cell) => (
+	const renderCells = (row: Row<TData>) => [
+		// Leading per-row selection checkbox. The wrapper stops its own mousedown
+		// and click so ticking the box never registers as a row press (the
+		// `downPos` guard above only navigates when the row itself recorded the
+		// press) and so it never bubbles to onRowClick.
+		selection ? (
+			<TableCell
+				key="__select"
+				className="w-10"
+				onMouseDown={(e) => e.stopPropagation()}
+				onClick={(e) => e.stopPropagation()}
+			>
+				<Checkbox
+					checked={row.getIsSelected()}
+					onCheckedChange={(value) => row.toggleSelected(!!value)}
+					aria-label="Select row"
+				/>
+			</TableCell>
+		) : null,
+		...row.getVisibleCells().map((cell) => (
 			<TableCell
 				key={cell.id}
 				className={cell.column.columnDef.meta?.className}
 			>
 				{flexRender(cell.column.columnDef.cell, cell.getContext())}
 			</TableCell>
-		))
+		)),
+	]
 
 	const dataRows = table.getRowModel().rows.map((row) =>
 		reorder ? (
@@ -289,6 +356,25 @@ export function DataTable<TData>({
 						>
 							{reorder && (
 								<TableHead className="w-10" aria-hidden />
+							)}
+							{selection && (
+								<TableHead className="w-10">
+									<Checkbox
+										checked={
+											table.getIsAllPageRowsSelected()
+												? true
+												: table.getIsSomePageRowsSelected()
+													? 'indeterminate'
+													: false
+										}
+										onCheckedChange={(value) =>
+											table.toggleAllPageRowsSelected(
+												!!value,
+											)
+										}
+										aria-label="Select all rows on this page"
+									/>
+								</TableHead>
 							)}
 							{headerGroup.headers.map((header) => {
 								const sortKey =
@@ -335,6 +421,7 @@ export function DataTable<TData>({
 						Array.from({ length: skeletonRows }).map((_, i) => (
 							<TableRow key={i} className="hover:bg-transparent">
 								{reorder && <TableCell className="w-10" />}
+								{selection && <TableCell className="w-10" />}
 								{columns.map((_col, j) => (
 									<TableCell key={j}>
 										<Skeleton className="h-8 w-full" />
@@ -356,7 +443,11 @@ export function DataTable<TData>({
 					) : (
 						<TableRow className="hover:bg-transparent">
 							<TableCell
-								colSpan={columns.length + (reorder ? 1 : 0)}
+								colSpan={
+									columns.length +
+									(reorder ? 1 : 0) +
+									(selection ? 1 : 0)
+								}
 								className="h-24 text-center text-muted-foreground"
 							>
 								{emptyMessage}

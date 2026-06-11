@@ -74,10 +74,10 @@ src/
   logic in a colocated `use<Component>` hook; the component body is just
   `const { … } = use<Component>()` plus JSX.
 - **Shared shells:** list pages are built from `src/components/list/` (`ListPage`
-  + a list-page hook wiring `usePagination`/`useSorting`/`useDebouncedValue`);
-  create/edit forms from `src/components/form/` (`FormLayout` driven by a
-  declarative field array). Build a new section by copying the closest existing
-  one — Partners and Referrals are the richest templates.
+    - a list-page hook wiring `usePagination`/`useSorting`/`useDebouncedValue`);
+      create/edit forms from `src/components/form/` (`FormLayout` driven by a
+      declarative field array). Build a new section by copying the closest existing
+      one — Partners and Referrals are the richest templates.
 - **URL-synced list state:** search, sort, page, page size, and filters persist
   in the URL query so a view survives reload and can be shared (`syncToUrl` on
   `usePagination`/`useSorting`, `useUrlParams()` for search/filters).

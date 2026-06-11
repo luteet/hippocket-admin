@@ -1,14 +1,23 @@
 import { useState, useRef, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { getApiErrorMessage } from '@/lib/api/client'
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
 import { useUrlParams } from '@/hooks/useUrlState'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
-import type { Partner, UpdatePartnerDto, ValueType } from '@/types/api'
-import { usePartners, useUpdatePartner } from './hooks'
+import { useRowSelection } from '@/hooks/useRowSelection'
+import { useBulkAction } from '@/hooks/useBulkAction'
+import type {
+	Partner,
+	PartnersData,
+	UpdatePartnerDto,
+	ValueType,
+} from '@/types/api'
+import { usePartners } from './hooks'
+import { deletePartner, updatePartner } from './api'
 
 /** Stop row-click navigation when interacting with an inline editor. */
 export const stopRowClick = (e: { stopPropagation: () => void }) =>
@@ -77,24 +86,25 @@ export function usePartnersPage() {
 		order: sorting.order,
 	})
 
-	const updateMut = useUpdatePartner()
+	const qc = useQueryClient()
 
-	// --- Inline editing -----------------------------------------------------
+	// --- Inline editing (auto-save) -----------------------------------------
+	// There's no explicit Save button: each field persists on its own as soon as
+	// the user is done with it — number inputs commit on blur, the value-type
+	// select on change — and a toast confirms it. `edits` only holds the
+	// in-progress typed value so a number input stays controlled while editing;
+	// it is intentionally NOT cleared after a save (the staged text already
+	// equals the patched value).
 	const [edits, setEdits] = useState<Edits>({})
-	// Ids currently being persisted (per-row checkmarks show a spinner).
-	const [savingIds, setSavingIds] = useState<Set<string>>(new Set())
 
 	// The cell renderers below are baked into a referentially-stable `columns`
 	// array (so react-table never remounts the inputs and focus is preserved).
-	// They therefore read live state through refs instead of closures. The refs
-	// are written during render on purpose: cells must observe fresh state in
-	// the same render that a keystroke triggers, which an effect can't provide.
+	// They therefore read live state through refs instead of closures. The ref is
+	// written during render on purpose: cells must observe fresh state in the
+	// same render that a keystroke triggers, which an effect can't provide.
 	const editsRef = useRef(edits)
-	const savingIdsRef = useRef(savingIds)
 	// eslint-disable-next-line react-hooks/refs
 	editsRef.current = edits
-	// eslint-disable-next-line react-hooks/refs
-	savingIdsRef.current = savingIds
 
 	/** Current value to display in a cell (pending edit, else stored value). */
 	const getCell = useCallback((partner: Partner, field: EditableField) => {
@@ -123,66 +133,101 @@ export function usePartnersPage() {
 		[],
 	)
 
-	const dirtyCount = useMemo(() => Object.keys(edits).length, [edits])
-	const isDirty = dirtyCount > 0
+	// `id:field` keys with a PUT in flight, so a repeated commit (e.g. a second
+	// blur before the first resolves) doesn't fire a duplicate request.
+	const inFlight = useRef<Set<string>>(new Set())
 
-	const discard = useCallback(() => setEdits({}), [])
-
-	const isRowDirty = useCallback((id: string) => !!editsRef.current[id], [])
-	const isRowSaving = useCallback(
-		(id: string) => savingIdsRef.current.has(id),
-		[],
-	)
-
-	/** Persist the pending edits for the given partner ids. */
-	const saveIds = async (ids: string[]) => {
-		const edits = editsRef.current
-		const targets = ids.filter((id) => edits[id])
-		if (targets.length === 0) return
-		setSavingIds((prev) => new Set([...prev, ...targets]))
+	/** Persist a single changed field for one partner. No-op if unchanged. */
+	const saveField = async (
+		partner: Partner,
+		field: EditableField,
+		value: string,
+	) => {
+		if (value === originalString(partner, field)) return
+		const key = `${partner.id}:${field}`
+		if (inFlight.current.has(key)) return
+		inFlight.current.add(key)
 		try {
-			await Promise.all(
-				targets.map((id) =>
-					updateMut.mutateAsync({
-						id,
-						dto: buildUpdateDto(edits[id]),
-					}),
-				),
+			const saved = await updatePartner(
+				partner.id,
+				buildUpdateDto({ [field]: value }),
 			)
-			toast.success(
-				`Saved ${targets.length} partner${targets.length > 1 ? 's' : ''}`,
+			// Patch the saved row into every cached partners list in place rather
+			// than invalidating: a refetch flips the query to `isFetching`, which
+			// the list shell renders as a full-table skeleton. An in-place patch
+			// keeps the rows on screen and just updates this one record. The
+			// `['partners']` filter also catches the single-partner detail query
+			// (whose data has no `items`), so guard before mapping.
+			qc.setQueriesData<PartnersData>(
+				{ queryKey: ['partners'] },
+				(old) =>
+					old && Array.isArray(old.items)
+						? {
+								...old,
+								items: old.items.map((p) =>
+									p.id === saved.id ? saved : p,
+								),
+							}
+						: old,
 			)
-			setEdits((prev) => {
-				const next = { ...prev }
-				targets.forEach((id) => delete next[id])
-				return next
-			})
+			toast.success('Partner updated')
 		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to save changes'))
+			toast.error(getApiErrorMessage(error, 'Failed to update partner'))
 		} finally {
-			setSavingIds((prev) => {
-				const next = new Set(prev)
-				targets.forEach((id) => next.delete(id))
-				return next
-			})
+			inFlight.current.delete(key)
 		}
 	}
-	// `saveIds` closes over the latest mutation each render; expose it through a
-	// ref so the row/all handlers stay referentially stable for the columns.
-	const saveIdsRef = useRef(saveIds)
+	// `saveField` closes over the latest mutation each render; expose it through a
+	// ref so the stable handler the columns capture always hits the current one.
+	const saveFieldRef = useRef(saveField)
 	// eslint-disable-next-line react-hooks/refs
-	saveIdsRef.current = saveIds
+	saveFieldRef.current = saveField
 
-	const handleSaveRow = useCallback(
-		(id: string) => saveIdsRef.current([id]),
+	const handleSaveField = useCallback(
+		(partner: Partner, field: EditableField, value: string) =>
+			saveFieldRef.current(partner, field, value),
 		[],
 	)
-	const handleSaveAll = useCallback(
-		() => saveIdsRef.current(Object.keys(editsRef.current)),
-		[],
+
+	// --- Bulk actions (hide / show / delete the selected partners) ----------
+	const {
+		selectedIds,
+		setSelectedIds,
+		clear: clearSelection,
+	} = useRowSelection(data?.items)
+	const { run, isRunning: isBulkRunning } = useBulkAction<Partner>()
+
+	const selectedItems = useMemo(
+		() => data?.items.filter((p) => selectedIds.includes(p.id)) ?? [],
+		[data, selectedIds],
 	)
+
+	const finishBulk = (failed: Partner[]) => {
+		qc.invalidateQueries({ queryKey: ['partners'] })
+		setSelectedIds(failed.map((p) => p.id))
+	}
+
+	const bulkSetHidden = (isHide: boolean, verb: string) =>
+		run(selectedItems, (p) => updatePartner(p.id, { is_hide: isHide }), {
+			verb,
+			onDone: finishBulk,
+		})
+
+	const bulkDelete = () =>
+		run(selectedItems, (p) => deletePartner(p.id), {
+			verb: 'Deleted',
+			onDone: finishBulk,
+		})
 
 	return {
+		selectedIds,
+		setSelectedIds,
+		clearSelection,
+		selectedCount: selectedItems.length,
+		isBulkRunning,
+		bulkHide: () => bulkSetHidden(true, 'Hid'),
+		bulkShow: () => bulkSetHidden(false, 'Showed'),
+		bulkDelete,
 		search,
 		setSearch,
 		data,
@@ -192,16 +237,9 @@ export function usePartnersPage() {
 		sorting,
 		goToCreate: () => navigate('/partners/new'),
 		openPartner: (id: string) => navigate(`/partners/${id}`),
-		// Inline editing
+		// Inline editing (auto-save per field)
 		getCell,
 		setCell,
-		isDirty,
-		dirtyCount,
-		isSaving: savingIds.size > 0,
-		isRowDirty,
-		isRowSaving,
-		handleSaveRow,
-		handleSaveAll,
-		discard,
+		saveField: handleSaveField,
 	}
 }
