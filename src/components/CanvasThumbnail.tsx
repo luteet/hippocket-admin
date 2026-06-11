@@ -25,21 +25,23 @@ export function CanvasThumbnail({
 	const objectFit = fit === 'contain' ? 'object-contain' : 'object-cover'
 
 	return (
-		<>
+		<div className="relative flex size-full items-center justify-center">
 			<canvas
 				ref={canvasRef}
-				className={`size-full ${objectFit}`}
+				className={`size-full ${objectFit} transition-opacity duration-300`}
 				data-status={status}
-				style={{ display: status === 'ready' ? undefined : 'none' }}
+				style={{ opacity: status === 'ready' ? 1 : 0 }}
 			/>
 			{status !== 'ready' && (
 				<Icon
 					name={status === 'error' ? 'image' : 'loader'}
 					className={
-						status === 'error' ? 'size-7' : 'size-7 animate-spin'
+						status === 'error'
+							? 'absolute size-7'
+							: 'absolute size-7 animate-spin'
 					}
 				/>
 			)}
-		</>
+		</div>
 	)
 }
