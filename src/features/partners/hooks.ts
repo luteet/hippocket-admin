@@ -85,7 +85,12 @@ export function useUploadPartnerPreview() {
 	})
 }
 
-const reviewsKey = (partnerId: string) => [KEY, 'detail', partnerId, 'reviews']
+export const reviewsKey = (partnerId: string) => [
+	KEY,
+	'detail',
+	partnerId,
+	'reviews',
+]
 
 export function usePartnerReviews(partnerId: string | undefined) {
 	return useQuery({

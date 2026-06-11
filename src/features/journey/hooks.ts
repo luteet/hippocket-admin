@@ -25,7 +25,7 @@ import {
 	type SharedPartnerFilters,
 } from './api'
 
-const SHARED_KEY = 'shared-partners'
+export const SHARED_KEY = 'shared-partners'
 
 // ---- Shared partners ----
 

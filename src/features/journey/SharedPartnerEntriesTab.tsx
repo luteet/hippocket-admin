@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button'
 import { Tooltip } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import { DataTable } from '@/components/DataTable'
-import { ConfirmDialog } from '@/components/ConfirmDialog'
 import type { SharedPartnerEntry } from '@/types/api'
 import { SharedPartnerEntryDialog } from './SharedPartnerEntryDialog'
 import {
@@ -27,10 +26,7 @@ export function SharedPartnerEntriesTab({ sharedId, entries }: Props) {
 		editing,
 		openCreate,
 		openEdit,
-		pendingDelete,
-		setPendingDelete,
-		isDeleting,
-		handleDelete,
+		deleteEntry,
 	} = useSharedPartnerEntriesTab(sharedId)
 
 	const columns = useMemo<ColumnDef<SharedPartnerEntry, unknown>[]>(
@@ -91,7 +87,7 @@ export function SharedPartnerEntriesTab({ sharedId, entries }: Props) {
 							<Button
 								variant="ghost"
 								size="icon"
-								onClick={() => setPendingDelete(row.original)}
+								onClick={() => deleteEntry(row.original)}
 							>
 								<Icon name="trash-2" />
 							</Button>
@@ -100,7 +96,7 @@ export function SharedPartnerEntriesTab({ sharedId, entries }: Props) {
 				),
 			},
 		],
-		[openEdit, setPendingDelete],
+		[openEdit, deleteEntry],
 	)
 
 	return (
@@ -128,17 +124,6 @@ export function SharedPartnerEntriesTab({ sharedId, entries }: Props) {
 					onOpenChange={setDialogOpen}
 				/>
 			)}
-
-			<ConfirmDialog
-				open={!!pendingDelete}
-				onOpenChange={(open) => !open && setPendingDelete(null)}
-				title="Remove partner?"
-				description={`"${pendingDelete?.partner_name ?? ''}" will be removed from this shared list.`}
-				confirmLabel="Remove"
-				destructive
-				loading={isDeleting}
-				onConfirm={handleDelete}
-			/>
 		</div>
 	)
 }

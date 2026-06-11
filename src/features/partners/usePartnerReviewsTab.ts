@@ -1,19 +1,17 @@
 import { useState } from 'react'
-import { toast } from 'sonner'
+import { useQueryClient } from '@tanstack/react-query'
 
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useUndoableDelete } from '@/hooks/useUndoableDelete'
 import type { PartnerReview } from '@/types/api'
-import { usePartnerReviews, useDeletePartnerReview } from './hooks'
+import { usePartnerReviews, useDeletePartnerReview, reviewsKey } from './hooks'
 
 export function usePartnerReviewsTab(partnerId: string) {
+	const qc = useQueryClient()
 	const { data: reviews, isLoading } = usePartnerReviews(partnerId)
 	const deleteMut = useDeletePartnerReview(partnerId)
 
 	const [dialogOpen, setDialogOpen] = useState(false)
 	const [editing, setEditing] = useState<PartnerReview | null>(null)
-	const [pendingDelete, setPendingDelete] = useState<PartnerReview | null>(
-		null,
-	)
 
 	const openCreate = () => {
 		setEditing(null)
@@ -25,16 +23,18 @@ export function usePartnerReviewsTab(partnerId: string) {
 		setDialogOpen(true)
 	}
 
-	const handleDelete = async () => {
-		if (!pendingDelete) return
-		try {
-			await deleteMut.mutateAsync(pendingDelete.id)
-			toast.success('Review deleted')
-			setPendingDelete(null)
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete review'))
-		}
-	}
+	const { remove: deleteReview } = useUndoableDelete<PartnerReview>({
+		delete: (review) => deleteMut.mutateAsync(review.id),
+		hide: (review) => {
+			const key = reviewsKey(partnerId)
+			const prev = qc.getQueryData<PartnerReview[]>(key)
+			qc.setQueryData<PartnerReview[]>(key, (cur) =>
+				(cur ?? []).filter((r) => r.id !== review.id),
+			)
+			return () => qc.setQueryData(key, prev)
+		},
+		label: (review) => `Deleted review by ${review.name}`,
+	})
 
 	return {
 		reviews,
@@ -44,9 +44,6 @@ export function usePartnerReviewsTab(partnerId: string) {
 		editing,
 		openCreate,
 		openEdit,
-		pendingDelete,
-		setPendingDelete,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
+		deleteReview,
 	}
 }

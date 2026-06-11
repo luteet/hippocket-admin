@@ -5,7 +5,6 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { MediaThumbnail } from '@/components/media/MediaThumbnail'
 import { TimeAgo } from '@/components/TimeAgo'
-import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { PartnerReviewDialog } from './PartnerReviewDialog'
 import { usePartnerReviewsTab } from './usePartnerReviewsTab'
 
@@ -22,10 +21,7 @@ export function PartnerReviewsTab({ partnerId }: Props) {
 		editing,
 		openCreate,
 		openEdit,
-		pendingDelete,
-		setPendingDelete,
-		isDeleting,
-		handleDelete,
+		deleteReview,
 	} = usePartnerReviewsTab(partnerId)
 
 	return (
@@ -83,7 +79,7 @@ export function PartnerReviewsTab({ partnerId }: Props) {
 												variant="ghost"
 												size="icon"
 												onClick={() =>
-													setPendingDelete(review)
+													deleteReview(review)
 												}
 											>
 												<Icon name="trash-2" />
@@ -105,17 +101,6 @@ export function PartnerReviewsTab({ partnerId }: Props) {
 					onOpenChange={setDialogOpen}
 				/>
 			)}
-
-			<ConfirmDialog
-				open={!!pendingDelete}
-				onOpenChange={(open) => !open && setPendingDelete(null)}
-				title="Delete review?"
-				description={`Review by "${pendingDelete?.name ?? ''}" will be permanently deleted.`}
-				confirmLabel="Delete"
-				destructive
-				loading={isDeleting}
-				onConfirm={handleDelete}
-			/>
 
 			<div className="flex justify-end">
 				<Button onClick={openCreate}>
