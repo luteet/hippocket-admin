@@ -420,9 +420,23 @@ export function DataTable<TData>({
 											header.column.columnDef.header,
 											header.getContext(),
 										)
+								// Expose sort state to assistive tech on the
+								// header cell itself (per ARIA, `aria-sort` lives
+								// on the `<th>`, not the inner button). 'none'
+								// marks a sortable-but-unsorted column; omitted
+								// entirely on non-sortable columns.
+								const isSortable = !!(sorting && sortKey)
+								const ariaSort = !isSortable
+									? undefined
+									: sorting.sortBy !== sortKey
+										? 'none'
+										: sorting.order === 'asc'
+											? 'ascending'
+											: 'descending'
 								return (
 									<TableHead
 										key={header.id}
+										aria-sort={ariaSort}
 										className={
 											header.column.columnDef.meta
 												?.className
@@ -489,6 +503,7 @@ export function DataTable<TData>({
 								    sized to its visible width, so the message stays
 								    centered on screen however wide the table is. */}
 								<div
+									role="status"
 									className="sticky left-0 flex min-h-24 items-center justify-center text-center text-muted-foreground"
 									style={{ width: viewportWidth }}
 								>
@@ -504,7 +519,10 @@ export function DataTable<TData>({
 
 	return (
 		<div className="space-y-4">
-			<div className="relative overflow-hidden rounded-xl border border-border bg-card">
+			<div
+				className="relative overflow-hidden rounded-xl border border-border bg-card"
+				aria-busy={isFetching || undefined}
+			>
 				{onRefresh && (
 					<RefreshButton
 						onRefresh={onRefresh}

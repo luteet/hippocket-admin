@@ -23,6 +23,7 @@ export function SearchInput({
 			/>
 			<Input
 				placeholder={placeholder}
+				aria-label={placeholder}
 				className="pl-9"
 				value={value}
 				onChange={(e) => onChange(e.target.value)}
