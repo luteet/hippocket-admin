@@ -4,9 +4,8 @@ import { useQueryClient } from '@tanstack/react-query'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
-import { useUrlParams } from '@/hooks/useUrlState'
+import { useUrlParams, useUrlSearch } from '@/hooks/useUrlState'
 import type { ActiveFilter } from '@/components/list/FilterChips'
-import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { useRowSelection } from '@/hooks/useRowSelection'
 import { useBulkAction } from '@/hooks/useBulkAction'
 import type { ReferralListItem } from '@/types/api'
@@ -20,9 +19,9 @@ export function useReferralsPage() {
 	// Search, filters (status, paid), sort and page all live in the URL
 	// (deep-linkable, survives reload). Each change resets the page in one write.
 	const [params, setParams] = useUrlParams()
-	const search = params.get('q') ?? ''
-	const setSearch = (value: string) => setParams({ q: value, page: null })
-	const debouncedSearch = useDebouncedValue(search)
+	// Instant local input, debounced URL write; `committedSearch` (the URL value)
+	// drives the query. See useUrlSearch.
+	const [search, setSearch, committedSearch] = useUrlSearch('q')
 	const statusLabel = params.get('status') ?? ALL
 	const setStatusLabel = (value: string) =>
 		setParams({ status: value === ALL ? null : value, page: null })
@@ -70,11 +69,17 @@ export function useReferralsPage() {
 	const removeFilter = (key: string) => setParams({ [key]: null, page: null })
 	const clearFilters = () =>
 		setParams({ status: null, paid: null, page: null })
+	// Whether the empty list is "filtered to nothing" (search or any filter
+	// active) vs genuinely having no records — the page picks its empty state
+	// from this. `clearAll` resets search and every filter in one write.
+	const hasFilters = activeFilterCount > 0 || Boolean(committedSearch)
+	const clearAll = () =>
+		setParams({ q: null, status: null, paid: null, page: null })
 
 	const { data, isLoading, isFetching, refetch } = useReferrals({
 		offset: pagination.offset,
 		count: pagination.count,
-		search: debouncedSearch || undefined,
+		search: committedSearch || undefined,
 		status_label: statusLabel === ALL ? undefined : statusLabel,
 		is_paid: isPaid === ALL ? undefined : isPaid === 'true',
 		sort_by: sorting.sortBy,
@@ -130,6 +135,8 @@ export function useReferralsPage() {
 		activeFilters,
 		removeFilter,
 		clearFilters,
+		hasFilters,
+		clearAll,
 		statuses,
 		statusNameByLabel,
 		data,

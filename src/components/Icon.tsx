@@ -56,6 +56,8 @@ export type IconName =
 	| 'image'
 	| 'grip-vertical'
 	| 'refresh-cw'
+	| 'inbox'
+	| 'search-x'
 
 const SPRITE_URL = `${import.meta.env.BASE_URL}img/sprites.svg`
 

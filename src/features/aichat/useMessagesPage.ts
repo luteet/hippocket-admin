@@ -2,9 +2,8 @@ import { useNavigate } from 'react-router'
 
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
-import { useUrlParams } from '@/hooks/useUrlState'
+import { useUrlParams, useUrlSearch } from '@/hooks/useUrlState'
 import type { ActiveFilter } from '@/components/list/FilterChips'
-import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import type { AiMessageRole } from '@/types/api'
 import { useMessages, useSessionRefs } from './hooks'
 
@@ -23,9 +22,9 @@ export function useMessagesPage() {
 	// session can also be pre-set via `?session=…` (e.g. from a session detail) —
 	// it's the same param. Changing search/filters resets the page in one write.
 	const [params, setParams] = useUrlParams()
-	const search = params.get('q') ?? ''
-	const setSearch = (value: string) => setParams({ q: value, page: null })
-	const debouncedSearch = useDebouncedValue(search)
+	// Instant local input, debounced URL write; `committedSearch` (the URL value)
+	// drives the query. See useUrlSearch.
+	const [search, setSearch, committedSearch] = useUrlSearch('q')
 	const role = params.get('role') ?? ALL
 	const setRole = (value: string) =>
 		setParams({ role: value === ALL ? null : value, page: null })
@@ -72,7 +71,7 @@ export function useMessagesPage() {
 	const { data, isLoading, isFetching, refetch } = useMessages({
 		offset: pagination.offset,
 		count: pagination.count,
-		search: debouncedSearch || undefined,
+		search: committedSearch || undefined,
 		role: role === ALL ? undefined : (role as AiMessageRole),
 		session_id: sessionId === ALL ? undefined : sessionId,
 		sort_by: sorting.sortBy,

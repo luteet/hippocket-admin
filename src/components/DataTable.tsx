@@ -1,4 +1,10 @@
-import { useMemo, useRef, useState } from 'react'
+import {
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+	type ReactNode,
+} from 'react'
 import {
 	flexRender,
 	getCoreRowModel,
@@ -131,7 +137,7 @@ interface DataTableProps<TData> {
 	columns: ColumnDef<TData, unknown>[]
 	data: TData[]
 	isLoading?: boolean
-	emptyMessage?: string
+	emptyMessage?: ReactNode
 	onRowClick?: (row: TData) => void
 	/**
 	 * Re-fetch the current view. When set, a quiet refresh button is pinned to
@@ -323,6 +329,24 @@ export function DataTable<TData>({
 		)),
 	]
 
+	// When the table is empty, the placeholder cell spans every column, so on a
+	// wide (horizontally scrolling) table its centered content would sit far off
+	// to the right. We instead pin it to the scroll container's *visible* width:
+	// measure that width here and render the empty block `sticky left-0` at that
+	// size, so it stays centered in view as the table scrolls sideways.
+	const scrollRef = useRef<HTMLDivElement>(null)
+	const isEmpty = !isLoading && table.getRowModel().rows.length === 0
+	const [viewportWidth, setViewportWidth] = useState<number>()
+	useLayoutEffect(() => {
+		const el = scrollRef.current
+		if (!el || !isEmpty) return
+		const update = () => setViewportWidth(el.clientWidth)
+		update()
+		const ro = new ResizeObserver(update)
+		ro.observe(el)
+		return () => ro.disconnect()
+	}, [isEmpty])
+
 	const dataRows = table.getRowModel().rows.map((row) =>
 		reorder ? (
 			<SortableRow
@@ -356,6 +380,7 @@ export function DataTable<TData>({
 			<Table
 				className={sorting ? 'table-fixed' : undefined}
 				stickyHeader={stickyHeader}
+				scrollRef={scrollRef}
 				style={minWidth ? { minWidth } : undefined}
 			>
 				<TableHeader>
@@ -458,9 +483,17 @@ export function DataTable<TData>({
 									(reorder ? 1 : 0) +
 									(selection ? 1 : 0)
 								}
-								className="h-24 text-center text-muted-foreground"
+								className="p-0"
 							>
-								{emptyMessage}
+								{/* Pinned to the left of the scroll viewport and
+								    sized to its visible width, so the message stays
+								    centered on screen however wide the table is. */}
+								<div
+									className="sticky left-0 flex min-h-24 items-center justify-center text-center text-muted-foreground"
+									style={{ width: viewportWidth }}
+								>
+									{emptyMessage}
+								</div>
 							</TableCell>
 						</TableRow>
 					)}

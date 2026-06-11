@@ -44,7 +44,7 @@ interface ListPageProps<TData> {
 
 	// Table
 	columns: ColumnDef<TData, unknown>[]
-	emptyMessage?: string
+	emptyMessage?: ReactNode
 	minWidth?: string
 	onRowClick?: (row: TData) => void
 	/** Server-side sorting wiring (from useSorting); enables sortable headers. */

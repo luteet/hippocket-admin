@@ -6,8 +6,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { getApiErrorMessage } from '@/lib/api/client'
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
-import { useUrlParams } from '@/hooks/useUrlState'
-import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { useUrlParams, useUrlSearch } from '@/hooks/useUrlState'
 import { useRowSelection } from '@/hooks/useRowSelection'
 import { useBulkAction } from '@/hooks/useBulkAction'
 import type {
@@ -61,12 +60,12 @@ function buildUpdateDto(
 export function usePartnersPage() {
 	const navigate = useNavigate()
 	// Search, sort, page and page size all live in the URL (deep-linkable,
-	// survives reload). Changing the search resets the page in the same write so
-	// there's no flash of page-N results for the new query.
-	const [params, setParams] = useUrlParams()
-	const search = params.get('q') ?? ''
-	const setSearch = (value: string) => setParams({ q: value, page: null })
-	const debouncedSearch = useDebouncedValue(search)
+	// survives reload). The search box keeps instant local state and writes the
+	// `q` param (resetting the page) only after a debounce, so typing doesn't
+	// push a navigation per keystroke; `committedSearch` is the URL value that
+	// drives the query.
+	const [, setParams] = useUrlParams()
+	const [search, setSearch, committedSearch] = useUrlSearch('q')
 	const pagination = usePagination({
 		count: 20,
 		storageKey: 'partners',
@@ -81,7 +80,7 @@ export function usePartnersPage() {
 	const { data, isLoading, isFetching, refetch } = usePartners({
 		offset: pagination.offset,
 		count: pagination.count,
-		search: debouncedSearch || undefined,
+		search: committedSearch || undefined,
 		sort_by: sorting.sortBy,
 		order: sorting.order,
 	})
@@ -230,6 +229,11 @@ export function usePartnersPage() {
 		bulkDelete,
 		search,
 		setSearch,
+		// Whether the empty list is "filtered to nothing" vs "no records yet" —
+		// the page picks the right empty state from this.
+		hasFilters: Boolean(committedSearch),
+		// Clear via the URL directly so the input empties at once (no debounce).
+		clearFilters: () => setParams({ q: null, page: null }),
 		data,
 		isLoading,
 		isFetching,

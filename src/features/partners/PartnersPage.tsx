@@ -13,6 +13,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { ListPage } from '@/components/list/ListPage'
+import { EmptyState } from '@/components/EmptyState'
 import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
 import type { Partner } from '@/types/api'
 import { usePartnersPage, stopRowClick } from './usePartnersPage'
@@ -30,6 +31,8 @@ export function PartnersPage() {
 		sorting,
 		goToCreate,
 		openPartner,
+		hasFilters,
+		clearFilters,
 		getCell,
 		setCell,
 		saveField,
@@ -59,6 +62,31 @@ export function PartnersPage() {
 			onRun: bulkDelete,
 		},
 	]
+
+	const emptyState = hasFilters ? (
+		<EmptyState
+			icon="search-x"
+			title="No results"
+			description="No partners match your current search."
+			action={
+				<Button variant="secondary" size="sm" onClick={clearFilters}>
+					Clear search
+				</Button>
+			}
+		/>
+	) : (
+		<EmptyState
+			icon="inbox"
+			title="No partners yet"
+			description="Create the first partner to get started."
+			action={
+				<Button size="sm" onClick={goToCreate}>
+					<Icon name="plus" />
+					Add partner
+				</Button>
+			}
+		/>
+	)
 
 	const columns = useMemo<ColumnDef<Partner, unknown>[]>(
 		() => [
@@ -223,7 +251,7 @@ export function PartnersPage() {
 				order: sorting.order,
 				onToggle: sorting.toggle,
 			}}
-			emptyMessage="No partners found"
+			emptyMessage={emptyState}
 			minWidth="1800px"
 			onRowClick={(p) => openPartner(p.id)}
 			selection={{

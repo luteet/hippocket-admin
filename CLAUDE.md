@@ -91,12 +91,20 @@ Read-only `GET`s against any record are fine.
           page size, and filters persist in the URL query so a view survives
           reload and can be shared. Pass `syncToUrl: true` to `usePagination`
           (`?page=` 1-based, `?count=`) and `useSorting` (`?sort=`/`?order=`);
-          for search/filters use `useUrlParams()` from
+          for filters use `useUrlParams()` from
           [src/hooks/useUrlState.ts](src/hooks/useUrlState.ts) — `params.get(key)`
           to read, `setParams({ key: value, page: null })` to write (a `null`/`''`
           value drops the key, keeping URLs clean; patching `page: null` in the
           same call resets to page one, so **no `pagination.reset()` effect is
           needed**). Use the `ALL` sentinel → `null` mapping for "All …" filters.
+          For the **search box** use `useUrlSearch('q')` (same file) instead of
+          wiring `q` by hand — it returns `[value, setValue, committed]` with
+          instant local typing but a **debounced** URL write (so a keystroke
+          doesn't push a navigation/refetch per character), resets the page on
+          write, and adopts external param changes (Back, a programmatic clear).
+          Bind `value`/`setValue` to the input and feed `committed` to the query
+          (no separate `useDebouncedValue` needed). Clear search via
+          `setParams({ q: null, page: null })` so the box empties instantly.
           Migrated: Partners, Referrals, AI-chat messages — copy one of those.
           Without `syncToUrl`, both hooks keep their old local-state behaviour
           (so non-list usages like `useChatMessagesTab` are unaffected).

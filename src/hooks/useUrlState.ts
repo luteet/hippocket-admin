@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router'
 
 /** A set of param updates: a key is removed when its value is null/undefined/''. */
@@ -38,6 +38,47 @@ export function useUrlParams() {
 	)
 
 	return [searchParams, setParams] as const
+}
+
+/**
+ * A search box backed by a URL query param, with the URL write debounced.
+ *
+ * Typing updates the returned `value` instantly (the input stays responsive),
+ * but the URL — and therefore the deep-linkable, query-driving `committed`
+ * value — only catches up after `delay` ms of inactivity. This keeps a keystroke
+ * from pushing a `replace` navigation (and a refetch) per character while still
+ * persisting the final query in the URL. Each write also resets `page` to one.
+ *
+ * An external change to the param (Back/forward, or a programmatic clear via
+ * `setParams`) flows back into `value`, so a "Clear filters" reset empties the
+ * box immediately. Returns `[value, setValue, committed]`: bind `value`/
+ * `setValue` to the input and feed `committed` to the data query.
+ */
+export function useUrlSearch(key = 'q', delay = 350) {
+	const [params, setParams] = useUrlParams()
+	const committed = params.get(key) ?? ''
+	const [value, setValue] = useState(committed)
+
+	// Adopt the URL value whenever it changes from outside our own debounced
+	// write (Back/forward, a programmatic clear). Our own write lands once
+	// `committed` already equals `value`, so that case is a no-op. This is the
+	// "derive state from props during render" pattern (cf. DataTable's prevData).
+	const [prevCommitted, setPrevCommitted] = useState(committed)
+	if (committed !== prevCommitted) {
+		setPrevCommitted(committed)
+		if (committed !== value) setValue(committed)
+	}
+
+	// Debounce the URL write; resets the page so a new query starts at page one.
+	useEffect(() => {
+		if (value === committed) return
+		const id = setTimeout(() => {
+			setParams({ [key]: value || null, page: null })
+		}, delay)
+		return () => clearTimeout(id)
+	}, [value, committed, key, delay, setParams])
+
+	return [value, setValue, committed] as const
 }
 
 /**

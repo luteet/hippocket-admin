@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/Icon'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { EmptyState } from '@/components/EmptyState'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
@@ -31,6 +32,8 @@ export function ReferralsPage() {
 		activeFilters,
 		removeFilter,
 		clearFilters,
+		hasFilters,
+		clearAll,
 		statuses,
 		statusNameByLabel,
 		data,
@@ -73,6 +76,27 @@ export function ReferralsPage() {
 			onRun: bulkDelete,
 		},
 	]
+
+	// Pipeline logs have no create route (they originate from agents), so the
+	// genuinely-empty state offers only a description — no CTA to act on.
+	const emptyState = hasFilters ? (
+		<EmptyState
+			icon="search-x"
+			title="No results"
+			description="No pipeline logs match your current search or filters."
+			action={
+				<Button variant="secondary" size="sm" onClick={clearAll}>
+					Clear filters
+				</Button>
+			}
+		/>
+	) : (
+		<EmptyState
+			icon="inbox"
+			title="No pipeline logs yet"
+			description="Pipeline logs will appear here as agents submit them."
+		/>
+	)
 
 	const statusOptions = useMemo(
 		() =>
@@ -202,7 +226,7 @@ export function ReferralsPage() {
 				order: sorting.order,
 				onToggle: sorting.toggle,
 			}}
-			emptyMessage="No pipeline logs found"
+			emptyMessage={emptyState}
 			minWidth="1200px"
 			onRowClick={(r) => goToDetail(r.id)}
 			selection={{

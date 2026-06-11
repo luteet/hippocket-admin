@@ -1,18 +1,24 @@
-import { type ComponentProps } from 'react'
+import { type ComponentProps, type Ref } from 'react'
 
 import { cn } from '@/lib/utils'
 
 // `stickyHeader` (default on) makes the wrapper a bounded scroll container so
 // the <thead> can stick to its top while the body scrolls — see
 // `src/styles/components/_table.scss`. Pass `false` to opt a short embedded
-// table out and fall back to plain horizontal-only scrolling.
+// table out and fall back to plain horizontal-only scrolling. `scrollRef`
+// exposes that scroll container (e.g. to measure its visible width).
 function Table({
 	className,
 	stickyHeader = true,
+	scrollRef,
 	...props
-}: ComponentProps<'table'> & { stickyHeader?: boolean }) {
+}: ComponentProps<'table'> & {
+	stickyHeader?: boolean
+	scrollRef?: Ref<HTMLDivElement>
+}) {
 	return (
 		<div
+			ref={scrollRef}
 			className={cn(
 				'relative w-full',
 				stickyHeader ? 'table-scroll' : 'overflow-x-auto',
