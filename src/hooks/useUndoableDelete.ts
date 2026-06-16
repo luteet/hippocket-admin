@@ -46,7 +46,7 @@ export function useUndoableDelete<T>({
 		const rollback = hide(item)
 		let settled = false
 
-		const entry: Pending = { timer: null, flush: () => { } }
+		const entry: Pending = { timer: null, flush: () => {} }
 
 		const commit = async () => {
 			if (settled) return

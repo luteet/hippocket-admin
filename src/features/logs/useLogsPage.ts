@@ -15,6 +15,18 @@ export const ALL = '__all__'
 // filter. The slug doubles as the URL segment under `/logs`.
 export type LogSlug = 'all' | 'referrals-sent' | 'referrals-closed'
 
+// SMS delivery statuses for the `sms_status` filter. The /logs/meta/ endpoint
+// doesn't enumerate these, so the list is fixed (mirrors the documented Twilio
+// states); the backend filters one status at a time (`?sms_status=…`).
+export const SMS_STATUSES = [
+	'delivered',
+	'undelivered',
+	'failed',
+	'queued',
+	'sent',
+	'sending',
+]
+
 export interface LogView {
 	title: string
 	description: string
@@ -47,6 +59,7 @@ export function useLogsPage(slug: LogSlug) {
 	// Only used on the "all" view; pinned views derive their event from `view`.
 	const [event, setEvent] = useState(ALL)
 	const [sendStatus, setSendStatus] = useState(ALL)
+	const [smsStatus, setSmsStatus] = useState(ALL)
 	const [createdFrom, setCreatedFrom] = useState('')
 	const [createdTo, setCreatedTo] = useState('')
 	// A per-slug storage key so each section keeps its own page size.
@@ -66,12 +79,14 @@ export function useLogsPage(slug: LogSlug) {
 	const activeFilterCount =
 		(showEventFilter && event !== ALL ? 1 : 0) +
 		(sendStatus !== ALL ? 1 : 0) +
+		(smsStatus !== ALL ? 1 : 0) +
 		(createdFrom ? 1 : 0) +
 		(createdTo ? 1 : 0)
 
 	const clearFilters = () => {
 		setEvent(ALL)
 		setSendStatus(ALL)
+		setSmsStatus(ALL)
 		setCreatedFrom('')
 		setCreatedTo('')
 	}
@@ -83,6 +98,7 @@ export function useLogsPage(slug: LogSlug) {
 		debouncedSearch,
 		effectiveEvent,
 		sendStatus,
+		smsStatus,
 		createdFrom,
 		createdTo,
 		sorting.sortBy,
@@ -95,6 +111,7 @@ export function useLogsPage(slug: LogSlug) {
 		search: debouncedSearch || undefined,
 		event: effectiveEvent,
 		send_status: sendStatus === ALL ? undefined : sendStatus,
+		sms_status: smsStatus === ALL ? undefined : smsStatus,
 		created_from: createdFrom || undefined,
 		created_to: createdTo || undefined,
 		sort_by: sorting.sortBy,
@@ -113,6 +130,8 @@ export function useLogsPage(slug: LogSlug) {
 		setEvent,
 		sendStatus,
 		setSendStatus,
+		smsStatus,
+		setSmsStatus,
 		createdFrom,
 		setCreatedFrom,
 		createdTo,

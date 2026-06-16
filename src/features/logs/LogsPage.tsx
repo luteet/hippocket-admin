@@ -9,7 +9,8 @@ import { FilterSelect } from '@/components/list/FilterSelect'
 import { FilterDate } from '@/components/list/FilterDate'
 import type { AdminLogItem } from '@/types/api'
 import { formatLogLabel } from './format'
-import { useLogsPage, ALL, type LogSlug } from './useLogsPage'
+import { SmsStatusCell } from './components/SmsStatusCell'
+import { useLogsPage, ALL, SMS_STATUSES, type LogSlug } from './useLogsPage'
 
 export function LogsPage({ slug }: { slug: LogSlug }) {
 	const {
@@ -23,6 +24,8 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 		setEvent,
 		sendStatus,
 		setSendStatus,
+		smsStatus,
+		setSmsStatus,
 		createdFrom,
 		setCreatedFrom,
 		createdTo,
@@ -76,6 +79,12 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 						</Badge>
 					)
 				},
+			},
+			{
+				accessorKey: 'sms_status',
+				header: 'SMS',
+				meta: { sortKey: 'sms_status', className: 'w-56' },
+				cell: ({ row }) => <SmsStatusCell log={row.original} />,
 			},
 			{
 				accessorKey: 'user_email',
@@ -134,6 +143,16 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 						}))}
 						allOption={{ value: ALL, label: 'All statuses' }}
 					/>
+					<FilterSelect
+						label="SMS status"
+						value={smsStatus}
+						onChange={setSmsStatus}
+						options={SMS_STATUSES.map((s) => ({
+							value: s,
+							label: formatLogLabel(s),
+						}))}
+						allOption={{ value: ALL, label: 'All SMS statuses' }}
+					/>
 					<div className="grid grid-cols-2 gap-3">
 						<FilterDate
 							label="From"
@@ -161,7 +180,7 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 				onToggle: sorting.toggle,
 			}}
 			emptyMessage="No logs found"
-			minWidth="1000px"
+			minWidth="1200px"
 		/>
 	)
 }

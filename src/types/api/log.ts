@@ -12,6 +12,14 @@ export interface AdminLogItem {
 	new_email: string | null
 	description: string | null
 	user_admin_url: string | null
+	// SMS delivery (mainly populated for `event: "referral_sent"`, since a
+	// referral is also sent to the partner by SMS). `sms_status` is `null` when
+	// no SMS was attempted (partner has SMS off or no number); the error fields
+	// are populated only for the `undelivered` / `failed` statuses.
+	sms_status: string | null
+	sms_sid: string | null
+	sms_error_code: string | null
+	sms_error_message: string | null
 	created_at: string
 }
 
