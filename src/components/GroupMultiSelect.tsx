@@ -6,22 +6,29 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useFilterContainer } from '@/components/list/FilterContainerContext'
 import type { GroupOption } from '@/types/api'
 
 export function GroupMultiSelect({
 	options,
 	selected,
 	onToggle,
+	container: containerProp,
 }: {
 	options: GroupOption[]
 	selected: number[]
 	onToggle: (id: number) => void
+	/** Portal container for the dropdown (e.g. a popover body). Falls back to
+	 * the FiltersPopover context when omitted, then to document.body. */
+	container?: HTMLElement | null
 }) {
+	const ctxContainer = useFilterContainer()
+	const container = containerProp ?? ctxContainer
 	const label = selected.length
 		? options
-				.filter((o) => selected.includes(o.id))
-				.map((o) => o.name)
-				.join(', ')
+			.filter((o) => selected.includes(o.id))
+			.map((o) => o.name)
+			.join(', ')
 		: 'Select groups'
 
 	return (
@@ -44,7 +51,10 @@ export function GroupMultiSelect({
 					<Icon name="chevron-down" className="size-4 opacity-50" />
 				</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className="max-h-64 w-(--radix-dropdown-menu-trigger-width) overflow-y-auto">
+			<DropdownMenuContent
+				container={container}
+				className="max-h-64 w-(--radix-dropdown-menu-trigger-width) overflow-y-auto"
+			>
 				{options.length === 0 ? (
 					<div className="px-2 py-1.5 text-sm text-muted-foreground">
 						No groups

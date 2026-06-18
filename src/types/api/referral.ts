@@ -5,6 +5,7 @@ export interface ReferralListData {
 	items: ReferralListItem[]
 	offset: number
 	total: number
+	total_pipeline_potential: number
 }
 
 export interface ReferralListItem {
@@ -16,6 +17,8 @@ export interface ReferralListItem {
 	status: string
 	is_paid: boolean
 	potential_value: string
+	group_id: number | null
+	group_name: string | null
 	created_at: string
 }
 

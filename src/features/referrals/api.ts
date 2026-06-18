@@ -18,6 +18,7 @@ export interface ReferralFilters extends SortParams {
 	partner_id?: string
 	agent_id?: string
 	is_paid?: boolean
+	group_ids?: number[]
 }
 
 // The export endpoint accepts the same filters as the list (minus pagination):
@@ -36,17 +37,18 @@ export interface ReferralExportFilters extends SortParams {
 export async function listReferrals(
 	filters: ReferralFilters,
 ): Promise<ReferralListData> {
-	const params: Record<string, string | number> = {
-		offset: filters.offset,
-		count: filters.count,
-	}
-	if (filters.search) params.search = filters.search
-	if (filters.status_label) params.status_label = filters.status_label
-	if (filters.partner_id) params.partner_id = filters.partner_id
-	if (filters.agent_id) params.agent_id = filters.agent_id
-	if (filters.is_paid !== undefined) params.is_paid = String(filters.is_paid)
-	if (filters.sort_by) params.sort_by = filters.sort_by
-	if (filters.order) params.order = filters.order
+	const params = new URLSearchParams()
+	params.set('offset', String(filters.offset))
+	params.set('count', String(filters.count))
+	if (filters.search) params.set('search', filters.search)
+	if (filters.status_label) params.set('status_label', filters.status_label)
+	if (filters.partner_id) params.set('partner_id', filters.partner_id)
+	if (filters.agent_id) params.set('agent_id', filters.agent_id)
+	if (filters.is_paid !== undefined)
+		params.set('is_paid', String(filters.is_paid))
+	filters.group_ids?.forEach((id) => params.append('group_ids', String(id)))
+	if (filters.sort_by) params.set('sort_by', filters.sort_by)
+	if (filters.order) params.set('order', filters.order)
 
 	const { data } = await api.get<ReferralListData>('/referrals/', {
 		params,

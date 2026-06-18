@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -9,7 +9,7 @@ import type { ActiveFilter } from '@/components/list/FilterChips'
 import { useRowSelection } from '@/hooks/useRowSelection'
 import { useBulkAction } from '@/hooks/useBulkAction'
 import type { ReferralListItem } from '@/types/api'
-import { useReferrals, useStatuses } from './hooks'
+import { useReferrals, useStatuses, useGroupOptions } from './hooks'
 import { deleteReferral, markReferralPaid } from './api'
 
 export const ALL = '__all__'
@@ -28,6 +28,22 @@ export function useReferralsPage() {
 	const isPaid = params.get('paid') ?? ALL
 	const setIsPaid = (value: string) =>
 		setParams({ paid: value === ALL ? null : value, page: null })
+
+	// Group filter — kept in local state so the GroupMultiSelect dropdown
+	// stays open while toggling checkboxes (no URL re-render on each change).
+	const [groupIds, setGroupIds] = useState<number[]>([])
+	const toggleGroupId = useCallback(
+		(id: number) =>
+			setGroupIds((prev) =>
+				prev.includes(id)
+					? prev.filter((g) => g !== id)
+					: [...prev, id],
+			),
+		[],
+	)
+
+	const { data: groupOptions } = useGroupOptions()
+
 	const pagination = usePagination({
 		count: 20,
 		storageKey: 'referrals',
@@ -49,9 +65,18 @@ export function useReferralsPage() {
 		return map
 	}, [statuses])
 
-	// Active filters as chips (Status / Payment), resolved to human labels so a
-	// chip reads "Status: Closed". A stale value with no matching option still
-	// renders (raw value) so the user can clear it. The badge count is derived.
+	// Group name lookup for the filter chip.
+	const groupNameById = useMemo(() => {
+		const map: Record<number, string> = {}
+		groupOptions?.forEach((g) => {
+			map[g.id] = g.name
+		})
+		return map
+	}, [groupOptions])
+
+	// Active filters as chips (Status / Payment / Groups), resolved to human
+	// labels. A stale value with no matching option still renders (raw value) so
+	// the user can clear it. The badge count is derived.
 	const activeFilters: ActiveFilter[] = [
 		statusLabel !== ALL && {
 			key: 'status',
@@ -63,18 +88,37 @@ export function useReferralsPage() {
 			label: 'Payment',
 			value: isPaid === 'true' ? 'Paid' : 'Unpaid',
 		},
+		groupIds.length > 0 && {
+			key: 'group_ids',
+			label: 'Group',
+			value: groupIds
+				.map((id) => groupNameById[id] ?? `#${id}`)
+				.join(', '),
+		},
 	].filter(Boolean) as ActiveFilter[]
 
 	const activeFilterCount = activeFilters.length
-	const removeFilter = (key: string) => setParams({ [key]: null, page: null })
-	const clearFilters = () =>
+	const removeFilter = (key: string) => {
+		if (key === 'group_ids') setGroupIds([])
+		else setParams({ [key]: null, page: null })
+	}
+	const clearFilters = () => {
+		setGroupIds([])
 		setParams({ status: null, paid: null, page: null })
+	}
 	// Whether the empty list is "filtered to nothing" (search or any filter
 	// active) vs genuinely having no records — the page picks its empty state
 	// from this. `clearAll` resets search and every filter in one write.
 	const hasFilters = activeFilterCount > 0 || Boolean(committedSearch)
-	const clearAll = () =>
-		setParams({ q: null, status: null, paid: null, page: null })
+	const clearAll = () => {
+		setGroupIds([])
+		setParams({
+			q: null,
+			status: null,
+			paid: null,
+			page: null,
+		})
+	}
 
 	const { data, isLoading, isFetching, refetch } = useReferrals({
 		offset: pagination.offset,
@@ -82,6 +126,7 @@ export function useReferralsPage() {
 		search: committedSearch || undefined,
 		status_label: statusLabel === ALL ? undefined : statusLabel,
 		is_paid: isPaid === ALL ? undefined : isPaid === 'true',
+		group_ids: groupIds.length ? groupIds : undefined,
 		sort_by: sorting.sortBy,
 		order: sorting.order,
 	})
@@ -131,6 +176,9 @@ export function useReferralsPage() {
 		setStatusLabel,
 		isPaid,
 		setIsPaid,
+		groupIds,
+		toggleGroupId,
+		groupOptions,
 		activeFilterCount,
 		activeFilters,
 		removeFilter,

@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/Icon'
 import { TimeAgo } from '@/components/TimeAgo'
@@ -11,6 +12,7 @@ import { EmptyState } from '@/components/EmptyState'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
+import { GroupMultiSelect } from '@/components/GroupMultiSelect'
 import type { ReferralListItem } from '@/types/api'
 import { useReferralsPage, ALL } from './useReferralsPage'
 
@@ -28,6 +30,9 @@ export function ReferralsPage() {
 		setStatusLabel,
 		isPaid,
 		setIsPaid,
+		groupIds,
+		toggleGroupId,
+		groupOptions,
 		activeFilterCount,
 		activeFilters,
 		removeFilter,
@@ -111,6 +116,30 @@ export function ReferralsPage() {
 				accessorKey: 'referral_name',
 				header: 'Referral',
 				meta: { sortKey: 'referral_name', className: 'w-48' },
+			},
+			{
+				accessorKey: 'group_name',
+				header: 'Group',
+				meta: { className: 'w-40' },
+				cell: ({ row }) => {
+					const { group_id, group_name } = row.original
+					if (!group_id) {
+						return (
+							<span className="text-muted-foreground">
+								—
+							</span>
+						)
+					}
+					return (
+						<Link
+							to={`/groups/${group_id}`}
+							className="link"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{group_name}
+						</Link>
+					)
+				},
 			},
 			{
 				accessorKey: 'agent_email',
@@ -214,6 +243,14 @@ export function ReferralsPage() {
 						onChange={setIsPaid}
 						options={PAID_OPTIONS}
 					/>
+					<div className="space-y-1.5">
+						<Label>Group</Label>
+						<GroupMultiSelect
+							options={groupOptions ?? []}
+							selected={groupIds}
+							onToggle={toggleGroupId}
+						/>
+					</div>
 				</FiltersPopover>
 			}
 			pagination={pagination}

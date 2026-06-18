@@ -13,9 +13,11 @@ const DropdownMenuGroup = DropdownMenuPrimitive.Group
 
 const DropdownMenuContent = forwardRef<
 	ComponentRef<typeof DropdownMenuPrimitive.Content>,
-	ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
-	<DropdownMenuPrimitive.Portal>
+	ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> & {
+		container?: HTMLElement | null
+	}
+>(({ className, sideOffset = 4, container, ...props }, ref) => (
+	<DropdownMenuPrimitive.Portal container={container}>
 		<DropdownMenuPrimitive.Content
 			ref={ref}
 			sideOffset={sideOffset}
