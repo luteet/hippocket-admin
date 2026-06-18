@@ -43,6 +43,7 @@ export interface Statistics {
 	total_admin_logs: number
 	total_sent_referrals: number
 	total_closed_referrals: number
+	total_pipeline_potential: number
 	financial: StatisticsFinancial
 	groups_overview: GroupOverview[]
 }

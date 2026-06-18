@@ -89,6 +89,10 @@ export function DashboardPage() {
 			label: 'Hippocket earnings',
 			value: money(stats.financial.hippocket_earnings),
 		},
+		{
+			label: 'Total Pipeline Potential',
+			value: money(stats.total_pipeline_potential),
+		},
 	]
 
 	// Continuous reveal order: metric cards, then the Financial section, then the
