@@ -194,5 +194,6 @@ export function useReferralsPage() {
 		pagination,
 		sorting,
 		goToDetail: (id: string) => navigate(`/referrals/${id}`),
+		totalPipelinePotential: data?.total_pipeline_potential,
 	}
 }

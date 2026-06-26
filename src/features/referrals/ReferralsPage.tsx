@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Icon } from '@/components/Icon'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
@@ -56,9 +58,14 @@ export function ReferralsPage() {
 		isBulkRunning,
 		bulkMarkPaid,
 		bulkDelete,
+		totalPipelinePotential,
 	} = useReferralsPage()
 
 	const plural = selectedCount === 1 ? '' : 's'
+	const pipelinePotentialDisplay =
+		totalPipelinePotential != null
+			? `$${totalPipelinePotential.toFixed(2)}`
+			: null
 	const bulkActions: BulkAction[] = [
 		{
 			label: 'Mark paid',
@@ -215,12 +222,30 @@ export function ReferralsPage() {
 			title="Pipeline Logs"
 			description="Pipeline log requests, statuses, and payouts"
 			actions={
-				<Button asChild variant="outline">
-					<Link to="/referrals/export">
-						<Icon name="download" />
-						<span className="sm:inline hidden">Export</span>
-					</Link>
-				</Button>
+				<>
+					<Card className="px-4 min-h-14 flex items-center gap-2">
+						<div className="text-right">
+							<p className="pt-1 pb-1 text-xs text-muted-foreground leading-tight">
+								Total Pipeline Potential
+							</p>
+							<div className="flex justify-end">
+								{isFetching ? (
+									<Skeleton className="inline-block h-5 w-24" />
+								) : (
+									<p className="min-h-3 font-semibold text-[#111111] leading-tight">
+										{pipelinePotentialDisplay}
+									</p>
+								)}
+							</div>
+						</div>
+					</Card>
+					<Button asChild variant="outline">
+						<Link to="/referrals/export">
+							<Icon name="download" />
+							<span className="sm:inline hidden">Export</span>
+						</Link>
+					</Button>
+				</>
 			}
 			search={search}
 			onSearchChange={setSearch}
