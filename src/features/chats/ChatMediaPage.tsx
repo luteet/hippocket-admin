@@ -3,6 +3,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { PageHeader } from '@/components/layout/PageHeader'
 import { Reveal } from '@/components/Reveal'
+import { TextTruncate } from '@/components/TextTruncate'
 import { TimeAgo } from '@/components/TimeAgo'
 import { DataTable } from '@/components/DataTable'
 import { PageSizeSelect } from '@/components/list/PageSizeSelect'
@@ -20,6 +21,9 @@ export function ChatMediaPage() {
 				accessorKey: 'user_email',
 				header: 'Uploaded by',
 				meta: { sortKey: 'user_email', className: 'w-56' },
+				cell: ({ getValue }) => (
+					<TextTruncate>{getValue<string>()}</TextTruncate>
+				),
 			},
 			{
 				id: 'file',

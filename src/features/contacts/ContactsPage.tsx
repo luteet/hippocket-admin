@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
+import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
 import { Tooltip } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
@@ -49,7 +50,9 @@ export function ContactsPage() {
 				header: 'Email',
 				meta: { sortKey: 'email', className: 'w-64' },
 				cell: ({ row }) =>
-					row.original.email || (
+					row.original.email ? (
+						<TextTruncate>{row.original.email}</TextTruncate>
+					) : (
 						<span className="text-muted-foreground">—</span>
 					),
 			},

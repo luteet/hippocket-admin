@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Badge } from '@/components/ui/badge'
+import { TextTruncate } from '@/components/TextTruncate'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
@@ -91,7 +92,9 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 				header: 'User',
 				meta: { sortKey: 'user_email', className: 'w-56' },
 				cell: ({ row }) =>
-					row.original.user_email ?? (
+					row.original.user_email ? (
+						<TextTruncate>{row.original.user_email}</TextTruncate>
+					) : (
 						<span className="text-muted-foreground">—</span>
 					),
 			},

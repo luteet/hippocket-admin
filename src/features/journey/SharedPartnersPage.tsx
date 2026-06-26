@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
+import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
@@ -29,6 +30,9 @@ export function SharedPartnersPage() {
 				accessorKey: 'agent_email',
 				header: 'Agent',
 				meta: { sortKey: 'agent_email', className: 'w-64' },
+				cell: ({ getValue }) => (
+					<TextTruncate>{getValue<string>()}</TextTruncate>
+				),
 			},
 			{
 				id: 'entries',

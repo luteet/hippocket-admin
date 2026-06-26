@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
+import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
@@ -44,6 +45,9 @@ export function TeamLeadersPage() {
 				accessorKey: 'tl_email',
 				header: 'Email',
 				meta: { sortKey: 'tl_email', className: 'w-64' },
+				cell: ({ getValue }) => (
+					<TextTruncate>{getValue<string>()}</TextTruncate>
+				),
 			},
 			{
 				accessorKey: 'tl_phone',

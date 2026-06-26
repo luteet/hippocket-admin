@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Badge } from '@/components/ui/badge'
+import { TextTruncate } from '@/components/TextTruncate'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
@@ -64,7 +65,7 @@ export function PaymentsPage() {
 							className="link"
 							onClick={(e) => e.stopPropagation()}
 						>
-							{user_email}
+							<TextTruncate>{user_email}</TextTruncate>
 						</Link>
 					)
 				},

@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
+import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
@@ -43,6 +44,9 @@ export function MessagesPage() {
 				accessorKey: 'session_user_email',
 				header: 'User',
 				meta: { sortKey: 'session_user_email', className: 'w-64' },
+				cell: ({ getValue }) => (
+					<TextTruncate>{getValue<string>()}</TextTruncate>
+				),
 			},
 			{
 				accessorKey: 'role',

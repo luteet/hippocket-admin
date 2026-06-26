@@ -4,6 +4,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 
 import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
+import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
 import { Icon } from '@/components/Icon'
 import { TimeAgo } from '@/components/TimeAgo'
@@ -145,6 +146,9 @@ export function ReferralsPage() {
 				accessorKey: 'agent_email',
 				header: 'Agent',
 				meta: { sortKey: 'agent_email', className: 'w-60' },
+				cell: ({ getValue }) => (
+					<TextTruncate>{getValue<string>()}</TextTruncate>
+				),
 			},
 			{
 				accessorKey: 'partner_name',

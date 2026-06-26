@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { Icon } from '@/components/Icon'
+import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
@@ -48,7 +49,7 @@ export function SavedFiltersPage() {
 							className="link"
 							onClick={(e) => e.stopPropagation()}
 						>
-							{user_email}
+							<TextTruncate>{user_email}</TextTruncate>
 						</Link>
 					)
 				},
