@@ -46,7 +46,7 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 			{
 				accessorKey: 'created_at',
 				header: 'When',
-				meta: { sortKey: 'created_at', className: 'w-40' },
+				meta: { sortKey: 'created_at', className: 'w-25' },
 				cell: ({ row }) => (
 					<TimeAgo
 						value={row.original.created_at}
@@ -57,7 +57,7 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 			{
 				accessorKey: 'event',
 				header: 'Event',
-				meta: { sortKey: 'event', className: 'w-44 min-w-35' },
+				meta: { sortKey: 'event', className: 'w-45' },
 				cell: ({ row }) => (
 					<span className="font-medium">
 						{formatLogLabel(row.original.event)}
@@ -67,7 +67,7 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 			{
 				accessorKey: 'send_status',
 				header: 'Status',
-				meta: { sortKey: 'send_status', className: 'w-32' },
+				meta: { sortKey: 'send_status', className: 'w-28' },
 				cell: ({ row }) => {
 					const status = row.original.send_status
 					if (!status)
@@ -84,7 +84,7 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 			{
 				accessorKey: 'sms_status',
 				header: 'SMS',
-				meta: { sortKey: 'sms_status', className: 'w-56' },
+				meta: { sortKey: 'sms_status', className: 'w-36' },
 				cell: ({ row }) => <SmsStatusCell log={row.original} />,
 			},
 			{
@@ -101,7 +101,7 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 			{
 				accessorKey: 'description',
 				header: 'Description',
-				meta: { sortKey: 'description', className: 'w-72' },
+				meta: { sortKey: 'description', className: 'w-82' },
 				cell: ({ row }) =>
 					row.original.description ?? (
 						<span className="text-muted-foreground">—</span>
