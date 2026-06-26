@@ -54,6 +54,7 @@
 		display: flex;
 		flex-direction: column;
 		flex-shrink: 0;
+		width: 12.5rem; // w-50
 		overflow: hidden;
 		border-radius: var(--pill);
 		background-color: var(--sidebar);
@@ -65,7 +66,6 @@
 			position: fixed;
 			inset-block: 0.625rem; // inset-y-2.5
 			left: 0.625rem;
-			width: 12.5rem; // w-50
 			transform: translateX(-110%);
 
 			&[data-open='true'] {
@@ -76,7 +76,6 @@
 		// Desktop: in-flow rail, collapsible.
 		@media (min-width: 768px) {
 			margin-block: 0.625rem; // my-2.5
-			width: 11.25rem; // w-45
 
 			&[data-collapsed='true'] {
 				width: 5rem; // w-20
