@@ -1,11 +1,20 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useLocation, useSearchParams } from 'react-router'
 
 /** A set of param updates: a key is removed when its value is null/undefined/''. */
 export type ParamPatch = Record<string, string | number | null | undefined>
 
 /**
  * Read/write several URL query params at once, backed by `useSearchParams`.
+ *
+ * **Frozen during route transitions:** when the pathname changes (navigation
+ * away, e.g. from `/referrals?status=foo` to `/referrals/123`), the returned
+ * params are frozen in their last valid state so the exiting page's hooks
+ * don't see empty params and flicker with stale cached data. The freeze lasts
+ * until the component unmounts (exit-animation completes).
+ *
+ * On the same route, URL → stable-params sync happens during render to
+ * support Back/Forward navigation within search params.
  *
  * `setParams` merges a patch into the current query string in a single
  * navigation (so e.g. changing the search and resetting the page happen
@@ -19,9 +28,40 @@ export type ParamPatch = Record<string, string | number | null | undefined>
  */
 export function useUrlParams() {
 	const [searchParams, setSearchParams] = useSearchParams()
+	const location = useLocation()
+
+	// Stable snapshot: initialised from the URL at mount, updated via setParams
+	// or when the pathname is the same (Back/Forward on the same route).
+	// Frozen when the pathname changes — the component is navigating away and
+	// still mounted for the exit animation; freezing prevents a flicker where
+	// the new route's empty query string would reset filters on the exiting page.
+	const [stableParams, setStableParams] = useState(
+		() => new URLSearchParams(searchParams),
+	)
+	const prevPathnameRef = useRef(location.pathname)
+
+	// Set to true inside setParams so the render-phase URL→stable sync below
+	// skips that render (setSearchParams hasn't updated searchParams yet).
+	const ownUpdateRef = useRef(false)
+
+	// Becomes true on the first render where the pathname changes and stays
+	// true for the entire component lifetime (exit animation). This prevents
+	// subsequent re-renders during exit from syncing the (now empty) URL params
+	// back into stableParams. The flag resets naturally when the component
+	// unmounts and a new instance mounts on the next visit.
+	const isExitingRef = useRef(false)
 
 	const setParams = useCallback(
 		(patch: ParamPatch, options?: { replace?: boolean }) => {
+			ownUpdateRef.current = true
+			setStableParams((prev) => {
+				const next = new URLSearchParams(prev)
+				for (const [key, value] of Object.entries(patch)) {
+					if (value == null || value === '') next.delete(key)
+					else next.set(key, String(value))
+				}
+				return next
+			})
 			setSearchParams(
 				(prev) => {
 					const next = new URLSearchParams(prev)
@@ -37,7 +77,36 @@ export function useUrlParams() {
 		[setSearchParams],
 	)
 
-	return [searchParams, setParams] as const
+	// During render: detect pathname changes and freeze / sync params.
+	if (location.pathname !== prevPathnameRef.current) {
+		// Route changed → the component is exiting. Keep stableParams frozen
+		// in their last valid state so the exiting page's hooks don't flicker.
+		prevPathnameRef.current = location.pathname
+		isExitingRef.current = true
+	}
+
+	// Sync URL params back into stableParams only when:
+	// 1. We're NOT in exit animation (isExitingRef is false), AND
+	// 2. No pending own update (ownUpdateRef is false)
+	//
+	// This handles Back/Forward within the same route's search params while
+	// preventing the empty URL params (from the newly navigated route) from
+	// overwriting the frozen stable state during exit animation.
+	if (!isExitingRef.current && !ownUpdateRef.current) {
+		const urlStr = searchParams.toString()
+		const stableStr = stableParams.toString()
+		if (urlStr !== stableStr) {
+			setStableParams(new URLSearchParams(searchParams))
+		}
+	}
+
+	// Reset the own-update flag after each committed render so the next render's
+	// sync can distinguish between external (Back/Forward) and own URL changes.
+	useEffect(() => {
+		ownUpdateRef.current = false
+	})
+
+	return [stableParams, setParams] as const
 }
 
 /**
