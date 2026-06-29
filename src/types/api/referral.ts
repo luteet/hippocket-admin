@@ -17,9 +17,17 @@ export interface ReferralListItem {
 	status: string
 	is_paid: boolean
 	potential_value: string
+	agent_potential_value: number
+	partner_potential_value: number | null
+	hippocket_fee: number
+	group_owner_fee: number
 	group_id: number | null
 	group_name: string | null
 	created_at: string
+	value_type: "money" | "tokens"
+	coin_course: number
+	agent_id: string
+	contact_id: string
 }
 
 export interface ReferralDetail extends ReferralListItem {

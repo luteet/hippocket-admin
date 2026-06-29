@@ -16,8 +16,15 @@ import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
 import { GroupMultiSelect } from '@/components/GroupMultiSelect'
-import type { ReferralListItem } from '@/types/api'
+import type { ReferralListItem, ValueType } from '@/types/api'
 import { useReferralsPage, ALL } from './useReferralsPage'
+
+function formatPotentialValue(value: number, valueType: ValueType) {
+	if (valueType === 'tokens') {
+		return `${value.toLocaleString('ru-RU')} Token${value === 1 ? '' : 's'}`
+	}
+	return `$${value.toLocaleString('ru-RU')}`
+}
 
 const PAID_OPTIONS = [
 	{ value: ALL, label: 'All' },
@@ -121,9 +128,32 @@ export function ReferralsPage() {
 	const columns = useMemo<ColumnDef<ReferralListItem, unknown>[]>(
 		() => [
 			{
+				accessorKey: 'created_at',
+				header: 'Created',
+				meta: { sortKey: 'created_at', className: 'w-40' },
+				cell: ({ row }) => (
+					<TimeAgo
+						value={row.original.created_at}
+						className="text-muted-foreground"
+					/>
+				),
+			},
+			{
 				accessorKey: 'referral_name',
 				header: 'Referral',
 				meta: { sortKey: 'referral_name', className: 'w-48' },
+				cell: ({ row }) => {
+					const { id, referral_name } = row.original
+					return (
+						<Link
+							to={`/referrals/${id}`}
+							className="link"
+							onClick={(e) => e.stopPropagation()}
+						>
+							{referral_name}
+						</Link>
+					)
+				},
 			},
 			{
 				accessorKey: 'group_name',
@@ -187,9 +217,40 @@ export function ReferralsPage() {
 				),
 			},
 			{
+				id: 'value_type',
+				header: 'Value Type',
+				meta: { sortKey: 'value_type', className: 'w-32' },
+				cell: ({ row }) =>
+					row.original.value_type === "money" ? (
+						<span className="text-center">Money ($)</span>
+					) : (
+						<span className="text-center">Tokens</span>
+					),
+			},
+			{
 				accessorKey: 'potential_value',
-				header: 'Potential',
-				meta: { className: 'w-32' },
+				header: 'Potential value',
+				meta: { className: 'w-42' }
+			},
+			{
+				accessorKey: 'agent_potential_value',
+				header: 'Agent potential value',
+				meta: { sortKey: 'agent_potential_value', className: 'w-55' },
+				cell: ({ row }) => {
+					const v = row.original.agent_potential_value
+					if (v == null) return <span className="text-muted-foreground">—</span>
+					return formatPotentialValue(v, row.original.value_type)
+				},
+			},
+			{
+				accessorKey: 'partner_potential_value',
+				header: 'Partner potential value',
+				meta: { sortKey: 'partner_potential_value', className: 'w-58' },
+				cell: ({ row }) => {
+					const v = row.original.partner_potential_value
+					if (v == null) return <span className="text-muted-foreground">—</span>
+					return formatPotentialValue(v, row.original.value_type)
+				},
 			},
 			{
 				id: 'is_paid',
@@ -203,15 +264,12 @@ export function ReferralsPage() {
 					),
 			},
 			{
-				accessorKey: 'created_at',
-				header: 'Created',
-				meta: { sortKey: 'created_at', className: 'w-40' },
-				cell: ({ row }) => (
-					<TimeAgo
-						value={row.original.created_at}
-						className="text-muted-foreground"
-					/>
-				),
+				id: 'coin_course',
+				header: 'Token course',
+				meta: { sortKey: 'coin_course', className: 'w-45' },
+				cell: ({ row }) => {
+					return row.original.coin_course.toFixed(2);
+				},
 			},
 		],
 		[statusNameByLabel],
