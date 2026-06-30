@@ -281,8 +281,8 @@ export function ReferralsPage() {
 			description="Pipeline log requests, statuses, and payouts"
 			actions={
 				<>
-					<Card className="px-4 min-h-14 flex items-center gap-2">
-						<div className="text-right">
+					<Card className="px-4 min-h-14 ml-auto flex justify-end items-center gap-2">
+						<div className="text-end">
 							<p className="pt-1 pb-1 text-xs text-muted-foreground leading-tight">
 								Total Pipeline Potential
 							</p>

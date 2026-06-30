@@ -20,7 +20,7 @@ export function PageHeader({ title, description, actions }: PageHeaderProps) {
 				)}
 			</div>
 			{actions && (
-				<div className="flex flex-wrap items-center gap-3">
+				<div className="flex flex-wrap items-center flex-auto gap-3 md:flex-none">
 					{actions}
 				</div>
 			)}
