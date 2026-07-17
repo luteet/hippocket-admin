@@ -240,6 +240,20 @@ export const NAV_ITEMS: NavItem[] = [
 		keywords: ['payment', 'transaction', 'money', 'billing'],
 	},
 	{
+		to: '/transactions',
+		label: 'Transactions',
+		icon: 'transactions',
+		description: 'Real-estate transactions with partner referrals',
+		keywords: [
+			'transaction',
+			'deal',
+			'real estate',
+			'property',
+			'referral',
+			'timeline',
+		],
+	},
+	{
 		// Parent has its own page (/settings — the General singleton); the rest
 		// of System (base) hangs off it. `end` so it highlights only on /settings.
 		to: '/settings',
