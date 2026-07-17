@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { Link } from 'react-router'
 
 import { Badge } from '@/components/ui/badge'
@@ -12,7 +13,6 @@ import {
 	formatFee,
 	valueTypeLabel,
 } from './format'
-
 export function PartnerDetailPage() {
 	const {
 		partner,
@@ -24,6 +24,7 @@ export function PartnerDetailPage() {
 		handleDelete,
 		goBack,
 		goToEdit,
+		partnerGroupNames,
 	} = usePartnerDetailPage()
 
 	return (
@@ -130,17 +131,31 @@ export function PartnerDetailPage() {
 									value: partner.location_name,
 								},
 								{
-									label: 'Group',
-									render: partner.chosen_group_id ? (
-										<Link
-											to={`/groups/${partner.chosen_group_id}`}
-											className="link"
-										>
-											{partner.chosen_group_name}
-										</Link>
-									) : (
-										'—'
-									),
+									label: 'Groups',
+									render:
+										partner.group_ids.length > 0 ? (
+											<div className="flex flex-wrap gap-1">
+												{partner.group_ids.map(
+													(id, i) => (
+														<Fragment key={id}>
+															{i > 0 &&
+																', '}
+															<Link
+																to={`/groups/${id}`}
+																className="link"
+															>
+																{partnerGroupNames.get(
+																	id,
+																) ??
+																	`#${id}`}
+															</Link>
+														</Fragment>
+													),
+												)}
+											</div>
+										) : (
+											'—'
+										),
 								},
 								{
 									label: 'Referral fee',

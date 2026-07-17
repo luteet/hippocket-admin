@@ -3,9 +3,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
+import { useQuery } from '@tanstack/react-query'
 
-import { getApiErrorMessage } from '@/lib/api/client'
-import type { Partner } from '@/types/api'
+import { api, getApiErrorMessage } from '@/lib/api/client'
+import type { GroupOption, Partner } from '@/types/api'
 import { useReferenceOptions } from '@/features/references/hooks'
 import { useCreatePartner, useUpdatePartner } from './hooks'
 
@@ -36,6 +37,7 @@ const schema = z.object({
 	location_id: z.string().optional(),
 	category_id: z.string().optional(),
 	service_id: z.string().optional(),
+	group_ids: z.array(z.number()),
 })
 
 export type PartnerFormValues = z.infer<typeof schema>
@@ -75,6 +77,7 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 			location_id: partner?.location_id ?? '',
 			category_id: partner?.category_id ?? '',
 			service_id: partner?.service_id ?? '',
+			group_ids: partner?.group_ids ?? [],
 		},
 	})
 	const { handleSubmit, reset } = form
@@ -104,6 +107,7 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 				location_id: partner.location_id ?? '',
 				category_id: partner.category_id ?? '',
 				service_id: partner.service_id ?? '',
+				group_ids: partner.group_ids,
 			})
 		}
 	}, [partner, reset])
@@ -122,6 +126,14 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 		'partner-services',
 		'/refs/partner-services/',
 	)
+
+	// Group options for the GroupMultiSelect (numeric ids).
+	const { data: groupOptions } = useQuery<GroupOption[]>({
+		queryKey: ['refs', 'groups'],
+		queryFn: () =>
+			api.get<GroupOption[]>('/refs/groups/').then((r) => r.data),
+		staleTime: 5 * 60_000,
+	})
 
 	const onSubmit = handleSubmit(async (values) => {
 		try {
@@ -150,6 +162,7 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 						location_id: values.location_id || null,
 						category_id: values.category_id || null,
 						service_id: values.service_id || null,
+						group_ids: values.group_ids,
 					},
 				})
 				toast.success('Partner updated')
@@ -176,6 +189,7 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 					location_id: values.location_id || null,
 					category_id: values.category_id || null,
 					service_id: values.service_id || null,
+					group_ids: values.group_ids,
 				})
 				toast.success('Partner created')
 				onSuccess(created)
@@ -199,6 +213,7 @@ export function usePartnerForm({ partner, onSuccess }: Params) {
 		locationOptions: locationOptions ?? [],
 		categoryOptions: categoryOptions ?? [],
 		serviceOptions: serviceOptions ?? [],
+		groupOptions: groupOptions ?? [],
 		isPending,
 		onSubmit,
 	}

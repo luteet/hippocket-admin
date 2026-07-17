@@ -72,6 +72,7 @@ export interface CreatePartnerDto {
 	location_id?: string | null
 	category_id?: string | null
 	service_id?: string | null
+	group_ids?: number[]
 }
 
 export interface UpdatePartnerDto {
@@ -96,6 +97,7 @@ export interface UpdatePartnerDto {
 	location_id?: string | null
 	category_id?: string | null
 	service_id?: string | null
+	group_ids?: number[]
 }
 
 export interface PartnerReview {

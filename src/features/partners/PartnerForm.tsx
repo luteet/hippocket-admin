@@ -1,6 +1,7 @@
 import { FormLayout } from '@/components/form/FormLayout'
 import type { FormFieldEntry } from '@/components/form/types'
 import type { Partner } from '@/types/api'
+import { GroupMultiSelect } from '@/components/GroupMultiSelect'
 import { usePartnerForm } from './usePartnerForm'
 import { RefSelect } from './components/RefSelect'
 import { LogoUpload } from './components/LogoUpload'
@@ -20,6 +21,7 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 		locationOptions,
 		categoryOptions,
 		serviceOptions,
+		groupOptions,
 		isPending,
 		onSubmit,
 	} = usePartnerForm({ partner, onSuccess })
@@ -176,6 +178,27 @@ export function PartnerForm({ partner, onSuccess, onCancel }: Props) {
 					placeholder="Select a service"
 					onChange={(v) => form.setValue('service_id', v)}
 					onCreate={handleCreateRef}
+				/>
+			),
+		},
+		{
+			type: 'custom',
+			label: 'Groups',
+			render: (
+				<GroupMultiSelect
+					options={groupOptions}
+					selected={form.watch('group_ids')}
+					onToggle={(id) => {
+						const current = form.getValues('group_ids')
+						if (current.includes(id)) {
+							form.setValue(
+								'group_ids',
+								current.filter((g) => g !== id),
+							)
+						} else {
+							form.setValue('group_ids', [...current, id])
+						}
+					}}
 				/>
 			),
 		},
