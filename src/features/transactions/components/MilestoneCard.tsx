@@ -15,7 +15,7 @@ export default function MilestoneCard({
 				</h4>
 				{milestone.target_date && (
 					<span className="text-xs text-muted-foreground">
-						Target: {milestone.target_date}
+						Send Date: {milestone.target_date}
 					</span>
 				)}
 			</div>
