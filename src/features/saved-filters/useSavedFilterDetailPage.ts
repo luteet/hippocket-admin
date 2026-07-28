@@ -1,32 +1,25 @@
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { useSavedFilter, useDeleteSavedFilter } from './hooks'
 
 export function useSavedFilterDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit } =
+		useDetailPage({ basePath: '/saved-filters' })
 	const { data: filter, isLoading } = useSavedFilter(id)
 	const deleteMut = useDeleteSavedFilter()
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Saved filter deleted')
-			navigate('/saved-filters')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/saved-filters', successMessage: 'Saved filter deleted' },
+	)
 
 	return {
 		filter,
 		isLoading,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/saved-filters'),
-		goToEdit: () => navigate(`/saved-filters/${id}/edit`),
+		ready: Boolean(filter),
+		onBack,
+		onEdit,
+		onDelete,
+		isDeleting,
 	}
 }

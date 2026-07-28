@@ -1,32 +1,25 @@
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { useContact, useDeleteContact } from './hooks'
 
 export function useContactDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit } =
+		useDetailPage({ basePath: '/contacts' })
 	const { data: contact, isLoading } = useContact(id)
 	const deleteMut = useDeleteContact()
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Contact deleted')
-			navigate('/contacts')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/contacts', successMessage: 'Contact deleted' },
+	)
 
 	return {
 		contact,
 		isLoading,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/contacts'),
-		goToEdit: () => navigate(`/contacts/${id}/edit`),
+		ready: Boolean(contact),
+		onBack,
+		onEdit,
+		onDelete,
+		isDeleting,
 	}
 }

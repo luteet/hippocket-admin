@@ -1,32 +1,28 @@
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
+import { useNavigate } from 'react-router'
 
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { useDeleteSession, useSession } from './hooks'
 
 export function useSessionDetailPage() {
-	const { id } = useParams()
+	const { id, onBack } =
+		useDetailPage({ basePath: '/ai-chat/sessions' })
 	const navigate = useNavigate()
 	const { data: session, isLoading } = useSession(id)
 	const deleteMut = useDeleteSession()
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Session deleted')
-			navigate('/ai-chat/sessions')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/ai-chat/sessions', successMessage: 'Session deleted' },
+	)
 
 	return {
 		session,
 		isLoading,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/ai-chat/sessions'),
+		ready: Boolean(session),
+		onBack,
+		onDelete,
+		isDeleting,
 		goToMessages: () => navigate(`/ai-chat/messages?session=${id}`),
 	}
 }

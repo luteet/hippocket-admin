@@ -13,6 +13,7 @@ import type { Pagination } from '@/hooks/usePagination'
 import { SearchInput } from './SearchInput'
 import { PageSizeSelect } from './PageSizeSelect'
 import { FilterChips, type ActiveFilter } from './FilterChips'
+import { useListPageContext } from './ListPageContext'
 
 interface ListPageProps<TData> {
 	// Header
@@ -22,8 +23,10 @@ interface ListPageProps<TData> {
 	actions?: ReactNode
 
 	// Toolbar
-	search: string
-	onSearchChange: (value: string) => void
+	/** When omitted, falls back to ListPageContext. */
+	search?: string
+	/** When omitted, falls back to ListPageContext. */
+	onSearchChange?: (value: string) => void
 	searchPlaceholder?: string
 	/** A <FiltersPopover> with the page's filter fields, if the page has any. */
 	filters?: ReactNode
@@ -33,21 +36,28 @@ interface ListPageProps<TData> {
 	onRemoveFilter?: (key: string) => void
 	/** Clear every active filter (chips' "Clear all"). */
 	onClearFilters?: () => void
-	/** Re-fetch the current view; when provided, renders a refresh button. */
+	/** Re-fetch the current view; when provided, renders a refresh button.
+	 *  When omitted, falls back to ListPageContext. */
 	onRefresh?: () => void
 
 	// Data + pagination (the usePagination object and the list result)
-	pagination: Pagination
+	/** When omitted, falls back to ListPageContext. */
+	pagination?: Pagination
+	/** When omitted, falls back to ListPageContext. */
 	data?: { items: TData[]; total: number }
+	/** When omitted, falls back to ListPageContext. */
 	isLoading?: boolean
+	/** When omitted, falls back to ListPageContext. */
 	isFetching?: boolean
 
 	// Table
 	columns: ColumnDef<TData, unknown>[]
 	emptyMessage?: ReactNode
 	minWidth?: string
+	/** When omitted, falls back to ListPageContext. */
 	onRowClick?: (row: TData) => void
-	/** Server-side sorting wiring (from useSorting); enables sortable headers. */
+	/** Server-side sorting wiring (from useSorting); enables sortable headers.
+	 *  When omitted, falls back to ListPageContext. */
 	sorting?: DataTableSorting
 	/** Drag-and-drop row reordering wiring; adds a drag handle per row. */
 	reorder?: DataTableReorder<TData>
@@ -68,28 +78,40 @@ export function ListPage<TData>({
 	title,
 	description,
 	actions,
-	search,
-	onSearchChange,
+	search: searchProp,
+	onSearchChange: onSearchChangeProp,
 	searchPlaceholder,
 	filters,
 	activeFilters,
 	onRemoveFilter,
 	onClearFilters,
-	onRefresh,
-	pagination,
-	data,
-	isLoading,
-	isFetching,
+	onRefresh: onRefreshProp,
+	pagination: paginationProp,
+	data: dataProp,
+	isLoading: isLoadingProp,
+	isFetching: isFetchingProp,
 	columns,
 	emptyMessage = 'No data',
 	minWidth,
-	onRowClick,
-	sorting,
+	onRowClick: onRowClickProp,
+	sorting: sortingProp,
 	reorder,
 	selection,
 	footer,
 	className,
 }: ListPageProps<TData>) {
+	const ctx = useListPageContext()
+
+	// Props take precedence; fall back to context values (if any).
+	const search = searchProp ?? ctx?.search ?? ''
+	const onSearchChange = onSearchChangeProp ?? ctx?.onSearchChange ?? (() => {})
+	const onRefresh = onRefreshProp ?? ctx?.onRefresh
+	const pagination = paginationProp ?? ctx?.pagination!
+	const data = (dataProp ?? ctx?.data) as { items: TData[]; total: number } | undefined
+	const isLoading = isLoadingProp ?? ctx?.isLoading
+	const isFetching = isFetchingProp ?? ctx?.isFetching
+	const onRowClick = (onRowClickProp ?? ctx?.onRowClick) as ((row: TData) => void) | undefined
+	const sorting = sortingProp ?? ctx?.sorting
 	return (
 		<div className={className}>
 			<Reveal index={0}>

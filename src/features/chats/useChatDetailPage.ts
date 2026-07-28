@@ -1,39 +1,28 @@
-import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { useChat, useDeleteChat } from './hooks'
 
-export type ChatDetailTab = 'general' | 'messages'
-
 export function useChatDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit, activeTab, onTabChange } =
+		useDetailPage({ basePath: '/chats', tabKeys: ['general', 'messages'] as const })
 	const { data: chat, isLoading } = useChat(id)
 	const deleteMut = useDeleteChat()
-	const [tab, setTab] = useState<ChatDetailTab>('general')
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Chat deleted')
-			navigate('/chats')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/chats', successMessage: 'Chat deleted' },
+	)
 
 	return {
 		chat,
 		chatId: id,
 		isLoading,
-		tab,
-		setTab,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/chats'),
-		goToEdit: () => navigate(`/chats/${id}/edit`),
+		ready: Boolean(chat),
+		onBack,
+		onEdit,
+		activeTab,
+		onTabChange,
+		onDelete,
+		isDeleting,
 	}
 }

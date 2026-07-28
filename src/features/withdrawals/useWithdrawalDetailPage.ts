@@ -1,32 +1,25 @@
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { useWithdrawal, useDeleteWithdrawal } from './hooks'
 
 export function useWithdrawalDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit } =
+		useDetailPage({ basePath: '/withdrawals' })
 	const { data: withdrawal, isLoading } = useWithdrawal(id)
 	const deleteMut = useDeleteWithdrawal()
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Withdrawal deleted')
-			navigate('/withdrawals')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/withdrawals', successMessage: 'Withdrawal deleted' },
+	)
 
 	return {
 		withdrawal,
 		isLoading,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/withdrawals'),
-		goToEdit: () => navigate(`/withdrawals/${id}/edit`),
+		ready: Boolean(withdrawal),
+		onBack,
+		onEdit,
+		onDelete,
+		isDeleting,
 	}
 }

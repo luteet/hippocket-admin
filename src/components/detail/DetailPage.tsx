@@ -15,6 +15,7 @@ import {
 	DetailHeaderButton,
 	type DetailButtonVariant,
 } from './DetailHeaderButton'
+import { useDetailPageContext } from './DetailPageContext'
 
 /** An extra header action between the Back and Delete buttons. */
 export interface DetailAction {
@@ -38,7 +39,9 @@ export interface DetailTab {
 interface DetailPageProps {
 	/** Page H1, e.g. "Partner". */
 	title: string
-	onBack: () => void
+
+	// --- context-provided props (all optional; fall back to DetailPageContext) ---
+	onBack?: () => void
 
 	/** Whether the record has loaded. Gates the action buttons and the body. */
 	ready?: boolean
@@ -90,15 +93,15 @@ const SKELETON = (
  */
 export function DetailPage({
 	title,
-	onBack,
-	ready,
-	isLoading,
-	onEdit,
-	actions,
-	onDelete,
+	onBack: onBackProp,
+	ready: readyProp,
+	isLoading: isLoadingProp,
+	onEdit: onEditProp,
+	actions: actionsProp,
+	onDelete: onDeleteProp,
 	deleteTitle = 'Delete?',
 	deleteDescription,
-	isDeleting,
+	isDeleting: isDeletingProp,
 	heading,
 	header,
 	intro,
@@ -106,10 +109,22 @@ export function DetailPage({
 	children,
 	notFound,
 	tabs,
-	activeTab,
-	onTabChange,
+	activeTab: activeTabProp,
+	onTabChange: onTabChangeProp,
 	maxWidth = 'max-w-2xl',
 }: DetailPageProps) {
+	const ctx = useDetailPageContext()
+
+	// Props take precedence; fall back to context values (if any).
+	const onBack = onBackProp ?? ctx?.onBack ?? (() => {})
+	const ready = readyProp ?? ctx?.ready
+	const isLoading = isLoadingProp ?? ctx?.isLoading
+	const onEdit = onEditProp ?? ctx?.onEdit
+	const actions = actionsProp ?? ctx?.actions
+	const onDelete = onDeleteProp ?? ctx?.onDelete
+	const isDeleting = isDeletingProp ?? ctx?.isDeleting
+	const activeTab = activeTabProp ?? ctx?.activeTab
+	const onTabChange = onTabChangeProp ?? ctx?.onTabChange
 	const [confirmOpen, setConfirmOpen] = useState(false)
 
 	const carded = (content: ReactNode) => (

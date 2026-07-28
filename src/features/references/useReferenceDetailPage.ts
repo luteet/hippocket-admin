@@ -1,13 +1,10 @@
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-
-import { getApiErrorMessage } from '@/lib/api/client'
 import { useCatalogItem, useDeleteCatalogItem } from './hooks'
 import { REFERENCE_CONFIG, type ReferenceKind } from './useReferenceListPage'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 
 export function useReferenceDetailPage(kind: ReferenceKind) {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit } =
+		useDetailPage({ basePath: `/${kind}` })
 	const config = REFERENCE_CONFIG[kind]
 	const { data: item, isLoading } = useCatalogItem(
 		config.queryKey,
@@ -19,25 +16,21 @@ export function useReferenceDetailPage(kind: ReferenceKind) {
 		config.queryKey,
 		config.endpoint,
 	)
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success(`${config.singular} deleted`)
-			navigate(`/${kind}`)
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: `/${kind}`, successMessage: `${config.singular} deleted` },
+	)
 
 	return {
 		config,
 		item,
 		isLoading,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate(`/${kind}`),
-		goToEdit: () => navigate(`/${kind}/${id}/edit`),
+		ready: Boolean(item),
+		onBack,
+		onEdit,
+		onDelete,
+		isDeleting,
 	}
 }

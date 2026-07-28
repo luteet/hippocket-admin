@@ -1,40 +1,32 @@
-import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
+import { useNavigate } from 'react-router'
 
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { useGroup, useDeleteGroup } from './hooks'
 
-export type GroupDetailTab = 'general' | 'theme'
-
 export function useGroupDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit, activeTab, onTabChange } =
+		useDetailPage({ basePath: '/groups', tabKeys: ['general', 'theme'] as const })
 	const numericId = id ? Number(id) : undefined
 	const { data: group, isLoading } = useGroup(numericId)
 	const deleteMut = useDeleteGroup()
-	const [tab, setTab] = useState<GroupDetailTab>('general')
-
-	const handleDelete = async () => {
-		if (numericId === undefined) return
-		try {
-			await deleteMut.mutateAsync(numericId)
-			toast.success('Group deleted')
-			navigate('/groups')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		numericId !== undefined ? id : undefined,
+		(_id) => deleteMut.mutateAsync(numericId!),
+		deleteMut.isPending,
+		{ basePath: '/groups', successMessage: 'Group deleted' },
+	)
+	const navigate = useNavigate()
 
 	return {
 		group,
 		isLoading,
-		tab,
-		setTab,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/groups'),
-		goToEdit: () => navigate(`/groups/${id}/edit`),
+		ready: Boolean(group),
+		onBack,
+		onEdit,
+		activeTab,
+		onTabChange,
+		onDelete,
+		isDeleting,
 		openAgent: (agentId: string) => navigate(`/agents/${agentId}`),
 	}
 }

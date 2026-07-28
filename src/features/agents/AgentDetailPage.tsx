@@ -1,147 +1,71 @@
-import { Fragment } from 'react'
-import { Link } from 'react-router'
-
 import { Badge } from '@/components/ui/badge'
 import { DetailPage } from '@/components/detail/DetailPage'
+import { DetailPageProvider } from '@/components/detail/DetailPageContext'
 import { MediaThumbnail } from '@/components/media/MediaThumbnail'
 import { useAgentDetailPage } from './useAgentDetailPage'
 import { chosenGroupName, formatDateTime, fullName } from './format'
 
 export function AgentDetailPage() {
-	const { agent, isLoading, isDeleting, handleDelete, goBack, goToEdit } =
-		useAgentDetailPage()
+	const { agent, ...detailCtx } = useAgentDetailPage()
 
 	return (
-		<DetailPage
-			title="Agent"
-			onBack={goBack}
-			ready={Boolean(agent)}
-			isLoading={isLoading}
-			onEdit={goToEdit}
-			onDelete={handleDelete}
-			deleteTitle="Delete agent?"
-			deleteDescription={`Agent "${agent?.email ?? ''}" will be permanently deleted.`}
-			isDeleting={isDeleting}
-			heading={
-				agent
-					? {
-							title:
-								fullName(agent.first_name, agent.last_name) ||
-								agent.email,
-							subtitle: agent.email,
-							avatar: (
-								<MediaThumbnail
-									url={agent.avatar_url}
-									shape="circle"
-									placeholderIcon="user"
-									canvas={true}
-									size={256}
-								/>
-							),
-							badge: agent.is_active ? (
-								<Badge variant="success">Active</Badge>
-							) : (
-								<Badge variant="muted">Inactive</Badge>
-							),
-						}
-					: undefined
-			}
-			fields={
-				agent
-					? [
-							{
-								label: 'Username',
-								value: agent.username,
-								copyable: true,
-							},
-							{
-								label: 'Phone',
-								value: agent.phone,
-								copyable: true,
-							},
-							{
-								label: 'Role',
-								value: agent.role,
-								capitalize: true,
-							},
-							{
-								label: 'Status',
-								value: agent.status,
-								capitalize: true,
-							},
-							{ label: 'Company', value: agent.company },
-							{ label: 'Address', value: agent.address },
-							{
-								label: 'Groups',
-								render: agent.group_ids.length ? (
-									<span>
-										{agent.group_ids.map((id, i) => (
-											<Fragment key={id}>
-												{i > 0 && ', '}
-												<Link
-													to={`/groups/${id}`}
-													className="link"
-												>
-													{agent.group_names[i] ?? id}
-												</Link>
-											</Fragment>
-										))}
-									</span>
-								) : (
-									'—'
+		<DetailPageProvider value={detailCtx}>
+			<DetailPage
+				title="Agent"
+				deleteTitle="Delete agent?"
+				deleteDescription={`Agent "${agent?.email ?? ''}" will be permanently deleted.`}
+				heading={
+					agent
+						? {
+								title: fullName(agent.first_name, agent.last_name),
+								subtitle: agent.email,
+								avatar: agent.avatar_url ? (
+									<MediaThumbnail
+										url={agent.avatar_url}
+										shape="circle"
+										placeholderIcon="user"
+									/>
+								) : undefined,
+								badge: (
+									<Badge
+										variant={
+											agent.is_active
+												? 'success'
+												: 'muted'
+										}
+									>
+										{agent.is_active ? 'Active' : 'Inactive'}
+									</Badge>
 								),
-							},
-							{
-								label: 'Chosen group',
-								value: chosenGroupName(agent),
-							},
-							{
-								label: 'Balance',
-								value: `$${agent.balance.toFixed(2)}`,
-							},
-							{
-								label: 'Token balance',
-								value: agent.balance_coin,
-							},
-							{
-								label: 'Referral code',
-								value: agent.referral_code ?? '',
-								copyable: true,
-							},
-							{
-								label: 'License number',
-								value: agent.license_number,
-							},
-							{ label: 'PayPal', value: agent.paypal_data },
-							{ label: 'Venmo', value: agent.venmo_id },
-							{ label: 'Cash App', value: agent.cash_app_info },
-							{ label: 'Zelle', value: agent.zelle },
-							{ label: 'New user', bool: agent.is_new_user },
-							{
-								label: 'Default admin',
-								bool: agent.default_admin,
-							},
-							{ label: 'Hidden', bool: agent.is_hide },
-							{ label: 'Logins', value: agent.count_login },
-							{
-								label: 'Pending email',
-								value: agent.pending_email ?? '',
-							},
-							{
-								label: 'Last login',
-								value: formatDateTime(agent.last_login),
-							},
-							{
-								label: 'Created',
-								value: formatDateTime(agent.created_at),
-							},
-							{
-								label: 'Updated',
-								value: formatDateTime(agent.updated_at),
-							},
-						]
-					: undefined
-			}
-		/>
+							}
+						: undefined
+				}
+				fields={
+					agent
+						? [
+								{ label: 'First name', value: agent.first_name },
+								{ label: 'Last name', value: agent.last_name },
+								{ label: 'Email', value: agent.email },
+								{ label: 'Phone', value: agent.phone },
+								{
+									label: 'Group',
+									value: chosenGroupName(
+										agent.chosen_group_id,
+										agent.groups,
+									) ?? '',
+								},
+								{
+									label: 'Registration',
+									value: agent.registration_date ?? '',
+								},
+								{
+									label: 'Created',
+									value: formatDateTime(agent.created_at),
+								},
+							]
+						: undefined
+				}
+			/>
+		</DetailPageProvider>
 	)
 }

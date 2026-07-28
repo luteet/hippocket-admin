@@ -1,15 +1,15 @@
-import { useNavigate, useParams } from 'react-router'
-
+import { useDetailPage } from '@/components/detail/useDetailPage'
 import { usePayment } from './hooks'
 
 export function usePaymentDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack } =
+		useDetailPage({ basePath: '/payments' })
 	const { data: payment, isLoading } = usePayment(id)
 
 	return {
 		payment,
 		isLoading,
-		goBack: () => navigate('/payments'),
+		ready: Boolean(payment),
+		onBack,
 	}
 }

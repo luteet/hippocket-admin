@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { TextTruncate } from '@/components/TextTruncate'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { FilterDate } from '@/components/list/FilterDate'
@@ -17,26 +18,13 @@ import { usePartnerConnectPage, ALL } from './usePartnerConnectPage'
 
 export function PartnerConnectPage() {
 	const {
-		search,
-		setSearch,
-		status,
-		setStatus,
-		role,
-		setRole,
-		createdFrom,
-		setCreatedFrom,
-		createdTo,
-		setCreatedTo,
-		activeFilterCount,
-		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
-		goToDetail,
+		status, setStatus,
+		role, setRole,
+		createdFrom, setCreatedFrom,
+		createdTo, setCreatedTo,
+		activeFilterCount, clearFilters,
 		goToCreate,
+		...listCtx
 	} = usePartnerConnectPage()
 
 	const columns = useMemo<ColumnDef<Transaction, unknown>[]>(
@@ -146,73 +134,62 @@ export function PartnerConnectPage() {
 	)
 
 	return (
-		<ListPage
-			title="Partner Connect"
-			description="Real-estate transactions with partner referrals (timeline)"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search address, agent email, customer or partner…"
-			onRefresh={onRefresh}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<FilterSelect
-						label="Status"
-						value={status}
-						onChange={setStatus}
-						options={[
-							{ value: 'active', label: 'Active' },
-							{ value: 'closed', label: 'Closed' },
-						]}
-						allOption={{ value: ALL, label: 'All statuses' }}
-					/>
-					<FilterSelect
-						label="Role"
-						value={role}
-						onChange={setRole}
-						options={[
-							{ value: 'Buyer', label: 'Buyer' },
-							{ value: 'Seller', label: 'Seller' },
-						]}
-						allOption={{ value: ALL, label: 'All roles' }}
-					/>
-					<div className="grid grid-cols-2 gap-3">
-						<FilterDate
-							label="From"
-							value={createdFrom}
-							onChange={setCreatedFrom}
-							max={createdTo || undefined}
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Partner Connect"
+				description="Real-estate transactions with partner referrals (timeline)"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search address, agent email, customer or partner…"
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<FilterSelect
+							label="Status"
+							value={status}
+							onChange={setStatus}
+							options={[
+								{ value: 'active', label: 'Active' },
+								{ value: 'closed', label: 'Closed' },
+							]}
+							allOption={{ value: ALL, label: 'All statuses' }}
 						/>
-						<FilterDate
-							label="To"
-							value={createdTo}
-							onChange={setCreatedTo}
-							min={createdFrom || undefined}
+						<FilterSelect
+							label="Role"
+							value={role}
+							onChange={setRole}
+							options={[
+								{ value: 'Buyer', label: 'Buyer' },
+								{ value: 'Seller', label: 'Seller' },
+							]}
+							allOption={{ value: ALL, label: 'All roles' }}
 						/>
-					</div>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No partner connects found"
-			minWidth="1200px"
-			onRowClick={(r) => goToDetail(r.id)}
-		/>
+						<div className="grid grid-cols-2 gap-3">
+							<FilterDate
+								label="From"
+								value={createdFrom}
+								onChange={setCreatedFrom}
+								max={createdTo || undefined}
+							/>
+							<FilterDate
+								label="To"
+								value={createdTo}
+								onChange={setCreatedTo}
+								min={createdFrom || undefined}
+							/>
+						</div>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No partner connects found"
+				minWidth="1200px"
+			/>
+		</ListPageProvider>
 	)
 }

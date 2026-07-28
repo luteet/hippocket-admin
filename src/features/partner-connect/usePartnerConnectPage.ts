@@ -66,8 +66,22 @@ export function usePartnerConnectPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) => navigate(`/partner-connect/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		status,
 		setStatus,
 		role,
@@ -78,13 +92,6 @@ export function usePartnerConnectPage() {
 		setCreatedTo,
 		activeFilterCount,
 		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
-		goToDetail: (id: string) => navigate(`/partner-connect/${id}`),
 		goToCreate: () => navigate('/partner-connect/new'),
 	}
 }

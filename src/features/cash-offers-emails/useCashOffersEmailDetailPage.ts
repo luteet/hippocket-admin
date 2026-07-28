@@ -1,32 +1,25 @@
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { useCashOffersEmail, useDeleteCashOffersEmail } from './hooks'
 
 export function useCashOffersEmailDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit } =
+		useDetailPage({ basePath: '/cash-offers-emails' })
 	const { data: email, isLoading } = useCashOffersEmail(id)
 	const deleteMut = useDeleteCashOffersEmail()
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Email deleted')
-			navigate('/cash-offers-emails')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/cash-offers-emails', successMessage: 'Email deleted' },
+	)
 
 	return {
 		email,
 		isLoading,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/cash-offers-emails'),
-		goToEdit: () => navigate(`/cash-offers-emails/${id}/edit`),
+		ready: Boolean(email),
+		onBack,
+		onEdit,
+		onDelete,
+		isDeleting,
 	}
 }

@@ -1,32 +1,25 @@
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { useAgent, useDeleteAgent } from './hooks'
 
 export function useAgentDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit } =
+		useDetailPage({ basePath: '/agents' })
 	const { data: agent, isLoading } = useAgent(id)
 	const deleteMut = useDeleteAgent()
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Agent deleted')
-			navigate('/agents')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/agents', successMessage: 'Agent deleted' },
+	)
 
 	return {
 		agent,
 		isLoading,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/agents'),
-		goToEdit: () => navigate(`/agents/${id}/edit`),
+		ready: Boolean(agent),
+		onBack,
+		onEdit,
+		onDelete,
+		isDeleting,
 	}
 }

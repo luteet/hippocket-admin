@@ -1,7 +1,7 @@
-import { useNavigate, useParams } from 'react-router'
 import { toast } from 'sonner'
 
 import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import {
 	useDeleteReferral,
 	useMarkReferralPaid,
@@ -11,13 +11,19 @@ import {
 } from './hooks'
 
 export function useReferralDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit } =
+		useDetailPage({ basePath: '/referrals' })
 	const { data: referral, isLoading } = useReferral(id)
 	const { data: statuses } = useStatuses()
 	const statusMut = useUpdateReferralStatus()
 	const paidMut = useMarkReferralPaid()
 	const deleteMut = useDeleteReferral()
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/referrals', successMessage: 'Referral deleted' },
+	)
 
 	const currentStatus = referral?.status ?? ''
 
@@ -41,29 +47,19 @@ export function useReferralDetailPage() {
 		}
 	}
 
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Referral deleted')
-			navigate('/referrals')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
-
 	return {
 		referral,
 		isLoading,
+		ready: Boolean(referral),
 		statuses,
 		currentStatus,
 		handleStatusChange,
 		handleMarkPaid,
 		isUpdatingStatus: statusMut.isPending,
 		isMarkingPaid: paidMut.isPending,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/referrals'),
-		goToEdit: () => navigate(`/referrals/${id}/edit`),
+		onBack,
+		onEdit,
+		onDelete,
+		isDeleting,
 	}
 }

@@ -1,39 +1,28 @@
-import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { useTransaction, useDeleteTransaction } from './hooks'
 
-export type PartnerConnectDetailTab = 'details' | 'timeline'
-
 export function usePartnerConnectDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit, activeTab, onTabChange } =
+		useDetailPage({ basePath: '/partner-connect', tabKeys: ['details', 'timeline'] as const })
 	const { data: transaction, isLoading } = useTransaction(id)
 	const deleteMut = useDeleteTransaction()
-	const [tab, setTab] = useState<PartnerConnectDetailTab>('details')
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Partner Connect deleted')
-			navigate('/partner-connect')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/partner-connect', successMessage: 'Partner Connect deleted' },
+	)
 
 	return {
 		transaction,
 		transactionId: id,
 		isLoading,
-		tab,
-		setTab,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/partner-connect'),
-		goToEdit: () => navigate(`/partner-connect/${id}/edit`),
+		ready: Boolean(transaction),
+		onBack,
+		onEdit,
+		activeTab,
+		onTabChange,
+		onDelete,
+		isDeleting,
 	}
 }

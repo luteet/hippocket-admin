@@ -1,32 +1,25 @@
-import { useNavigate, useParams } from 'react-router'
-import { toast } from 'sonner'
-
-import { getApiErrorMessage } from '@/lib/api/client'
+import { useDetailPage, useDetailPageDelete } from '@/components/detail/useDetailPage'
 import { usePropertyImage, useDeletePropertyImage } from './hooks'
 
 export function usePropertyImageDetailPage() {
-	const { id } = useParams()
-	const navigate = useNavigate()
+	const { id, onBack, onEdit } =
+		useDetailPage({ basePath: '/property-images' })
 	const { data: image, isLoading } = usePropertyImage(id)
 	const deleteMut = useDeletePropertyImage()
-
-	const handleDelete = async () => {
-		if (!id) return
-		try {
-			await deleteMut.mutateAsync(id)
-			toast.success('Image deleted')
-			navigate('/property-images')
-		} catch (error) {
-			toast.error(getApiErrorMessage(error, 'Failed to delete'))
-		}
-	}
+	const { onDelete, isDeleting } = useDetailPageDelete(
+		id,
+		(id) => deleteMut.mutateAsync(id),
+		deleteMut.isPending,
+		{ basePath: '/property-images', successMessage: 'Image deleted' },
+	)
 
 	return {
 		image,
 		isLoading,
-		isDeleting: deleteMut.isPending,
-		handleDelete,
-		goBack: () => navigate('/property-images'),
-		goToEdit: () => navigate(`/property-images/${id}/edit`),
+		ready: Boolean(image),
+		onBack,
+		onEdit,
+		onDelete,
+		isDeleting,
 	}
 }
