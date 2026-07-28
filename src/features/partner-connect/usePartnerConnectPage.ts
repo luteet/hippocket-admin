@@ -9,7 +9,7 @@ import { useTransactions } from './hooks'
 // Sentinel for the "no filter" option in selects (empty string can't be a SelectItem).
 export const ALL = '__all__'
 
-export function useTransactionsPage() {
+export function usePartnerConnectPage() {
 	const navigate = useNavigate()
 	const [search, setSearch] = useState('')
 	const debouncedSearch = useDebouncedValue(search)
@@ -19,7 +19,7 @@ export function useTransactionsPage() {
 	const [createdTo, setCreatedTo] = useState('')
 	const pagination = usePagination({
 		count: 20,
-		storageKey: 'transactions',
+		storageKey: 'partner-connect',
 	})
 	const sorting = useSorting({
 		defaultSortBy: 'created_at',
@@ -84,7 +84,7 @@ export function useTransactionsPage() {
 		onRefresh: () => void refetch(),
 		pagination,
 		sorting,
-		goToDetail: (id: string) => navigate(`/transactions/${id}`),
-		goToCreate: () => navigate('/transactions/new'),
+		goToDetail: (id: string) => navigate(`/partner-connect/${id}`),
+		goToCreate: () => navigate('/partner-connect/new'),
 	}
 }

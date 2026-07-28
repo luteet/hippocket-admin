@@ -301,21 +301,21 @@ const SharedPartnerEditPage = lazyNamed(
 	() => import('@/features/journey/SharedPartnerEditPage'),
 	'SharedPartnerEditPage',
 )
-const TransactionsPage = lazyNamed(
-	() => import('@/features/transactions/TransactionsPage'),
-	'TransactionsPage',
+const PartnerConnectPage = lazyNamed(
+	() => import('@/features/partner-connect/PartnerConnectPage'),
+	'PartnerConnectPage',
 )
-const TransactionCreatePage = lazyNamed(
-	() => import('@/features/transactions/TransactionCreatePage'),
-	'TransactionCreatePage',
+const PartnerConnectCreatePage = lazyNamed(
+	() => import('@/features/partner-connect/PartnerConnectCreatePage'),
+	'PartnerConnectCreatePage',
 )
-const TransactionDetailPage = lazyNamed(
-	() => import('@/features/transactions/TransactionDetailPage'),
-	'TransactionDetailPage',
+const PartnerConnectDetailPage = lazyNamed(
+	() => import('@/features/partner-connect/PartnerConnectDetailPage'),
+	'PartnerConnectDetailPage',
 )
-const TransactionEditPage = lazyNamed(
-	() => import('@/features/transactions/TransactionEditPage'),
-	'TransactionEditPage',
+const PartnerConnectEditPage = lazyNamed(
+	() => import('@/features/partner-connect/PartnerConnectEditPage'),
+	'PartnerConnectEditPage',
 )
 // One parameterized page serves the three read-only audit-log sections; the
 // `slug` prop selects the labels and which `event` (if any) is pinned.
@@ -596,12 +596,12 @@ const CRUD_SECTIONS: { path: string; pages: CrudPages }[] = [
 		},
 	},
 	{
-		path: 'transactions',
+		path: 'partner-connect',
 		pages: {
-			List: TransactionsPage,
-			Create: TransactionCreatePage,
-			Detail: TransactionDetailPage,
-			Edit: TransactionEditPage,
+			List: PartnerConnectPage,
+			Create: PartnerConnectCreatePage,
+			Detail: PartnerConnectDetailPage,
+			Edit: PartnerConnectEditPage,
 		},
 	},
 	// System (base) resources — no detail page: a row opens straight into Edit.

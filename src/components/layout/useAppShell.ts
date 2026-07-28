@@ -240,11 +240,12 @@ export const NAV_ITEMS: NavItem[] = [
 		keywords: ['payment', 'transaction', 'money', 'billing'],
 	},
 	{
-		to: '/transactions',
-		label: 'Transactions',
-		icon: 'transactions',
+		to: '/partner-connect',
+		label: 'Partner Connect',
+		icon: 'partner-connect',
 		description: 'Real-estate transactions with partner referrals',
 		keywords: [
+			'partner connect',
 			'transaction',
 			'deal',
 			'real estate',

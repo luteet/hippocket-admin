@@ -13,7 +13,7 @@ import {
 	updateTransaction,
 } from './api'
 
-const KEY = 'transactions'
+const KEY = 'partner-connect'
 
 export function useTransactions(filters: TransactionFilters) {
 	return useQuery({

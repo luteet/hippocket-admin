@@ -13,9 +13,9 @@ import { FilterSelect } from '@/components/list/FilterSelect'
 import { FilterDate } from '@/components/list/FilterDate'
 import type { Transaction } from '@/types/api'
 import { capitalize } from './format'
-import { useTransactionsPage, ALL } from './useTransactionsPage'
+import { usePartnerConnectPage, ALL } from './usePartnerConnectPage'
 
-export function TransactionsPage() {
+export function PartnerConnectPage() {
 	const {
 		search,
 		setSearch,
@@ -37,7 +37,7 @@ export function TransactionsPage() {
 		sorting,
 		goToDetail,
 		goToCreate,
-	} = useTransactionsPage()
+	} = usePartnerConnectPage()
 
 	const columns = useMemo<ColumnDef<Transaction, unknown>[]>(
 		() => [
@@ -147,7 +147,7 @@ export function TransactionsPage() {
 
 	return (
 		<ListPage
-			title="Transactions"
+			title="Partner Connect"
 			description="Real-estate transactions with partner referrals (timeline)"
 			actions={
 				<Button onClick={goToCreate}>
@@ -210,7 +210,7 @@ export function TransactionsPage() {
 				order: sorting.order,
 				onToggle: sorting.toggle,
 			}}
-			emptyMessage="No transactions found"
+			emptyMessage="No partner connects found"
 			minWidth="1200px"
 			onRowClick={(r) => goToDetail(r.id)}
 		/>

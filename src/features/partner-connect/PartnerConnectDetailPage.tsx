@@ -6,7 +6,7 @@ import { DetailBody } from '@/components/detail/DetailBody'
 import { SectionTitle } from '@/components/SectionTitle'
 import type { TransactionMilestone } from '@/types/api'
 import { capitalize, formatDateTime } from './format'
-import { useTransactionDetailPage } from './useTransactionDetailPage'
+import { usePartnerConnectDetailPage } from './usePartnerConnectDetailPage'
 import MilestoneCard from './components/MilestoneCard'
 
 /** The timeline tab: list of milestones with referrals. */
@@ -29,7 +29,7 @@ function TimelineTab({
 	)
 }
 
-export function TransactionDetailPage() {
+export function PartnerConnectDetailPage() {
 	const {
 		transaction,
 		isLoading,
@@ -39,18 +39,18 @@ export function TransactionDetailPage() {
 		handleDelete,
 		goBack,
 		goToEdit,
-	} = useTransactionDetailPage()
+	} = usePartnerConnectDetailPage()
 
 	return (
 		<DetailPage
-			title="Transaction"
+			title="Partner Connect"
 			onBack={goBack}
 			ready={Boolean(transaction)}
 			isLoading={isLoading}
 			onEdit={goToEdit}
 			onDelete={handleDelete}
-			deleteTitle="Delete transaction?"
-			deleteDescription={`Transaction "${transaction?.property_address ?? ''}" will be permanently deleted along with its milestones and referrals.`}
+			deleteTitle="Delete partner connect?"
+			deleteDescription={`Partner connect "${transaction?.property_address ?? ''}" will be permanently deleted along with its milestones and referrals.`}
 			isDeleting={isDeleting}
 			activeTab={tab}
 			onTabChange={(key) => setTab(key as typeof tab)}
@@ -156,7 +156,7 @@ export function TransactionDetailPage() {
 												),
 										},
 										{
-											label: 'Transaction ID',
+											label: 'Partner Connect ID',
 											value: transaction.id,
 											fullWidth: true,
 											copyable: true,

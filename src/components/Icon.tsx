@@ -58,7 +58,7 @@ export type IconName =
 	| 'refresh-cw'
 	| 'inbox'
 	| 'search-x'
-	| 'transactions'
+	| 'partner-connect'
 
 const SPRITE_URL = `${import.meta.env.BASE_URL}img/sprites.svg`
 

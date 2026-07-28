@@ -5,21 +5,21 @@ import { toast } from 'sonner'
 import { getApiErrorMessage } from '@/lib/api/client'
 import { useTransaction, useDeleteTransaction } from './hooks'
 
-export type TransactionDetailTab = 'details' | 'timeline'
+export type PartnerConnectDetailTab = 'details' | 'timeline'
 
-export function useTransactionDetailPage() {
+export function usePartnerConnectDetailPage() {
 	const { id } = useParams()
 	const navigate = useNavigate()
 	const { data: transaction, isLoading } = useTransaction(id)
 	const deleteMut = useDeleteTransaction()
-	const [tab, setTab] = useState<TransactionDetailTab>('details')
+	const [tab, setTab] = useState<PartnerConnectDetailTab>('details')
 
 	const handleDelete = async () => {
 		if (!id) return
 		try {
 			await deleteMut.mutateAsync(id)
-			toast.success('Transaction deleted')
-			navigate('/transactions')
+			toast.success('Partner Connect deleted')
+			navigate('/partner-connect')
 		} catch (error) {
 			toast.error(getApiErrorMessage(error, 'Failed to delete'))
 		}
@@ -33,7 +33,7 @@ export function useTransactionDetailPage() {
 		setTab,
 		isDeleting: deleteMut.isPending,
 		handleDelete,
-		goBack: () => navigate('/transactions'),
-		goToEdit: () => navigate(`/transactions/${id}/edit`),
+		goBack: () => navigate('/partner-connect'),
+		goToEdit: () => navigate(`/partner-connect/${id}/edit`),
 	}
 }

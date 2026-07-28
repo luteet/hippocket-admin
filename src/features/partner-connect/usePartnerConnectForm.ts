@@ -18,19 +18,19 @@ const schema = z.object({
 	agent_display_name: z.string().optional(),
 })
 
-export type TransactionFormValues = z.infer<typeof schema>
+export type PartnerConnectFormValues = z.infer<typeof schema>
 
 interface Params {
 	transaction?: Transaction | null
 	onSuccess: (transaction: Transaction) => void
 }
 
-export function useTransactionForm({ transaction, onSuccess }: Params) {
+export function usePartnerConnectForm({ transaction, onSuccess }: Params) {
 	const isEdit = !!transaction
 	const createMut = useCreateTransaction()
 	const updateMut = useUpdateTransaction()
 
-	const form = useForm<TransactionFormValues>({
+	const form = useForm<PartnerConnectFormValues>({
 		resolver: zodResolver(schema),
 		defaultValues: {
 			agent_id: transaction?.agent_id ?? '',
@@ -75,7 +75,7 @@ export function useTransactionForm({ transaction, onSuccess }: Params) {
 							values.agent_display_name || undefined,
 					},
 				})
-				toast.success('Transaction updated')
+				toast.success('Partner Connect updated')
 				onSuccess(updated)
 			} else {
 				const created = await createMut.mutateAsync({
@@ -88,7 +88,7 @@ export function useTransactionForm({ transaction, onSuccess }: Params) {
 					agent_display_name: values.agent_display_name || undefined,
 					referrals: [],
 				})
-				toast.success('Transaction created')
+				toast.success('Partner Connect created')
 				onSuccess(created)
 			}
 		} catch (error) {

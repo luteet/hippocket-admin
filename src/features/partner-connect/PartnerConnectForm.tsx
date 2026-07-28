@@ -1,7 +1,7 @@
 import { FormLayout } from '@/components/form/FormLayout'
 import type { FormFieldEntry } from '@/components/form/types'
 import type { Transaction } from '@/types/api'
-import { useTransactionForm } from './useTransactionForm'
+import { usePartnerConnectForm } from './usePartnerConnectForm'
 
 interface Props {
 	transaction?: Transaction | null
@@ -9,18 +9,18 @@ interface Props {
 	onCancel: () => void
 }
 
-export function TransactionForm({
+export function PartnerConnectForm({
 	transaction,
 	onSuccess,
 	onCancel,
 }: Props) {
-	const { isEdit, form, isPending, onSubmit } = useTransactionForm({
+	const { isEdit, form, isPending, onSubmit } = usePartnerConnectForm({
 		transaction,
 		onSuccess,
 	})
 
 	const fields: FormFieldEntry[] = [
-		{ type: 'section', title: 'Transaction details', first: true },
+		{ type: 'section', title: 'Partner Connect details', first: true },
 		{ type: 'text', name: 'property_address', label: 'Property address' },
 		{
 			type: 'grid',
