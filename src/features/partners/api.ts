@@ -13,14 +13,30 @@ import type {
 export async function listPartners(
 	params: PaginationParams,
 ): Promise<PartnersData> {
+	const queryParams = new URLSearchParams()
+	queryParams.set('offset', String(params.offset))
+	queryParams.set('count', String(params.count))
+	if (params.search) queryParams.set('search', params.search)
+	if (params.sort_by) queryParams.set('sort_by', params.sort_by)
+	if (params.order) queryParams.set('order', params.order)
+	params.group_ids?.forEach((id) =>
+		queryParams.append('group_ids', String(id)),
+	)
+	params.partner_category_ids?.forEach((id) =>
+		queryParams.append('partner_category_ids', id),
+	)
+	params.service_ids?.forEach((id) =>
+		queryParams.append('service_ids', id),
+	)
+	params.location_ids?.forEach((id) =>
+		queryParams.append('location_ids', id),
+	)
+	params.category_ids?.forEach((id) =>
+		queryParams.append('category_ids', id),
+	)
+
 	const { data } = await api.get<PartnersData>('/partners/', {
-		params: {
-			offset: params.offset,
-			count: params.count,
-			...(params.search ? { search: params.search } : {}),
-			...(params.sort_by ? { sort_by: params.sort_by } : {}),
-			...(params.order ? { order: params.order } : {}),
-		},
+		params: queryParams,
 	})
 	return data
 }

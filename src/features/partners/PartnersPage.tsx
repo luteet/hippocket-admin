@@ -5,6 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Label } from '@/components/ui/label'
 import {
 	Select,
 	SelectContent,
@@ -15,10 +16,13 @@ import {
 import { ListPage } from '@/components/list/ListPage'
 import { ListPageProvider } from '@/components/list/ListPageContext'
 import { EmptyState } from '@/components/EmptyState'
+import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
+import { GroupMultiSelect } from '@/components/GroupMultiSelect'
 import type { Partner } from '@/types/api'
 import { usePartnersPage, stopRowClick } from './usePartnersPage'
 import { NumberCell } from './components/NumberCell'
+import { RefMultiSelect } from './components/RefMultiSelect'
 
 export function PartnersPage() {
 	const {
@@ -36,6 +40,24 @@ export function PartnersPage() {
 		bulkHide,
 		bulkShow,
 		bulkDelete,
+		groupIds,
+		toggleGroupId,
+		groupOptions,
+		partnerCategoryIds,
+		togglePartnerCategoryId,
+		partnerCategoryOptions,
+		serviceIds,
+		toggleServiceId,
+		serviceOptions,
+		locationIds,
+		toggleLocationId,
+		locationOptions,
+		categoryTagIds,
+		toggleCategoryTagId,
+		categoryTagOptions,
+		activeFilterCount,
+		activeFilters,
+		removeFilter,
 		...listCtx
 	} = usePartnersPage()
 
@@ -232,6 +254,60 @@ export function PartnersPage() {
 					</Button>
 				}
 				searchPlaceholder="Search partners…"
+				activeFilters={activeFilters}
+				onRemoveFilter={removeFilter}
+				onClearFilters={clearFilters}
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<div className="space-y-1.5">
+							<Label>Group</Label>
+							<GroupMultiSelect
+								options={groupOptions ?? []}
+								selected={groupIds}
+								onToggle={toggleGroupId}
+							/>
+						</div>
+						<div className="space-y-1.5">
+							<Label>Partner category</Label>
+							<RefMultiSelect
+								options={partnerCategoryOptions ?? []}
+								selected={partnerCategoryIds}
+								onToggle={togglePartnerCategoryId}
+								placeholder="Select categories"
+							/>
+						</div>
+						<div className="space-y-1.5">
+							<Label>Service</Label>
+							<RefMultiSelect
+								options={serviceOptions ?? []}
+								selected={serviceIds}
+								onToggle={toggleServiceId}
+								placeholder="Select services"
+							/>
+						</div>
+						<div className="space-y-1.5">
+							<Label>Location</Label>
+							<RefMultiSelect
+								options={locationOptions ?? []}
+								selected={locationIds}
+								onToggle={toggleLocationId}
+								placeholder="Select locations"
+							/>
+						</div>
+						<div className="space-y-1.5">
+							<Label>Tag</Label>
+							<RefMultiSelect
+								options={categoryTagOptions ?? []}
+								selected={categoryTagIds}
+								onToggle={toggleCategoryTagId}
+								placeholder="Select tags"
+							/>
+						</div>
+					</FiltersPopover>
+				}
 				columns={columns}
 				emptyMessage={emptyState}
 				minWidth="1800px"

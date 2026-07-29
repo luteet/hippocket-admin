@@ -27,4 +27,14 @@ export interface PaginationParams extends SortParams {
 	offset: number
 	count: number
 	search?: string
+	/** Filter by group id(s). Repeated param: ?group_ids=1&group_ids=2 */
+	group_ids?: number[]
+	/** Filter by partner-category id(s) (UUID). Repeated param. */
+	partner_category_ids?: string[]
+	/** Filter by service id(s) (UUID). Repeated param. */
+	service_ids?: string[]
+	/** Filter by location id(s) (UUID). Repeated param. */
+	location_ids?: string[]
+	/** Filter by category/tag id(s) (UUID, M2M). Repeated param. */
+	category_ids?: string[]
 }

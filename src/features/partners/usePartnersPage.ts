@@ -1,17 +1,22 @@
 import { useState, useRef, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router'
 import { toast } from 'sonner'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { getApiErrorMessage } from '@/lib/api/client'
+import { api, getApiErrorMessage } from '@/lib/api/client'
 import { usePagination } from '@/hooks/usePagination'
 import { useSorting } from '@/hooks/useSorting'
 import { useUrlParams, useUrlSearch } from '@/hooks/useUrlState'
 import { useRowSelection } from '@/hooks/useRowSelection'
 import { useBulkAction } from '@/hooks/useBulkAction'
 import type {
+	ActiveFilter,
+} from '@/components/list/FilterChips'
+import type {
+	GroupOption,
 	Partner,
 	PartnersData,
+	RefOption,
 	UpdatePartnerDto,
 	ValueType,
 } from '@/types/api'
@@ -77,12 +82,207 @@ export function usePartnersPage() {
 		syncToUrl: true,
 	})
 
+	// --- Filters -------------------------------------------------------------
+	// All are kept in local state so the multi-select dropdowns stay open while
+	// toggling checkboxes (no URL re-render on each change).
+	const [groupIds, setGroupIds] = useState<number[]>([])
+	const toggleGroupId = useCallback(
+		(id: number) =>
+			setGroupIds((prev) =>
+				prev.includes(id)
+					? prev.filter((g) => g !== id)
+					: [...prev, id],
+			),
+		[],
+	)
+
+	const [partnerCategoryIds, setPartnerCategoryIds] = useState<string[]>([])
+	const togglePartnerCategoryId = useCallback(
+		(id: string) =>
+			setPartnerCategoryIds((prev) =>
+				prev.includes(id)
+					? prev.filter((c) => c !== id)
+					: [...prev, id],
+			),
+		[],
+	)
+
+	const [serviceIds, setServiceIds] = useState<string[]>([])
+	const toggleServiceId = useCallback(
+		(id: string) =>
+			setServiceIds((prev) =>
+				prev.includes(id)
+					? prev.filter((s) => s !== id)
+					: [...prev, id],
+			),
+		[],
+	)
+
+	const [locationIds, setLocationIds] = useState<string[]>([])
+	const toggleLocationId = useCallback(
+		(id: string) =>
+			setLocationIds((prev) =>
+				prev.includes(id)
+					? prev.filter((l) => l !== id)
+					: [...prev, id],
+			),
+		[],
+	)
+
+	const [categoryTagIds, setCategoryTagIds] = useState<string[]>([])
+	const toggleCategoryTagId = useCallback(
+		(id: string) =>
+			setCategoryTagIds((prev) =>
+				prev.includes(id)
+					? prev.filter((c) => c !== id)
+					: [...prev, id],
+			),
+		[],
+	)
+
+	// --- Reference data for filter dropdowns ---------------------------------
+	const { data: groupOptions } = useQuery<GroupOption[]>({
+		queryKey: ['refs', 'groups'],
+		queryFn: () =>
+			api.get<GroupOption[]>('/refs/groups/').then((r) => r.data),
+		staleTime: 5 * 60_000,
+	})
+
+	const { data: partnerCategoryOptions } = useQuery<RefOption[]>({
+		queryKey: ['refs', 'partner-categories'],
+		queryFn: () =>
+			api
+				.get<RefOption[]>('/refs/partner-categories/')
+				.then((r) => r.data),
+		staleTime: 5 * 60_000,
+	})
+
+	const { data: serviceOptions } = useQuery<RefOption[]>({
+		queryKey: ['refs', 'partner-services'],
+		queryFn: () =>
+			api
+				.get<RefOption[]>('/refs/partner-services/')
+				.then((r) => r.data),
+		staleTime: 5 * 60_000,
+	})
+
+	const { data: locationOptions } = useQuery<RefOption[]>({
+		queryKey: ['refs', 'partner-locations'],
+		queryFn: () =>
+			api
+				.get<RefOption[]>('/refs/partner-locations/')
+				.then((r) => r.data),
+		staleTime: 5 * 60_000,
+	})
+
+	const { data: categoryTagOptions } = useQuery<RefOption[]>({
+		queryKey: ['refs', 'categories'],
+		queryFn: () =>
+			api.get<RefOption[]>('/refs/categories/').then((r) => r.data),
+		staleTime: 5 * 60_000,
+	})
+
+	// --- Active filter chips -------------------------------------------------
+	const groupNameById = useMemo(() => {
+		const map: Record<number, string> = {}
+		groupOptions?.forEach((g) => {
+			map[g.id] = g.name
+		})
+		return map
+	}, [groupOptions])
+
+	const partnerCategoryNameById = useMemo(() => {
+		const map: Record<string, string> = {}
+		partnerCategoryOptions?.forEach((c) => {
+			map[c.id] = c.name
+		})
+		return map
+	}, [partnerCategoryOptions])
+
+	const serviceNameById = useMemo(() => {
+		const map: Record<string, string> = {}
+		serviceOptions?.forEach((s) => {
+			map[s.id] = s.name
+		})
+		return map
+	}, [serviceOptions])
+
+	const locationNameById = useMemo(() => {
+		const map: Record<string, string> = {}
+		locationOptions?.forEach((l) => {
+			map[l.id] = l.name
+		})
+		return map
+	}, [locationOptions])
+
+	const categoryTagNameById = useMemo(() => {
+		const map: Record<string, string> = {}
+		categoryTagOptions?.forEach((c) => {
+			map[c.id] = c.name
+		})
+		return map
+	}, [categoryTagOptions])
+
+	const activeFilters: ActiveFilter[] = [
+		groupIds.length > 0 && {
+			key: 'group_ids',
+			label: 'Group',
+			value: groupIds
+				.map((id) => groupNameById[id] ?? `#${id}`)
+				.join(', '),
+		},
+		partnerCategoryIds.length > 0 && {
+			key: 'partner_category_ids',
+			label: 'Partner category',
+			value: partnerCategoryIds
+				.map((id) => partnerCategoryNameById[id] ?? id)
+				.join(', '),
+		},
+		serviceIds.length > 0 && {
+			key: 'service_ids',
+			label: 'Service',
+			value: serviceIds
+				.map((id) => serviceNameById[id] ?? id)
+				.join(', '),
+		},
+		locationIds.length > 0 && {
+			key: 'location_ids',
+			label: 'Location',
+			value: locationIds
+				.map((id) => locationNameById[id] ?? id)
+				.join(', '),
+		},
+		categoryTagIds.length > 0 && {
+			key: 'category_ids',
+			label: 'Tag',
+			value: categoryTagIds
+				.map((id) => categoryTagNameById[id] ?? id)
+				.join(', '),
+		},
+	].filter(Boolean) as ActiveFilter[]
+
+	const activeFilterCount = activeFilters.length
+	const removeFilter = (key: string) => {
+		if (key === 'group_ids') setGroupIds([])
+		else if (key === 'partner_category_ids') setPartnerCategoryIds([])
+		else if (key === 'service_ids') setServiceIds([])
+		else if (key === 'location_ids') setLocationIds([])
+		else if (key === 'category_ids') setCategoryTagIds([])
+	}
+
 	const { data, isLoading, isFetching, refetch } = usePartners({
 		offset: pagination.offset,
 		count: pagination.count,
 		search: committedSearch || undefined,
 		sort_by: sorting.sortBy,
 		order: sorting.order,
+		group_ids: groupIds.length ? groupIds : undefined,
+		partner_category_ids: partnerCategoryIds.length
+			? partnerCategoryIds
+			: undefined,
+		service_ids: serviceIds.length ? serviceIds : undefined,
+		location_ids: locationIds.length ? locationIds : undefined,
+		category_ids: categoryTagIds.length ? categoryTagIds : undefined,
 	})
 
 	const qc = useQueryClient()
@@ -246,13 +446,46 @@ export function usePartnersPage() {
 		bulkDelete,
 		// Whether the empty list is "filtered to nothing" vs "no records yet" —
 		// the page picks the right empty state from this.
-		hasFilters: Boolean(committedSearch),
+		hasFilters:
+			Boolean(committedSearch) ||
+			groupIds.length > 0 ||
+			partnerCategoryIds.length > 0 ||
+			serviceIds.length > 0 ||
+			locationIds.length > 0 ||
+			categoryTagIds.length > 0,
 		// Clear via the URL directly so the input empties at once (no debounce).
-		clearFilters: () => setParams({ q: null, page: null }),
+		clearFilters: () => {
+			setGroupIds([])
+			setPartnerCategoryIds([])
+			setServiceIds([])
+			setLocationIds([])
+			setCategoryTagIds([])
+			setParams({ q: null, page: null })
+		},
 		goToCreate: () => navigate('/partners/new'),
 		// Inline editing (auto-save per field)
 		getCell,
 		setCell,
 		saveField: handleSaveField,
+
+		// --- Filters ---
+		groupIds,
+		toggleGroupId,
+		groupOptions,
+		partnerCategoryIds,
+		togglePartnerCategoryId,
+		partnerCategoryOptions,
+		serviceIds,
+		toggleServiceId,
+		serviceOptions,
+		locationIds,
+		toggleLocationId,
+		locationOptions,
+		categoryTagIds,
+		toggleCategoryTagId,
+		categoryTagOptions,
+		activeFilterCount,
+		activeFilters,
+		removeFilter,
 	}
 }
