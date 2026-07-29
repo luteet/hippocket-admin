@@ -163,6 +163,23 @@ export function useReferralsPage() {
 		})
 
 	return {
+		// --- ListPageContext fields ---
+		search,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/referrals/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		selectedIds,
 		setSelectedIds,
 		clearSelection,
@@ -170,8 +187,6 @@ export function useReferralsPage() {
 		isBulkRunning,
 		bulkMarkPaid,
 		bulkDelete,
-		search,
-		setSearch,
 		statusLabel,
 		setStatusLabel,
 		isPaid,
@@ -187,13 +202,6 @@ export function useReferralsPage() {
 		clearAll,
 		statuses,
 		statusNameByLabel,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
-		goToDetail: (id: string) => navigate(`/referrals/${id}`),
 		totalPipelinePotential: data?.total_pipeline_potential,
 	}
 }

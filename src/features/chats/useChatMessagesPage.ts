@@ -54,8 +54,23 @@ export function useChatMessagesPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/chats/messages/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		readState,
 		setReadState,
 		chatId,
@@ -64,13 +79,6 @@ export function useChatMessagesPage() {
 		clearFilters,
 		chatRefs: chatRefs ?? [],
 		chatsLoading,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
 		goToCreate: () => navigate('/chats/messages/new'),
-		openMessage: (id: string) => navigate(`/chats/messages/${id}`),
 	}
 }

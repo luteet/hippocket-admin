@@ -7,21 +7,14 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import type { AiSession } from '@/types/api'
 import { useSessionsPage } from './useSessionsPage'
 
 export function SessionsPage() {
 	const {
-		search,
-		setSearch,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
 		goToCreate,
-		openSession,
+		...listCtx
 	} = useSessionsPage()
 
 	const columns = useMemo<ColumnDef<AiSession, unknown>[]>(
@@ -71,32 +64,21 @@ export function SessionsPage() {
 	)
 
 	return (
-		<ListPage
-			title="AI Chat Sessions"
-			description="Conversations between agents and the AI assistant"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search sessions…"
-			onRefresh={onRefresh}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No sessions found"
-			minWidth="700px"
-			onRowClick={(s) => openSession(s.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="AI Chat Sessions"
+				description="Conversations between agents and the AI assistant"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search sessions…"
+				columns={columns}
+				emptyMessage="No sessions found"
+				minWidth="700px"
+			/>
+		</ListPageProvider>
 	)
 }

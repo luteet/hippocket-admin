@@ -9,6 +9,7 @@ import { Tooltip } from '@/components/ui/tooltip'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import type { Contact } from '@/types/api'
@@ -17,20 +18,10 @@ import { fullName } from './format'
 
 export function ContactsPage() {
 	const {
-		search,
-		setSearch,
-		deleted,
-		setDeleted,
-		activeFilterCount,
-		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
+		deleted, setDeleted,
+		activeFilterCount, clearFilters,
 		goToCreate,
-		openContact,
+		...listCtx
 	} = useContactsPage()
 
 	const columns = useMemo<ColumnDef<Contact, unknown>[]>(
@@ -141,45 +132,34 @@ export function ContactsPage() {
 	)
 
 	return (
-		<ListPage
-			title="Contacts"
-			description="Browse agent contacts"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search contacts…"
-			onRefresh={onRefresh}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<FilterSelect
-						label="Status"
-						value={deleted}
-						onChange={setDeleted}
-						options={DELETED_OPTIONS}
-					/>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No contacts found"
-			minWidth="1000px"
-			onRowClick={(c) => openContact(c.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Contacts"
+				description="Browse agent contacts"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search contacts…"
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<FilterSelect
+							label="Status"
+							value={deleted}
+							onChange={setDeleted}
+							options={DELETED_OPTIONS}
+						/>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No contacts found"
+				minWidth="1000px"
+			/>
+		</ListPageProvider>
 	)
 }

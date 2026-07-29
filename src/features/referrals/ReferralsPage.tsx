@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Icon } from '@/components/Icon'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { EmptyState } from '@/components/EmptyState'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
@@ -34,38 +35,22 @@ const PAID_OPTIONS = [
 
 export function ReferralsPage() {
 	const {
-		search,
-		setSearch,
-		statusLabel,
-		setStatusLabel,
-		isPaid,
-		setIsPaid,
-		groupIds,
-		toggleGroupId,
+		statusLabel, setStatusLabel,
+		isPaid, setIsPaid,
+		groupIds, toggleGroupId,
 		groupOptions,
 		activeFilterCount,
-		activeFilters,
-		removeFilter,
-		clearFilters,
-		hasFilters,
-		clearAll,
-		statuses,
-		statusNameByLabel,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
-		goToDetail,
-		selectedIds,
-		setSelectedIds,
+		activeFilters, removeFilter, clearFilters,
+		hasFilters, clearAll,
+		statuses, statusNameByLabel,
+		selectedIds, setSelectedIds,
 		clearSelection,
 		selectedCount,
 		isBulkRunning,
-		bulkMarkPaid,
-		bulkDelete,
+		bulkMarkPaid, bulkDelete,
 		totalPipelinePotential,
+		isFetching,
+		...listCtx
 	} = useReferralsPage()
 
 	const plural = selectedCount === 1 ? '' : 's'
@@ -276,97 +261,87 @@ export function ReferralsPage() {
 	)
 
 	return (
-		<ListPage
-			title="Pipeline Logs"
-			description="Pipeline log requests, statuses, and payouts"
-			actions={
-				<>
-					<Card className="px-4 min-h-14 ml-auto flex justify-end items-center gap-2">
-						<div className="text-end">
-							<p className="pt-1 pb-1 text-xs text-muted-foreground leading-tight">
-								Total Pipeline Potential
-							</p>
-							<div className="flex justify-end">
-								{isFetching ? (
-									<Skeleton className="inline-block h-5 w-24" />
-								) : (
-									<p className="min-h-3 font-semibold text-[#111111] leading-tight">
-										{pipelinePotentialDisplay}
-									</p>
-								)}
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Pipeline Logs"
+				description="Pipeline log requests, statuses, and payouts"
+				actions={
+					<>
+						<Card className="px-4 min-h-14 ml-auto flex justify-end items-center gap-2">
+							<div className="text-end">
+								<p className="pt-1 pb-1 text-xs text-muted-foreground leading-tight">
+									Total Pipeline Potential
+								</p>
+								<div className="flex justify-end">
+									{isFetching ? (
+										<Skeleton className="inline-block h-5 w-24" />
+									) : (
+										<p className="min-h-3 font-semibold text-[#111111] leading-tight">
+											{pipelinePotentialDisplay}
+										</p>
+									)}
+								</div>
 							</div>
-						</div>
-					</Card>
-					<Button asChild variant="outline">
-						<Link to="/referrals/export">
-							<Icon name="download" />
-							<span className="sm:inline hidden">Export</span>
-						</Link>
-					</Button>
-				</>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search…"
-			onRefresh={onRefresh}
-			activeFilters={activeFilters}
-			onRemoveFilter={removeFilter}
-			onClearFilters={clearFilters}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<FilterSelect
-						label="Status"
-						value={statusLabel}
-						onChange={setStatusLabel}
-						options={statusOptions}
-						allOption={{ value: ALL, label: 'All statuses' }}
-					/>
-					<FilterSelect
-						label="Payment"
-						value={isPaid}
-						onChange={setIsPaid}
-						options={PAID_OPTIONS}
-					/>
-					<div className="space-y-1.5">
-						<Label>Group</Label>
-						<GroupMultiSelect
-							options={groupOptions ?? []}
-							selected={groupIds}
-							onToggle={toggleGroupId}
+						</Card>
+						<Button asChild variant="outline">
+							<Link to="/referrals/export">
+								<Icon name="download" />
+								<span className="sm:inline hidden">Export</span>
+							</Link>
+						</Button>
+					</>
+				}
+				searchPlaceholder="Search…"
+				isFetching={isFetching}
+				activeFilters={activeFilters}
+				onRemoveFilter={removeFilter}
+				onClearFilters={clearFilters}
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<FilterSelect
+							label="Status"
+							value={statusLabel}
+							onChange={setStatusLabel}
+							options={statusOptions}
+							allOption={{ value: ALL, label: 'All statuses' }}
 						/>
-					</div>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage={emptyState}
-			minWidth="1200px"
-			onRowClick={(r) => goToDetail(r.id)}
-			selection={{
-				getRowId: (r) => r.id,
-				selectedIds,
-				onSelectionChange: setSelectedIds,
-			}}
-			className={selectedCount > 0 ? 'pb-24' : undefined}
-			footer={
-				<BulkActionBar
-					count={selectedCount}
-					actions={bulkActions}
-					onClear={clearSelection}
-					isRunning={isBulkRunning}
-				/>
-			}
-		/>
+						<FilterSelect
+							label="Payment"
+							value={isPaid}
+							onChange={setIsPaid}
+							options={PAID_OPTIONS}
+						/>
+						<div className="space-y-1.5">
+							<Label>Group</Label>
+							<GroupMultiSelect
+								options={groupOptions ?? []}
+								selected={groupIds}
+								onToggle={toggleGroupId}
+							/>
+						</div>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage={emptyState}
+				minWidth="1200px"
+				selection={{
+					getRowId: (r) => r.id,
+					selectedIds,
+					onSelectionChange: setSelectedIds,
+				}}
+				className={selectedCount > 0 ? 'pb-24' : undefined}
+				footer={
+					<BulkActionBar
+						count={selectedCount}
+						actions={bulkActions}
+						onClear={clearSelection}
+						isRunning={isBulkRunning}
+					/>
+				}
+			/>
+		</ListPageProvider>
 	)
 }

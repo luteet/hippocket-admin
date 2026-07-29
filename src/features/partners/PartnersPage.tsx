@@ -13,6 +13,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { EmptyState } from '@/components/EmptyState'
 import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
 import type { Partner } from '@/types/api'
@@ -21,16 +22,7 @@ import { NumberCell } from './components/NumberCell'
 
 export function PartnersPage() {
 	const {
-		search,
-		setSearch,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
 		goToCreate,
-		openPartner,
 		hasFilters,
 		clearFilters,
 		getCell,
@@ -44,6 +36,7 @@ export function PartnersPage() {
 		bulkHide,
 		bulkShow,
 		bulkDelete,
+		...listCtx
 	} = usePartnersPage()
 
 	const plural = selectedCount === 1 ? '' : 's'
@@ -228,46 +221,35 @@ export function PartnersPage() {
 	)
 
 	return (
-		<ListPage
-			title="Partners"
-			description="Manage partners and their fees"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search partners…"
-			onRefresh={onRefresh}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage={emptyState}
-			minWidth="1800px"
-			onRowClick={(p) => openPartner(p.id)}
-			selection={{
-				getRowId: (p) => p.id,
-				selectedIds,
-				onSelectionChange: setSelectedIds,
-			}}
-			className={selectedCount > 0 ? 'pb-24' : undefined}
-			footer={
-				<BulkActionBar
-					count={selectedCount}
-					actions={bulkActions}
-					onClear={clearSelection}
-					isRunning={isBulkRunning}
-				/>
-			}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Partners"
+				description="Manage partners and their fees"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search partners…"
+				columns={columns}
+				emptyMessage={emptyState}
+				minWidth="1800px"
+				selection={{
+					getRowId: (p) => p.id,
+					selectedIds,
+					onSelectionChange: setSelectedIds,
+				}}
+				className={selectedCount > 0 ? 'pb-24' : undefined}
+				footer={
+					<BulkActionBar
+						count={selectedCount}
+						actions={bulkActions}
+						onClear={clearSelection}
+						isRunning={isBulkRunning}
+					/>
+				}
+			/>
+		</ListPageProvider>
 	)
 }

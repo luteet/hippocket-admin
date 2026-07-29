@@ -79,8 +79,23 @@ export function useMessagesPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/ai-chat/messages/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		role,
 		setRole,
 		sessionId,
@@ -91,13 +106,6 @@ export function useMessagesPage() {
 		clearFilters,
 		sessionRefs: sessionRefs ?? [],
 		sessionsLoading,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
 		goToCreate: () => navigate('/ai-chat/messages/new'),
-		openMessage: (id: string) => navigate(`/ai-chat/messages/${id}`),
 	}
 }

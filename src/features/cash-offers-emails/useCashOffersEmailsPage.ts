@@ -55,8 +55,23 @@ export function useCashOffersEmailsPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/cash-offers-emails/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		group,
 		setGroup,
 		isActive,
@@ -64,13 +79,6 @@ export function useCashOffersEmailsPage() {
 		groupOptions: groupOptions ?? [],
 		activeFilterCount,
 		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
 		goToCreate: () => navigate('/cash-offers-emails/new'),
-		openEmail: (id: string) => navigate(`/cash-offers-emails/${id}`),
 	}
 }

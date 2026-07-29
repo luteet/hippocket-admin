@@ -7,22 +7,15 @@ import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import type { SavedFilter } from '@/types/api'
 import { useSavedFiltersPage } from './useSavedFiltersPage'
 import { savedFilterTitle } from './format'
 
 export function SavedFiltersPage() {
 	const {
-		search,
-		setSearch,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
-		openSavedFilter,
 		goToCreate,
+		...listCtx
 	} = useSavedFiltersPage()
 
 	const columns = useMemo<ColumnDef<SavedFilter, unknown>[]>(
@@ -80,32 +73,21 @@ export function SavedFiltersPage() {
 	)
 
 	return (
-		<ListPage
-			title="Saved Filters"
-			description="Agents' saved property searches"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search by title or agent…"
-			onRefresh={onRefresh}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No saved filters found"
-			minWidth="900px"
-			onRowClick={(f) => openSavedFilter(f.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Saved Filters"
+				description="Agents' saved property searches"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search by title or agent…"
+				columns={columns}
+				emptyMessage="No saved filters found"
+				minWidth="900px"
+			/>
+		</ListPageProvider>
 	)
 }

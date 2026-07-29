@@ -6,21 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import type { GroupFormPrice } from '@/types/api'
 import { useGroupFormPricesPage } from './useGroupFormPricesPage'
 
 export function GroupFormPricesPage() {
 	const {
-		search,
-		setSearch,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
 		goToCreate,
-		openItem,
+		...listCtx
 	} = useGroupFormPricesPage()
 
 	const columns = useMemo<ColumnDef<GroupFormPrice, unknown>[]>(
@@ -74,32 +67,21 @@ export function GroupFormPricesPage() {
 	)
 
 	return (
-		<ListPage
-			title="Form Prices"
-			description="Per-group form pricing"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search prices…"
-			onRefresh={onRefresh}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No form prices found"
-			minWidth="900px"
-			onRowClick={(r) => openItem(r.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Form Prices"
+				description="Per-group form pricing"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search prices…"
+				columns={columns}
+				emptyMessage="No form prices found"
+				minWidth="900px"
+			/>
+		</ListPageProvider>
 	)
 }

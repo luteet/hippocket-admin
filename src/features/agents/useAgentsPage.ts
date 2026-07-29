@@ -71,8 +71,23 @@ export function useAgentsPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/agents/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		role,
 		setRole,
 		status,
@@ -81,13 +96,6 @@ export function useAgentsPage() {
 		setIsActive,
 		activeFilterCount,
 		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
 		goToCreate: () => navigate('/agents/new'),
-		openAgent: (id: string) => navigate(`/agents/${id}`),
 	}
 }

@@ -42,19 +42,27 @@ export function useContactsPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/contacts/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		deleted,
 		setDeleted,
 		activeFilterCount,
 		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
 		goToCreate: () => navigate('/contacts/new'),
-		openContact: (id: string) => navigate(`/contacts/${id}`),
 	}
 }

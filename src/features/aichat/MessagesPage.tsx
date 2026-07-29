@@ -6,6 +6,7 @@ import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import type { AiMessage } from '@/types/api'
@@ -16,26 +17,13 @@ import { SessionFilter } from './components/SessionFilter'
 
 export function MessagesPage() {
 	const {
-		search,
-		setSearch,
-		role,
-		setRole,
-		sessionId,
-		setSessionId,
+		role, setRole,
+		sessionId, setSessionId,
 		activeFilterCount,
-		activeFilters,
-		removeFilter,
-		clearFilters,
-		sessionRefs,
-		sessionsLoading,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
+		activeFilters, removeFilter, clearFilters,
+		sessionRefs, sessionsLoading,
 		goToCreate,
-		openMessage,
+		...listCtx
 	} = useMessagesPage()
 
 	const columns = useMemo<ColumnDef<AiMessage, unknown>[]>(
@@ -94,55 +82,44 @@ export function MessagesPage() {
 	)
 
 	return (
-		<ListPage
-			title="AI Chat Messages"
-			description="Individual messages exchanged with the AI assistant"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search messages…"
-			onRefresh={onRefresh}
-			activeFilters={activeFilters}
-			onRemoveFilter={removeFilter}
-			onClearFilters={clearFilters}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<FilterSelect
-						label="Role"
-						value={role}
-						onChange={setRole}
-						options={ROLE_OPTIONS}
-						allOption={{ value: ALL, label: 'All roles' }}
-					/>
-					<SessionFilter
-						value={sessionId}
-						options={sessionRefs}
-						loading={sessionsLoading}
-						onChange={setSessionId}
-					/>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No messages found"
-			minWidth="900px"
-			onRowClick={(m) => openMessage(m.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="AI Chat Messages"
+				description="Individual messages exchanged with the AI assistant"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search messages…"
+				activeFilters={activeFilters}
+				onRemoveFilter={removeFilter}
+				onClearFilters={clearFilters}
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<FilterSelect
+							label="Role"
+							value={role}
+							onChange={setRole}
+							options={ROLE_OPTIONS}
+							allOption={{ value: ALL, label: 'All roles' }}
+						/>
+						<SessionFilter
+							value={sessionId}
+							options={sessionRefs}
+							loading={sessionsLoading}
+							onChange={setSessionId}
+						/>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No messages found"
+				minWidth="900px"
+			/>
+		</ListPageProvider>
 	)
 }

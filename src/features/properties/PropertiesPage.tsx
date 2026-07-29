@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { MediaThumbnail } from '@/components/media/MediaThumbnail'
 import type { Property } from '@/types/api'
 import { usePropertiesPage } from './usePropertiesPage'
@@ -13,16 +14,8 @@ import { formatLocation } from './format'
 
 export function PropertiesPage() {
 	const {
-		search,
-		setSearch,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
 		goToCreate,
-		openProperty,
+		...listCtx
 	} = usePropertiesPage()
 
 	const columns = useMemo<ColumnDef<Property, unknown>[]>(
@@ -110,32 +103,21 @@ export function PropertiesPage() {
 	)
 
 	return (
-		<ListPage
-			title="Properties"
-			description="Browse investment properties"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search properties…"
-			onRefresh={onRefresh}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No properties found"
-			minWidth="1000px"
-			onRowClick={(p) => openProperty(p.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Properties"
+				description="Browse investment properties"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search properties…"
+				columns={columns}
+				emptyMessage="No properties found"
+				minWidth="1000px"
+			/>
+		</ListPageProvider>
 	)
 }

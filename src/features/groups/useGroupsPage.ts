@@ -42,19 +42,27 @@ export function useGroupsPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/groups/${(row as { id: number }).id}`),
+
+		// --- page-specific content ---
 		deleted,
 		setDeleted,
 		activeFilterCount,
 		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
 		goToCreate: () => navigate('/groups/new'),
-		openGroup: (id: number) => navigate(`/groups/${id}`),
 	}
 }

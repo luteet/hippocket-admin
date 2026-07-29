@@ -34,15 +34,23 @@ export function useSharedPartnersPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
 		data,
 		isLoading,
 		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/shared-partners/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		goToCreate: () => navigate('/shared-partners/new'),
-		openSharedPartner: (id: string) => navigate(`/shared-partners/${id}`),
 	}
 }

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import type { Agent } from '@/types/api'
@@ -21,24 +22,12 @@ import {
 
 export function AgentsPage() {
 	const {
-		search,
-		setSearch,
-		role,
-		setRole,
-		status,
-		setStatus,
-		isActive,
-		setIsActive,
-		activeFilterCount,
-		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
+		role, setRole,
+		status, setStatus,
+		isActive, setIsActive,
+		activeFilterCount, clearFilters,
 		goToCreate,
-		openAgent,
+		...listCtx
 	} = useAgentsPage()
 
 	const columns = useMemo<ColumnDef<Agent, unknown>[]>(
@@ -128,59 +117,48 @@ export function AgentsPage() {
 	)
 
 	return (
-		<ListPage
-			title="Agents"
-			description="Browse registered agents"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search agents…"
-			onRefresh={onRefresh}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<FilterSelect
-						label="Role"
-						value={role}
-						onChange={setRole}
-						options={ROLE_OPTIONS}
-						allOption={{ value: ALL, label: 'All roles' }}
-					/>
-					<FilterSelect
-						label="Status"
-						value={status}
-						onChange={setStatus}
-						options={STATUS_OPTIONS}
-						allOption={{ value: ALL, label: 'All statuses' }}
-					/>
-					<FilterSelect
-						label="Active"
-						value={isActive}
-						onChange={setIsActive}
-						options={ACTIVE_OPTIONS}
-					/>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No agents found"
-			minWidth="1000px"
-			onRowClick={(a) => openAgent(a.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Agents"
+				description="Browse registered agents"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search agents…"
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<FilterSelect
+							label="Role"
+							value={role}
+							onChange={setRole}
+							options={ROLE_OPTIONS}
+							allOption={{ value: ALL, label: 'All roles' }}
+						/>
+						<FilterSelect
+							label="Status"
+							value={status}
+							onChange={setStatus}
+							options={STATUS_OPTIONS}
+							allOption={{ value: ALL, label: 'All statuses' }}
+						/>
+						<FilterSelect
+							label="Active"
+							value={isActive}
+							onChange={setIsActive}
+							options={ACTIVE_OPTIONS}
+						/>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No agents found"
+				minWidth="1000px"
+			/>
+		</ListPageProvider>
 	)
 }

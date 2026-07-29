@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { BulkActionBar, type BulkAction } from '@/components/list/BulkActionBar'
@@ -21,29 +22,16 @@ import { formatAmount, methodLabel, STATUS_BADGE } from './format'
 
 export function WithdrawalsPage() {
 	const {
-		search,
-		setSearch,
-		status,
-		setStatus,
-		method,
-		setMethod,
-		activeFilterCount,
-		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
-		openWithdrawal,
+		status, setStatus,
+		method, setMethod,
+		activeFilterCount, clearFilters,
 		goToCreate,
-		selectedIds,
-		setSelectedIds,
+		selectedIds, setSelectedIds,
 		clearSelection,
 		selectedCount,
 		isBulkRunning,
-		bulkApprove,
-		bulkReject,
+		bulkApprove, bulkReject,
+		...listCtx
 	} = useWithdrawalsPage()
 
 	const plural = selectedCount === 1 ? '' : 's'
@@ -131,67 +119,56 @@ export function WithdrawalsPage() {
 	)
 
 	return (
-		<ListPage
-			title="Withdrawals"
-			description="Browse agent withdrawal requests"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search by agent…"
-			onRefresh={onRefresh}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<FilterSelect
-						label="Status"
-						value={status}
-						onChange={setStatus}
-						options={STATUS_OPTIONS}
-						allOption={{ value: ALL, label: 'All statuses' }}
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Withdrawals"
+				description="Browse agent withdrawal requests"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search by agent…"
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<FilterSelect
+							label="Status"
+							value={status}
+							onChange={setStatus}
+							options={STATUS_OPTIONS}
+							allOption={{ value: ALL, label: 'All statuses' }}
+						/>
+						<FilterSelect
+							label="Method"
+							value={method}
+							onChange={setMethod}
+							options={METHOD_OPTIONS}
+							allOption={{ value: ALL, label: 'All methods' }}
+						/>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No withdrawals found"
+				minWidth="800px"
+				selection={{
+					getRowId: (w) => w.id,
+					selectedIds,
+					onSelectionChange: setSelectedIds,
+				}}
+				className={selectedCount > 0 ? 'pb-24' : undefined}
+				footer={
+					<BulkActionBar
+						count={selectedCount}
+						actions={bulkActions}
+						onClear={clearSelection}
+						isRunning={isBulkRunning}
 					/>
-					<FilterSelect
-						label="Method"
-						value={method}
-						onChange={setMethod}
-						options={METHOD_OPTIONS}
-						allOption={{ value: ALL, label: 'All methods' }}
-					/>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No withdrawals found"
-			minWidth="800px"
-			onRowClick={(w) => openWithdrawal(w.id)}
-			selection={{
-				getRowId: (w) => w.id,
-				selectedIds,
-				onSelectionChange: setSelectedIds,
-			}}
-			className={selectedCount > 0 ? 'pb-24' : undefined}
-			footer={
-				<BulkActionBar
-					count={selectedCount}
-					actions={bulkActions}
-					onClear={clearSelection}
-					isRunning={isBulkRunning}
-				/>
-			}
-		/>
+				}
+			/>
+		</ListPageProvider>
 	)
 }

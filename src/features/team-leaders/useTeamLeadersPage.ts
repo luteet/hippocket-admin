@@ -43,20 +43,28 @@ export function useTeamLeadersPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/team-leaders/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		groupId,
 		setGroupId,
 		groupOptions: groupOptions ?? [],
 		activeFilterCount,
 		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
-		openTeamLeader: (id: string) => navigate(`/team-leaders/${id}`),
 		goToCreate: () => navigate('/team-leaders/new'),
 	}
 }

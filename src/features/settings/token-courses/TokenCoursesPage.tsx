@@ -5,21 +5,14 @@ import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import type { TokenCourse } from '@/types/api'
 import { useTokenCoursesPage } from './useTokenCoursesPage'
 
 export function TokenCoursesPage() {
 	const {
-		search,
-		setSearch,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
 		goToCreate,
-		openItem,
+		...listCtx
 	} = useTokenCoursesPage()
 
 	const columns = useMemo<ColumnDef<TokenCourse, unknown>[]>(
@@ -46,32 +39,21 @@ export function TokenCoursesPage() {
 	)
 
 	return (
-		<ListPage
-			title="Token Courses"
-			description="Token-to-money conversion rates"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search…"
-			onRefresh={onRefresh}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No token courses found"
-			minWidth="480px"
-			onRowClick={(r) => openItem(r.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Token Courses"
+				description="Token-to-money conversion rates"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search…"
+				columns={columns}
+				emptyMessage="No token courses found"
+				minWidth="480px"
+			/>
+		</ListPageProvider>
 	)
 }

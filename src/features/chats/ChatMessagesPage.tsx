@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import type { ChatMessage } from '@/types/api'
@@ -17,24 +18,12 @@ import { ChatFilter } from './components/ChatFilter'
 
 export function ChatMessagesPage() {
 	const {
-		search,
-		setSearch,
-		readState,
-		setReadState,
-		chatId,
-		setChatId,
-		activeFilterCount,
-		clearFilters,
-		chatRefs,
-		chatsLoading,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
+		readState, setReadState,
+		chatId, setChatId,
+		activeFilterCount, clearFilters,
+		chatRefs, chatsLoading,
 		goToCreate,
-		openMessage,
+		...listCtx
 	} = useChatMessagesPage()
 
 	const columns = useMemo<ColumnDef<ChatMessage, unknown>[]>(
@@ -92,52 +81,41 @@ export function ChatMessagesPage() {
 	)
 
 	return (
-		<ListPage
-			title="Chat Messages"
-			description="Individual messages exchanged in chats"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search messages…"
-			onRefresh={onRefresh}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<ChatFilter
-						value={chatId}
-						options={chatRefs}
-						loading={chatsLoading}
-						onChange={setChatId}
-					/>
-					<FilterSelect
-						label="Status"
-						value={readState}
-						onChange={setReadState}
-						options={READ_OPTIONS}
-						allOption={{ value: ALL, label: 'All statuses' }}
-					/>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No messages found"
-			minWidth="900px"
-			onRowClick={(m) => openMessage(m.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Chat Messages"
+				description="Individual messages exchanged in chats"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search messages…"
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<ChatFilter
+							value={chatId}
+							options={chatRefs}
+							loading={chatsLoading}
+							onChange={setChatId}
+						/>
+						<FilterSelect
+							label="Status"
+							value={readState}
+							onChange={setReadState}
+							options={READ_OPTIONS}
+							allOption={{ value: ALL, label: 'All statuses' }}
+						/>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No messages found"
+				minWidth="900px"
+			/>
+		</ListPageProvider>
 	)
 }

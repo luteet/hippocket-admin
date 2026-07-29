@@ -219,6 +219,23 @@ export function usePartnersPage() {
 		})
 
 	return {
+		// --- ListPageContext fields ---
+		search,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/partners/${(row as Partner).id}`),
+
+		// --- page-specific content ---
 		selectedIds,
 		setSelectedIds,
 		clearSelection,
@@ -227,21 +244,12 @@ export function usePartnersPage() {
 		bulkHide: () => bulkSetHidden(true, 'Hid'),
 		bulkShow: () => bulkSetHidden(false, 'Showed'),
 		bulkDelete,
-		search,
-		setSearch,
 		// Whether the empty list is "filtered to nothing" vs "no records yet" —
 		// the page picks the right empty state from this.
 		hasFilters: Boolean(committedSearch),
 		// Clear via the URL directly so the input empties at once (no debounce).
 		clearFilters: () => setParams({ q: null, page: null }),
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
 		goToCreate: () => navigate('/partners/new'),
-		openPartner: (id: string) => navigate(`/partners/${id}`),
 		// Inline editing (auto-save per field)
 		getCell,
 		setCell,

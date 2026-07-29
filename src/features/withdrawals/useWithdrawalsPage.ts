@@ -98,6 +98,23 @@ export function useWithdrawalsPage() {
 		)
 
 	return {
+		// --- ListPageContext fields ---
+		search,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/withdrawals/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		selectedIds,
 		setSelectedIds,
 		clearSelection: clear,
@@ -105,21 +122,12 @@ export function useWithdrawalsPage() {
 		isBulkRunning,
 		bulkApprove: () => bulkSetStatus('success', 'Approved'),
 		bulkReject: () => bulkSetStatus('cancel', 'Rejected'),
-		search,
-		setSearch,
 		status,
 		setStatus,
 		method,
 		setMethod,
 		activeFilterCount,
 		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
-		openWithdrawal: (id: string) => navigate(`/withdrawals/${id}`),
 		goToCreate: () => navigate('/withdrawals/new'),
 	}
 }

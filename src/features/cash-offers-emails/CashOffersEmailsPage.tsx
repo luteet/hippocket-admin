@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import type { CashOffersEmail } from '@/types/api'
@@ -18,23 +19,12 @@ import {
 
 export function CashOffersEmailsPage() {
 	const {
-		search,
-		setSearch,
-		group,
-		setGroup,
-		isActive,
-		setIsActive,
+		group, setGroup,
+		isActive, setIsActive,
 		groupOptions,
-		activeFilterCount,
-		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
+		activeFilterCount, clearFilters,
 		goToCreate,
-		openEmail,
+		...listCtx
 	} = useCashOffersEmailsPage()
 
 	const columns = useMemo<ColumnDef<CashOffersEmail, unknown>[]>(
@@ -90,55 +80,44 @@ export function CashOffersEmailsPage() {
 	)
 
 	return (
-		<ListPage
-			title="Cash Offers Emails"
-			description="Recipients of cash-offer emails"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search emails…"
-			onRefresh={onRefresh}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<FilterSelect
-						label="Group"
-						value={group}
-						onChange={setGroup}
-						options={groupOptions.map((g) => ({
-							value: String(g.id),
-							label: g.name,
-						}))}
-						allOption={{ value: ALL, label: 'All groups' }}
-					/>
-					<FilterSelect
-						label="Status"
-						value={isActive}
-						onChange={setIsActive}
-						options={ACTIVE_OPTIONS}
-					/>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No emails found"
-			minWidth="900px"
-			onRowClick={(e) => openEmail(e.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Cash Offers Emails"
+				description="Recipients of cash-offer emails"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search emails…"
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<FilterSelect
+							label="Group"
+							value={group}
+							onChange={setGroup}
+							options={groupOptions.map((g) => ({
+								value: String(g.id),
+								label: g.name,
+							}))}
+							allOption={{ value: ALL, label: 'All groups' }}
+						/>
+						<FilterSelect
+							label="Status"
+							value={isActive}
+							onChange={setIsActive}
+							options={ACTIVE_OPTIONS}
+						/>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No emails found"
+				minWidth="900px"
+			/>
+		</ListPageProvider>
 	)
 }

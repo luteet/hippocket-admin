@@ -66,8 +66,23 @@ export function usePaymentsPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/payments/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		paymentType,
 		setPaymentType,
 		formName,
@@ -80,12 +95,5 @@ export function usePaymentsPage() {
 		clearFilters,
 		paymentTypes: meta?.payment_types ?? [],
 		formNames: meta?.form_names ?? [],
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
-		goToDetail: (id: string) => navigate(`/payments/${id}`),
 	}
 }

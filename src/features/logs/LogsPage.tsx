@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { TextTruncate } from '@/components/TextTruncate'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { FilterDate } from '@/components/list/FilterDate'
@@ -19,26 +20,14 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 		showEventFilter,
 		activeFilterCount,
 		clearFilters,
-		search,
-		setSearch,
-		event,
-		setEvent,
-		sendStatus,
-		setSendStatus,
-		smsStatus,
-		setSmsStatus,
-		createdFrom,
-		setCreatedFrom,
-		createdTo,
-		setCreatedTo,
+		event, setEvent,
+		sendStatus, setSendStatus,
+		smsStatus, setSmsStatus,
+		createdFrom, setCreatedFrom,
+		createdTo, setCreatedTo,
 		events,
 		sendStatuses,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
+		...listCtx
 	} = useLogsPage(slug)
 
 	const columns = useMemo<ColumnDef<AdminLogItem, unknown>[]>(
@@ -112,78 +101,68 @@ export function LogsPage({ slug }: { slug: LogSlug }) {
 	)
 
 	return (
-		<ListPage
-			title={view.title}
-			description={view.description}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search email or description…"
-			onRefresh={onRefresh}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					{showEventFilter && (
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title={view.title}
+				description={view.description}
+				searchPlaceholder="Search email or description…"
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						{showEventFilter && (
+							<FilterSelect
+								label="Event"
+								value={event}
+								onChange={setEvent}
+								options={events.map((e) => ({
+									value: e,
+									label: formatLogLabel(e),
+								}))}
+								allOption={{ value: ALL, label: 'All events' }}
+							/>
+						)}
 						<FilterSelect
-							label="Event"
-							value={event}
-							onChange={setEvent}
-							options={events.map((e) => ({
-								value: e,
-								label: formatLogLabel(e),
+							label="Send status"
+							value={sendStatus}
+							onChange={setSendStatus}
+							options={sendStatuses.map((s) => ({
+								value: s,
+								label: formatLogLabel(s),
 							}))}
-							allOption={{ value: ALL, label: 'All events' }}
+							allOption={{ value: ALL, label: 'All statuses' }}
 						/>
-					)}
-					<FilterSelect
-						label="Send status"
-						value={sendStatus}
-						onChange={setSendStatus}
-						options={sendStatuses.map((s) => ({
-							value: s,
-							label: formatLogLabel(s),
-						}))}
-						allOption={{ value: ALL, label: 'All statuses' }}
-					/>
-					<FilterSelect
-						label="SMS status"
-						value={smsStatus}
-						onChange={setSmsStatus}
-						options={SMS_STATUSES.map((s) => ({
-							value: s,
-							label: formatLogLabel(s),
-						}))}
-						allOption={{ value: ALL, label: 'All SMS statuses' }}
-					/>
-					<div className="grid grid-cols-2 gap-3">
-						<FilterDate
-							label="From"
-							value={createdFrom}
-							onChange={setCreatedFrom}
-							max={createdTo || undefined}
+						<FilterSelect
+							label="SMS status"
+							value={smsStatus}
+							onChange={setSmsStatus}
+							options={SMS_STATUSES.map((s) => ({
+								value: s,
+								label: formatLogLabel(s),
+							}))}
+							allOption={{ value: ALL, label: 'All SMS statuses' }}
 						/>
-						<FilterDate
-							label="To"
-							value={createdTo}
-							onChange={setCreatedTo}
-							min={createdFrom || undefined}
-						/>
-					</div>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No logs found"
-			minWidth="1200px"
-		/>
+						<div className="grid grid-cols-2 gap-3">
+							<FilterDate
+								label="From"
+								value={createdFrom}
+								onChange={setCreatedFrom}
+								max={createdTo || undefined}
+							/>
+							<FilterDate
+								label="To"
+								value={createdTo}
+								onChange={setCreatedTo}
+								min={createdFrom || undefined}
+							/>
+						</div>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No logs found"
+				minWidth="1200px"
+			/>
+		</ListPageProvider>
 	)
 }

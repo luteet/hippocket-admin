@@ -7,6 +7,7 @@ import { TextTruncate } from '@/components/TextTruncate'
 import { Button } from '@/components/ui/button'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import type { TeamLeader } from '@/types/api'
@@ -14,21 +15,11 @@ import { useTeamLeadersPage, ALL } from './useTeamLeadersPage'
 
 export function TeamLeadersPage() {
 	const {
-		search,
-		setSearch,
-		groupId,
-		setGroupId,
+		groupId, setGroupId,
 		groupOptions,
-		activeFilterCount,
-		clearFilters,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
-		openTeamLeader,
+		activeFilterCount, clearFilters,
 		goToCreate,
+		...listCtx
 	} = useTeamLeadersPage()
 
 	const columns = useMemo<ColumnDef<TeamLeader, unknown>[]>(
@@ -101,49 +92,38 @@ export function TeamLeadersPage() {
 	)
 
 	return (
-		<ListPage
-			title="Team Leaders"
-			description="Group team leaders and their office locations"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search by name, email or office…"
-			onRefresh={onRefresh}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<FilterSelect
-						label="Group"
-						value={groupId}
-						onChange={setGroupId}
-						options={groupOptions.map((g) => ({
-							value: String(g.id),
-							label: g.name,
-						}))}
-						allOption={{ value: ALL, label: 'All groups' }}
-					/>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No team leaders found"
-			minWidth="1000px"
-			onRowClick={(t) => openTeamLeader(t.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Team Leaders"
+				description="Group team leaders and their office locations"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search by name, email or office…"
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<FilterSelect
+							label="Group"
+							value={groupId}
+							onChange={setGroupId}
+							options={groupOptions.map((g) => ({
+								value: String(g.id),
+								label: g.name,
+							}))}
+							allOption={{ value: ALL, label: 'All groups' }}
+						/>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No team leaders found"
+				minWidth="1000px"
+			/>
+		</ListPageProvider>
 	)
 }

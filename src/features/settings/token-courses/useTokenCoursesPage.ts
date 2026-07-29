@@ -30,15 +30,23 @@ export function useTokenCoursesPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
 		data,
 		isLoading,
 		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/token-courses/${(row as { id: string }).id}/edit`),
+
+		// --- page-specific content ---
 		goToCreate: () => navigate('/token-courses/new'),
-		openItem: (id: string) => navigate(`/token-courses/${id}/edit`),
 	}
 }

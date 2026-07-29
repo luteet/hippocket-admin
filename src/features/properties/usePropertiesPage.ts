@@ -31,15 +31,23 @@ export function usePropertiesPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
 		data,
 		isLoading,
 		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/properties/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		goToCreate: () => navigate('/properties/new'),
-		openProperty: (id: string) => navigate(`/properties/${id}`),
 	}
 }

@@ -5,21 +5,14 @@ import { Icon } from '@/components/Icon'
 import { Button } from '@/components/ui/button'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import type { LinkName } from '@/types/api'
 import { useLinkNamesPage } from './useLinkNamesPage'
 
 export function LinkNamesPage() {
 	const {
-		search,
-		setSearch,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
 		goToCreate,
-		openItem,
+		...listCtx
 	} = useLinkNamesPage()
 
 	const columns = useMemo<ColumnDef<LinkName, unknown>[]>(
@@ -57,32 +50,21 @@ export function LinkNamesPage() {
 	)
 
 	return (
-		<ListPage
-			title="Links"
-			description="Named external links"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search links…"
-			onRefresh={onRefresh}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No links found"
-			minWidth="640px"
-			onRowClick={(r) => openItem(r.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Links"
+				description="Named external links"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search links…"
+				columns={columns}
+				emptyMessage="No links found"
+				minWidth="640px"
+			/>
+		</ListPageProvider>
 	)
 }

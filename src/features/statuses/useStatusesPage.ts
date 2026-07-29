@@ -34,14 +34,23 @@ export function useStatusesPage() {
 	const reorderMut = useReorderStatuses()
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
 		data,
 		isLoading,
 		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/statuses/${(row as { id: number }).id}`),
+
+		// --- page-specific content ---
 		// Drag-and-drop only makes sense in the natural `priority` order with no
 		// search, and only when the whole set is on one page — a partial reorder
 		// would renumber just the visible rows and push the rest behind them.
@@ -56,6 +65,5 @@ export function useStatusesPage() {
 				pagination.pageCount(data?.total ?? 0) <= 1,
 		},
 		goToCreate: () => navigate('/statuses/new'),
-		openStatus: (id: number) => navigate(`/statuses/${id}`),
 	}
 }

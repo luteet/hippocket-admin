@@ -30,15 +30,23 @@ export function useLinkNamesPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
 		data,
 		isLoading,
 		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/link-names/${(row as { id: string }).id}/edit`),
+
+		// --- page-specific content ---
 		goToCreate: () => navigate('/link-names/new'),
-		openItem: (id: string) => navigate(`/link-names/${id}/edit`),
 	}
 }

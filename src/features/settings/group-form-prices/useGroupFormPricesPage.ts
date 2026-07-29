@@ -33,15 +33,23 @@ export function useGroupFormPricesPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
 		data,
 		isLoading,
 		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/group-form-prices/${(row as { id: string }).id}/edit`),
+
+		// --- page-specific content ---
 		goToCreate: () => navigate('/group-form-prices/new'),
-		openItem: (id: string) => navigate(`/group-form-prices/${id}/edit`),
 	}
 }

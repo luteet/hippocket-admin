@@ -119,13 +119,26 @@ export function useLogsPage(slug: LogSlug) {
 	})
 
 	return {
+		// --- ListPageContext fields ---
+		search,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
+		data,
+		isLoading,
+		isFetching,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+
+		// --- page-specific content ---
 		view,
 		// The event filter is offered only when the view doesn't pin one.
 		showEventFilter,
 		activeFilterCount,
 		clearFilters,
-		search,
-		setSearch,
 		event,
 		setEvent,
 		sendStatus,
@@ -138,11 +151,5 @@ export function useLogsPage(slug: LogSlug) {
 		setCreatedTo,
 		events: meta?.events ?? [],
 		sendStatuses: meta?.send_statuses ?? [],
-		data,
-		isLoading,
-		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
 	}
 }

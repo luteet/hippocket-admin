@@ -27,15 +27,23 @@ export function useFormConfigsPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
 		data,
 		isLoading,
 		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/form-configs/${(row as { id: string }).id}/edit`),
+
+		// --- page-specific content ---
 		goToCreate: () => navigate('/form-configs/new'),
-		openItem: (id: string) => navigate(`/form-configs/${id}/edit`),
 	}
 }

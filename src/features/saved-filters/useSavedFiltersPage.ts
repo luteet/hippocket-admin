@@ -31,15 +31,23 @@ export function useSavedFiltersPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
 		data,
 		isLoading,
 		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
-		openSavedFilter: (id: string) => navigate(`/saved-filters/${id}`),
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/saved-filters/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		goToCreate: () => navigate('/saved-filters/new'),
 	}
 }

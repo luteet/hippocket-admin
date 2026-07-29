@@ -31,15 +31,23 @@ export function useSessionsPage() {
 	})
 
 	return {
+		// --- ListPageContext fields ---
 		search,
-		setSearch,
+		onSearchChange: setSearch,
+		onRefresh: () => void refetch(),
+		pagination,
 		data,
 		isLoading,
 		isFetching,
-		onRefresh: () => void refetch(),
-		pagination,
-		sorting,
+		sorting: {
+			sortBy: sorting.sortBy,
+			order: sorting.order,
+			onToggle: sorting.toggle,
+		},
+		onRowClick: (row: unknown) =>
+			navigate(`/ai-chat/sessions/${(row as { id: string }).id}`),
+
+		// --- page-specific content ---
 		goToCreate: () => navigate('/ai-chat/sessions/new'),
-		openSession: (id: string) => navigate(`/ai-chat/sessions/${id}`),
 	}
 }

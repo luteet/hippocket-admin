@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { TextTruncate } from '@/components/TextTruncate'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import { FiltersPopover } from '@/components/list/FiltersPopover'
 import { FilterSelect } from '@/components/list/FilterSelect'
 import { FilterDate } from '@/components/list/FilterDate'
@@ -15,27 +16,13 @@ import { usePaymentsPage, ALL } from './usePaymentsPage'
 
 export function PaymentsPage() {
 	const {
-		search,
-		setSearch,
-		paymentType,
-		setPaymentType,
-		formName,
-		setFormName,
-		createdFrom,
-		setCreatedFrom,
-		createdTo,
-		setCreatedTo,
-		activeFilterCount,
-		clearFilters,
-		paymentTypes,
-		formNames,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
-		goToDetail,
+		paymentType, setPaymentType,
+		formName, setFormName,
+		createdFrom, setCreatedFrom,
+		createdTo, setCreatedTo,
+		activeFilterCount, clearFilters,
+		paymentTypes, formNames,
+		...listCtx
 	} = usePaymentsPage()
 
 	const columns = useMemo<ColumnDef<Payment, unknown>[]>(
@@ -111,67 +98,56 @@ export function PaymentsPage() {
 	)
 
 	return (
-		<ListPage
-			title="Payments"
-			description="Payments recorded for referrals and forms (read-only)"
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search…"
-			onRefresh={onRefresh}
-			filters={
-				<FiltersPopover
-					activeCount={activeFilterCount}
-					onClear={clearFilters}
-				>
-					<FilterSelect
-						label="Payment type"
-						value={paymentType}
-						onChange={setPaymentType}
-						options={paymentTypes.map((t) => ({
-							value: t,
-							label: titleizeSlug(t),
-						}))}
-						allOption={{ value: ALL, label: 'All types' }}
-					/>
-					<FilterSelect
-						label="Form"
-						value={formName}
-						onChange={setFormName}
-						options={formNames.map((f) => ({
-							value: f,
-							label: titleizeSlug(f),
-						}))}
-						allOption={{ value: ALL, label: 'All forms' }}
-					/>
-					<div className="grid grid-cols-2 gap-3">
-						<FilterDate
-							label="From"
-							value={createdFrom}
-							onChange={setCreatedFrom}
-							max={createdTo || undefined}
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Payments"
+				description="Payments recorded for referrals and forms (read-only)"
+				searchPlaceholder="Search…"
+				filters={
+					<FiltersPopover
+						activeCount={activeFilterCount}
+						onClear={clearFilters}
+					>
+						<FilterSelect
+							label="Payment type"
+							value={paymentType}
+							onChange={setPaymentType}
+							options={paymentTypes.map((t) => ({
+								value: t,
+								label: titleizeSlug(t),
+							}))}
+							allOption={{ value: ALL, label: 'All types' }}
 						/>
-						<FilterDate
-							label="To"
-							value={createdTo}
-							onChange={setCreatedTo}
-							min={createdFrom || undefined}
+						<FilterSelect
+							label="Form"
+							value={formName}
+							onChange={setFormName}
+							options={formNames.map((f) => ({
+								value: f,
+								label: titleizeSlug(f),
+							}))}
+							allOption={{ value: ALL, label: 'All forms' }}
 						/>
-					</div>
-				</FiltersPopover>
-			}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No payments found"
-			minWidth="1000px"
-			onRowClick={(r) => goToDetail(r.id)}
-		/>
+						<div className="grid grid-cols-2 gap-3">
+							<FilterDate
+								label="From"
+								value={createdFrom}
+								onChange={setCreatedFrom}
+								max={createdTo || undefined}
+							/>
+							<FilterDate
+								label="To"
+								value={createdTo}
+								onChange={setCreatedTo}
+								min={createdFrom || undefined}
+							/>
+						</div>
+					</FiltersPopover>
+				}
+				columns={columns}
+				emptyMessage="No payments found"
+				minWidth="1000px"
+			/>
+		</ListPageProvider>
 	)
 }

@@ -7,21 +7,14 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { TimeAgo } from '@/components/TimeAgo'
 import { ListPage } from '@/components/list/ListPage'
+import { ListPageProvider } from '@/components/list/ListPageContext'
 import type { SharedPartner } from '@/types/api'
 import { useSharedPartnersPage } from './useSharedPartnersPage'
 
 export function SharedPartnersPage() {
 	const {
-		search,
-		setSearch,
-		data,
-		isLoading,
-		isFetching,
-		onRefresh,
-		pagination,
-		sorting,
 		goToCreate,
-		openSharedPartner,
+		...listCtx
 	} = useSharedPartnersPage()
 
 	const columns = useMemo<ColumnDef<SharedPartner, unknown>[]>(
@@ -60,32 +53,21 @@ export function SharedPartnersPage() {
 	)
 
 	return (
-		<ListPage
-			title="Shared Partners"
-			description="Curated partner lists assigned to an agent"
-			actions={
-				<Button onClick={goToCreate}>
-					<Icon name="plus" />
-					Add
-				</Button>
-			}
-			search={search}
-			onSearchChange={setSearch}
-			searchPlaceholder="Search by agent email…"
-			onRefresh={onRefresh}
-			pagination={pagination}
-			data={data}
-			isLoading={isLoading}
-			isFetching={isFetching}
-			columns={columns}
-			sorting={{
-				sortBy: sorting.sortBy,
-				order: sorting.order,
-				onToggle: sorting.toggle,
-			}}
-			emptyMessage="No shared partners found"
-			minWidth="600px"
-			onRowClick={(s) => openSharedPartner(s.id)}
-		/>
+		<ListPageProvider value={listCtx}>
+			<ListPage
+				title="Shared Partners"
+				description="Curated partner lists assigned to an agent"
+				actions={
+					<Button onClick={goToCreate}>
+						<Icon name="plus" />
+						Add
+					</Button>
+				}
+				searchPlaceholder="Search by agent email…"
+				columns={columns}
+				emptyMessage="No shared partners found"
+				minWidth="600px"
+			/>
+		</ListPageProvider>
 	)
 }
