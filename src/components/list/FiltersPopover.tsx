@@ -13,6 +13,8 @@ import {
 	FilterOpenContext,
 } from './FilterContainerContext'
 
+const MIN_HEIGHT = 240
+
 // A list page's filters, collapsed into a popover so the toolbar stays compact.
 // The trigger shows a badge with the number of active filters; "Clear all"
 // resets them. Filter fields go in as `children` (use FilterSelect / FilterDate,
@@ -38,10 +40,24 @@ export function FiltersPopover({
 	// Id of the filter field whose dropdown is currently open, so only one is
 	// open at a time (see FilterOpenContext). Reset when the popover closes.
 	const [openId, setOpenId] = useState<string | null>(null)
+	// Max height for the popover, set from the trigger position on open so the
+	// popover never extends past the bottom of the viewport.
+	const [maxHeight, setMaxHeight] = useState<number | null>(null)
 
 	const handleOpenChange = (next: boolean) => {
 		setOpen(next)
-		if (!next) setOpenId(null)
+		if (!next) {
+			setOpenId(null)
+			setMaxHeight(null)
+		} else if (triggerEl) {
+			// Snapshot the trigger rect synchronously. The popover appears below
+			// the trigger with a 4px gap (sideOffset in PopoverContent) plus a
+			// 12px bottom margin so there's breathing room. Available =
+			// viewportHeight - triggerBottom - gap - margin.
+			const rect = triggerEl.getBoundingClientRect()
+			const available = window.innerHeight - rect.bottom - 16
+			setMaxHeight(Math.max(MIN_HEIGHT, available))
+		}
 	}
 
 	// Close on a pointer-down outside the popover body and its trigger. We do it
@@ -84,28 +100,28 @@ export function FiltersPopover({
 			<PopoverContent
 				ref={setFiltersEl}
 				align={isMobile ? 'start' : align}
-				// Keep some breathing room from the viewport edges so the popover
-				// isn't flush against the screen on narrow/mobile widths.
 				collisionPadding={12}
-				// pointer-events-auto: stay interactive while an open Select sets
-				// pointer-events:none on <body>.
-				className="w-[calc(100vw-1.5rem)] md:w-80 pointer-events-auto"
+				className="w-[calc(100vw-1.5rem)] md:w-80 pointer-events-auto overflow-y-auto"
+				style={{
+					maxHeight:
+						maxHeight != null ? `${maxHeight}px` : undefined,
+				}}
 				onInteractOutside={(e) => e.preventDefault()}
 			>
-				<div className="space-y-4">
-					<div className="flex items-center justify-between">
-						<span className="text-sm font-semibold">Filters</span>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="h-auto px-2 py-1 text-xs"
-							disabled={activeCount === 0}
-							onClick={onClear}
-						>
-							Clear all
-						</Button>
-					</div>
+				<div className="flex items-center justify-between">
+					<span className="text-sm font-semibold">Filters</span>
+					<Button
+						variant="ghost"
+						size="sm"
+						className="h-auto px-2 py-1 text-xs"
+						disabled={activeCount === 0}
+						onClick={onClear}
+					>
+						Clear all
+					</Button>
+				</div>
 
+				<div className="mt-4 space-y-4">
 					<FilterContainerContext value={filtersEl}>
 						<FilterOpenContext value={openCoord}>
 							{children}
