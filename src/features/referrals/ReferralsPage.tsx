@@ -261,7 +261,7 @@ export function ReferralsPage() {
 	)
 
 	return (
-		<ListPageProvider value={listCtx}>
+		<ListPageProvider value={{ ...listCtx, isFetching }}>
 			<ListPage
 				title="Pipeline Logs"
 				description="Pipeline log requests, statuses, and payouts"
@@ -292,7 +292,6 @@ export function ReferralsPage() {
 					</>
 				}
 				searchPlaceholder="Search…"
-				isFetching={isFetching}
 				activeFilters={activeFilters}
 				onRemoveFilter={removeFilter}
 				onClearFilters={clearFilters}
